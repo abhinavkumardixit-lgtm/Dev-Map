@@ -1,3 +1,16 @@
+# Dependencies
 node_modules/
+
+# Local Environment & API Keys (Private Secrets)
+.env
+.env.local
+.env.*.local
+config.local.js
+*.pem
+*.key
+
+# Temporary & Log Files
 *.log
 scratch/
+.tempmediaStorage/
+.DS_Store
