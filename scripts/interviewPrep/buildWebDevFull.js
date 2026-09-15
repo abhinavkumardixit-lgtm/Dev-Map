@@ -1,4 +1,4 @@
-// scripts/interviewPrep/buildWebDevFull.js
+
 const fs = require('fs');
 const path = require('path');
 
@@ -7,9 +7,8 @@ function q(id, topic, difficulty, question, options, correctAnswer, explanation)
   return { id, topic, difficulty, question, options, correctAnswer, explanation };
 }
 
-// Topics 1-5 from before, plus 6-14
 const allWebQuestions = [
-  // 1. HTML5 Semantics & Web Standards
+
   q('wd_h5_1', 'HTML5 Semantics & Web Standards', 'Easy',
     'Which HTML5 element should be used to encapsulate self-contained content that could be distributed independently?',
     ['<section>', '<article>', '<aside>', '<div>'], 1,
@@ -51,7 +50,6 @@ const allWebQuestions = [
     ['It compresses network requests', 'It prevents the opened window from accessing `window.opener` to redirect the parent page (reverse tabnabbing security vulnerability) and suppresses the Referer header', 'It forces links to open in incognito mode', 'It boosts Google PageRank ranking'], 1,
     'Without `noopener`, the target window can manipulate `window.opener.location` to phishing pages (reverse tabnabbing) and runs on the same process thread, degrading performance.'),
 
-  // 2. Modern CSS
   q('wd_css_1', 'Modern CSS', 'Easy',
     'Which CSS property enables a Flexbox layout on a container element?',
     ['display: flex;', 'flex-direction: row;', 'align-items: center;', 'float: flex;'], 0,
@@ -93,7 +91,6 @@ const allWebQuestions = [
     ['Container queries only work in SVG containers', 'Media queries respond to the global browser viewport dimensions; Container queries respond to the specific width/height of a parent container element, enabling truly modular responsive components', 'Container queries style Docker containers', 'Container queries replace CSS Flexbox completely'], 1,
     'Container Queries allow a component to inspect the dimensions of its immediate parent container rather than the overall browser window, allowing a component to render as a card in a sidebar and as a horizontal banner in the main area seamlessly.'),
 
-  // 3. JavaScript Core Concepts
   q('wd_js_1', 'JavaScript Core Concepts', 'Easy',
     'What is the difference between `var`, `let`, and `const` regarding scope?',
     ['`var` is block-scoped; `let` and `const` are function-scoped', '`var` is function-scoped and hoisted with undefined; `let` and `const` are block-scoped and reside in the Temporal Dead Zone (TDZ) before declaration', '`const` can be reassigned freely', '`let` is global only'], 1,
@@ -135,7 +132,6 @@ const allWebQuestions = [
     ['Shallow copy creates a new object; deep copy does not', 'Shallow copy duplicates top-level properties but copies references for nested objects; `JSON.parse(JSON.stringify())` fails to clone Functions, `undefined`, Symbols, Dates (converted to string), Maps/Sets, and throws on circular references', 'JSON cloning works on all JavaScript types flawlessly', 'Object.assign() creates a deep clone'], 1,
     '`JSON.parse(JSON.stringify(obj))` destroys non-JSON types (`undefined`, functions, symbols, BigInt) and crashes on circular graphs. Modern JavaScript provides `structuredClone()` for native deep cloning of complex objects.'),
 
-  // 4. Asynchronous JS
   q('wd_async_1', 'Asynchronous JS', 'Easy',
     'Is JavaScript single-threaded or multi-threaded in its main execution context?',
     ['Multi-threaded with 8 worker threads by default', 'Single-threaded: it has one call stack and executes one operation at a time on the main thread', 'Hardware dependent', 'Runs on multiple threads without locks'], 1,
@@ -177,7 +173,6 @@ const allWebQuestions = [
     ['By running code in try/catch without await', 'By listening to the global `unhandledrejection` event on `window` (or `process.on("unhandledRejection")` in Node) and ensuring all promises have `.catch()` or are wrapped in try/catch with await', 'By disabling promises in package.json', 'By using only callbacks'], 1,
     'Unhandled promise rejections trigger the `window.addEventListener("unhandledrejection")` event in browsers and can terminate Node processes. Robust code uses global rejection hooks and local try/catch with `await`.'),
 
-  // 5. DOM Manipulation & Browser Rendering
   q('wd_dom_1', 'DOM Manipulation & Browser Rendering', 'Easy',
     'What is the DOM (Document Object Model)?',
     ['A JavaScript compiler', 'A programming interface for HTML and XML documents representing the page as a structured tree of nodes/objects that programs can manipulate', 'A CSS layout framework', 'A network socket for browsers'], 1,
@@ -219,7 +214,6 @@ const allWebQuestions = [
     ['The network path taken by fiber cables to data centers', 'The sequence of steps the browser takes from receiving HTML/CSS/JS to painting pixels on screen: HTML -> DOM + CSS -> CSSOM -> Render Tree -> Layout -> Paint', 'The path where JavaScript is compiled by V8', 'The URL routing table in the browser address bar'], 1,
     'CRP is the rendering sequence: 1) Parse HTML to DOM; 2) Parse CSS to CSSOM; 3) Combine into Render Tree; 4) Compute geometry in Layout (Reflow); 5) Paint pixels into layers; 6) Composite layers to screen.'),
 
-  // 6. React Core Concepts
   q('wd_rc_1', 'React Core Concepts', 'Easy',
     'What is JSX in React?',
     ['A new JavaScript runtime engine', 'A syntax extension for JavaScript that allows writing HTML-like markup directly inside JavaScript files, transpiled into React.createElement calls', 'A CSS styling framework', 'A database query language'], 1,
@@ -261,7 +255,6 @@ const allWebQuestions = [
     ['React throws a syntax error if index is used', 'If items are reordered or deleted, indexes change, causing React to mismatch component state with wrong DOM nodes and causing severe UI rendering bugs', 'Indexes consume too much browser RAM', 'Indexes are not supported in ES6'], 1,
     'Using array index causes React to assume identity is tied to position. If item 0 is deleted, item 1 becomes index 0, and React incorrectly preserves the previous state (like input text or checkbox state) in the wrong item.'),
 
-  // 7. React Hooks
   q('wd_hk_1', 'React Hooks', 'Easy',
     'What are the two fundamental Rules of Hooks in React?',
     ['Hooks must be capitalized; Hooks can only be used in class components', 'Only call Hooks at the top level (never inside loops, conditions, or nested functions); Only call Hooks from React function components or custom Hooks', 'Hooks must be imported from npm; Hooks must return arrays', 'Hooks cannot accept parameters'], 1,
@@ -303,7 +296,6 @@ const allWebQuestions = [
     ['It applies CSS transitions to buttons', 'It allows marking UI updates as non-urgent transitions (e.g. filtering a long list), allowing urgent updates (like typing in an input) to interrupt the render and keep the UI responsive', 'It transitions React apps to Next.js', 'It manages page URL transitions'], 1,
     '`useTransition` enables concurrent React: wrapping state updates in `startTransition(() => setSearch(val))` marks them as low priority, letting React interrupt list rendering if the user types another keystroke.'),
 
-  // 8. State Management
   q('wd_sm_1', 'State Management', 'Easy',
     'What is "Prop Drilling" in React applications?',
     ['Drilling holes into CPU motherboard', 'The process of passing props through multiple levels of intermediate components that do not need the data themselves, solely to reach a deeply nested child', 'A technique for automated testing', 'Binding props to HTML inputs'], 1,
@@ -345,7 +337,6 @@ const allWebQuestions = [
     ['It changes JavaScript language specifications', 'It uses JavaScript `Proxy` objects to record all modifications to a temporary "draft" state and automatically produces a brand new immutable state tree based on those recorded changes', 'It freezes computer RAM', 'It runs mutating code in C++'], 1,
     'Immer wraps state in a `Proxy` draft: you write `draft.todos[0].done = true`. Immer intercepts operations, leaves original state untouched, and constructs a structurally shared immutable copy with changes applied.'),
 
-  // 9. Web Performance & Optimization
   q('wd_perf_1', 'Web Performance & Optimization', 'Easy',
     'What is "Code Splitting" and how does dynamic `import()` help modern web apps?',
     ['Splitting code into two different Git branches', 'Breaking a single large JavaScript bundle into smaller chunks loaded on demand when a user navigates to a specific route/feature, drastically reducing initial load time', 'Splitting HTML and CSS into separate files', 'Writing code across two monitors'], 1,
@@ -388,9 +379,8 @@ const allWebQuestions = [
     'Rendering 10,000 real DOM nodes degrades browser memory and causes severe layout reflow lag. Virtual scrolling renders only 20-30 visible rows at any moment, repositioning them dynamically on scroll.')
 ];
 
-// Write remaining topics (10-14)
 const remainingTopics = [
-  // 10. Web Security Fundamentals
+
   q('wd_sec_1', 'Web Security Fundamentals', 'Easy',
     'What is Cross-Site Scripting (XSS)?',
     ['An attack on server hardware', 'A vulnerability where malicious JavaScript is injected into trusted web applications and executed inside unsuspecting users\' browsers', 'Overloading servers with network requests', 'Intercepting Wi-Fi traffic'], 1,
@@ -432,7 +422,6 @@ const remainingTopics = [
     ['A feature verifying CPU integrity', 'A security feature that enables browsers to verify that resources fetched from CDNs (scripts/styles) haven\'t been tampered with by checking their cryptographic hash (`integrity="sha384-..."`)', 'A database foreign key rule', 'A Git commit signature check'], 1,
     'SRI ensures that if a third-party CDN is compromised and malicious code injected into an external library, the browser detects that the file hash does not match the `integrity` attribute and refuses to execute the script.'),
 
-  // 11. RESTful APIs & Fetch / Axios
   q('wd_api_1', 'RESTful APIs & Fetch / Axios', 'Easy',
     'Which HTTP method is traditionally used to replace an entire resource in RESTful API design?',
     ['GET', 'POST', 'PUT', 'PATCH'], 2,
@@ -474,7 +463,6 @@ const remainingTopics = [
     ['REST is faster than GraphQL in all cases', 'REST often returns fixed data schemas causing over-fetching (unneeded fields) or under-fetching (requiring N+1 requests); GraphQL allows clients to request exactly the fields needed in a single query', 'GraphQL does not use HTTP', 'REST does not support caching'], 1,
     'GraphQL solves REST over-fetching (downloading 50 fields when you only need a username) and under-fetching (needing 3 separate round-trips to get a user, their posts, and comments) by allowing client-specified query shapes.'),
 
-  // 12. WebSockets & Real-time Communication
   q('wd_ws_1', 'WebSockets & Real-time', 'Easy',
     'What protocol scheme do secure WebSockets use?',
     ['http://', 'https://', 'wss://', 'tcp://'], 2,
@@ -516,7 +504,6 @@ const remainingTopics = [
     ['STUN stores video files; TURN renders graphics', 'STUN discovers the public IP and port of clients behind NAT/firewalls; TURN acts as a relay server when symmetric NAT blocks direct P2P connections', 'STUN encrypts passwords; TURN compiles code', 'STUN is a database; TURN is a cache'], 1,
     'STUN allows peers to discover their public IP/port behind NATs. If strict firewalls or symmetric NATs prevent direct P2P connections, TURN relays media streams between peers through an intermediate server.'),
 
-  // 13. Progressive Web Apps (PWA) & Service Workers
   q('wd_pwa_1', 'Progressive Web Apps & Service Workers', 'Easy',
     'What is a Service Worker in modern web applications?',
     ['A background employee at a web hosting company', 'An event-driven background script registered by the browser that runs on a separate thread from the webpage, intercepting network requests and enabling offline caching and push notifications', 'A database background job', 'A CSS styling preprocessor'], 1,
@@ -558,7 +545,6 @@ const remainingTopics = [
     ['A method to sync files with Google Drive', 'An API that allows a Service Worker to defer server synchronization tasks (e.g. sending a chat message or offline form submit) until the user has stable network connectivity, even if the user has navigated away or closed the app', 'A CSS sync animation', 'A tool for multi-monitor displays'], 1,
     'Background Sync queues user actions (like submitting a message or comment) while offline and delegates guaranteed delivery to the Service Worker once network connection is restored, even after the tab is closed.'),
 
-  // 14. TypeScript Fundamentals for Web Developers
   q('wd_ts_1', 'TypeScript Fundamentals', 'Easy',
     'What is TypeScript in relation to JavaScript?',
     ['A complete replacement that doesn\'t run in browsers', 'A strongly typed, syntactical superset of JavaScript that compiles down to plain JavaScript', 'A backend framework for Node.js only', 'A styling library for React'], 1,

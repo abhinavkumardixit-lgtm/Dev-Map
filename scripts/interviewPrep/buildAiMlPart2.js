@@ -1,4 +1,4 @@
-// scripts/interviewPrep/buildAiMlPart2.js
+
 const fs = require('fs');
 const path = require('path');
 
@@ -10,7 +10,7 @@ function q(id, topic, difficulty, question, options, correctAnswer, explanation)
 }
 
 const topics10To15 = [
-  // 10. Convolutional Neural Networks & Computer Vision
+
   q('aiml_cnn_1', 'CNNs & Computer Vision', 'Easy',
     'Why are standard Multi-Layer Perceptrons (MLPs) unsuitable for processing high-resolution images compared to CNNs?',
     ['MLPs cannot multiply numbers', 'MLPs treat every pixel as an independent feature with full connectivity, causing an astronomical explosion of parameters and completely ignoring 2D spatial locality', 'MLPs can only process black and white images', 'MLPs require quantum processors'], 1,
@@ -52,7 +52,6 @@ const topics10To15 = [
     ['YOLO uses decision trees instead of neural networks', 'YOLO reframes object detection as a single regression problem from image pixels directly to bounding box coordinates and class probabilities in a single forward pass, achieving real-time 60+ FPS speeds', 'YOLO looks at images twice', 'Faster R-CNN has zero latency'], 1,
     'Two-stage detectors generate region proposals first, then classify each. YOLO divides the image into a grid and predicts all bounding boxes and class probabilities simultaneously in one single forward inference pass.'),
 
-  // 11. Recurrent Neural Networks & Sequence Modeling
   q('aiml_rnn_1', 'RNNs & Sequence Modeling', 'Easy',
     'What is the primary distinguishing characteristic of Recurrent Neural Networks (RNNs)?',
     ['They only process image pixels', 'They maintain an internal hidden state (memory) that loops back into the network, allowing information to persist across sequential input steps over time', 'They have no weights or biases', 'They only run backwards'], 1,
@@ -94,7 +93,6 @@ const topics10To15 = [
     ['Because RNN code is written in Python', 'Because the computation of step `t` strictly requires the output hidden state `h_{t-1}` from the previous step, enforcing sequential execution that cannot exploit GPU parallelization across time', 'Because GPUs only support 2D arrays', 'Because sequence lengths are unpredictable'], 1,
     'RNNs have inherently sequential temporal dependencies: you cannot compute token 50 before token 49 finishes. Transformers eliminate recurrent recurrence entirely, enabling massive simultaneous GPU parallelization over all tokens.'),
 
-  // 12. Transformer Architecture & Self-Attention
   q('aiml_tf_1', 'Transformer & Self-Attention', 'Easy',
     'What is the seminal 2017 research paper by Vaswani et al. that introduced the Transformer architecture?',
     ['"Deep Residual Learning for Image Recognition"', '"Attention Is All You Need"', '"Language Models are Few-Shot Learners"', '"Mastering the Game of Go"'], 1,
@@ -138,7 +136,7 @@ const topics10To15 = [
 ];
 
 const topics13To15 = [
-  // 13. NLP Fundamentals
+
   q('aiml_nlp_1', 'NLP Fundamentals', 'Easy',
     'What is "Tokenization" in Natural Language Processing?',
     ['Converting words into audio sounds', 'The process of splitting raw text strings into discrete units (tokens) such as words, subwords, or characters to be converted into numerical IDs', 'Translating text to another language', 'Encrypting text with AES'], 1,
@@ -180,7 +178,6 @@ const topics13To15 = [
     ['Contextual embeddings are stored in cloud databases', 'Static embeddings assign a single fixed vector per word regardless of context (the word "apple" has the same vector in "eating an apple" and "Apple stock"); Contextual embeddings generate dynamic representations based on surrounding context', 'Static embeddings require Transformers', 'Contextual embeddings cannot handle numbers'], 1,
     'Word2Vec gives polysemous words ("bank" of a river vs "bank" for money) the exact same vector. Contextual models dynamically compute representations based on sentence context.'),
 
-  // 14. LLMs & Generative AI
   q('aiml_llm_1', 'LLMs & Generative AI', 'Easy',
     'What does LLM stand for in modern AI?',
     ['Low-Latency Machine', 'Large Language Model', 'Linear Logic Matrix', 'Logical Learning Mechanism'], 1,
@@ -222,7 +219,6 @@ const topics13To15 = [
     ['Rounding numbers to the nearest integer', 'Converting model weights and activations from high-precision floating point (FP32/FP16) into lower-precision integers (INT8/INT4), slashing GPU memory requirements by 50-75% with minimal accuracy loss', 'Deleting 4 out of every 8 layers', 'Splitting models across 4 GPUs'], 1,
     'Quantization maps continuous 16-bit floats to compact 4-bit/8-bit integers. This allows a 70B parameter model (needing ~140 GB VRAM in FP16) to fit comfortably onto consumer GPUs (~35-40 GB in 4-bit) with near-lossless accuracy.'),
 
-  // 15. Ethical AI, Bias & Model Deployment (MLOps)
   q('aiml_mlops_1', 'Ethical AI & MLOps', 'Easy',
     'What does MLOps stand for and what is its goal?',
     ['Machine Learning Operations: applying DevOps principles (CI/CD, versioning, monitoring) to automate the deployment, monitoring, and lifecycle management of machine learning models in production', 'Machine Language Optimizers', 'Microservice Load Operations', 'Model Loss Optimizers'], 0,
@@ -265,7 +261,6 @@ const topics13To15 = [
     'Prompt injection exploits the lack of separation between code (instructions) and data (user input) in LLMs. Attackers trick the model into breaking guardrails, exfiltrating system prompts or taking unauthorized actions.')
 ];
 
-// Combine all 150 questions
 const complete150 = [...JSON.parse(content.substring(content.indexOf('questions: [') + 11, content.lastIndexOf(']') + 1)), ...topics10To15, ...topics13To15];
 
 console.log(`Total questions compiled: ${complete150.length}`);

@@ -4,7 +4,6 @@ const analyzer = require('../../js/pages/resumeAnalyzer.js');
 async function main() {
   console.log('Testing live GitHub verification & clean location extraction...');
 
-  // Mock global.fetch for deterministic offline verification
   const originalFetch = global.fetch;
   global.fetch = async function(url) {
     if (url.includes('nonexistentfakeusertesting9999123')) {
@@ -23,7 +22,6 @@ async function main() {
     };
   };
 
-  // 1. Test clean location extraction from long summary paragraph
   const resumeWithSummary = [
     'ADITYA SHARMA | 2k25aiml2513475@gmail.com | +91 96160 32564',
     'Driven Computer Science Engineering Student at PSIT Kanpur with a strong passion for Software Engineering, Frontend Development, and AI Applications. Quick learner skilled in building responsive web applications using JavaScript (ES6), HTML5, and CSS3. Strong foundation in Data Structures & Algorithms (DSA) with 170+ LeetCode problems solved.',
@@ -35,7 +33,6 @@ async function main() {
   console.log('Location extracted:', contact.details.location);
   assert.strictEqual(contact.details.location, 'Kanpur', 'Must extract clean city Kanpur instead of full paragraph');
 
-  // 2. Test renderContactAndLinksCard markup
   const result = {
     candidate: { name: 'ADITYA SHARMA', email: '2k25aiml2513475@gmail.com', location: 'Kanpur' },
     structuredResume: {
@@ -54,7 +51,6 @@ async function main() {
   assert.ok(html.includes('Format Valid'), 'LinkedIn has Format Valid badge');
   assert.ok(!html.includes('✓ Verified') || !html.includes('Verified Ground Truth'), 'Ground truth badge present, deceptive Verified badges removed');
 
-  // 3. Test verifyGitHubProfileLive on mock DOM with REAL valid GitHub account
   const mockValidContainer = {
     classes: new Set(),
     querySelector(sel) {
@@ -92,7 +88,6 @@ async function main() {
   assert.ok(mockValidContainer.metaEl.innerHTML.includes('Active GitHub Account'), 'Must report Active GitHub Account');
   assert.ok(mockValidContainer.classes.has('verified-success'), 'Card has verified-success class');
 
-  // 4. Test verifyGitHubProfileLive on mock DOM with FAKE / CHANGED non-existent GitHub account
   const fakeResult = {
     structuredResume: {
       links: [

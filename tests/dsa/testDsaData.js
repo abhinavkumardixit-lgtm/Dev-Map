@@ -1,6 +1,3 @@
-/**
- * MAD DEV — Automated Validation Test Suite for DSA Roadmap Dataset
- */
 
 const assert = require('assert');
 const { dsaRoadmap } = require('../../js/data/dsaData.js');
@@ -23,7 +20,6 @@ function check(name, fn) {
   }
 }
 
-// 1. Structure & Category checks
 check('TEST 1: Exact 16 major DSA categories exist', () => {
   const expected = [
     'Array', 'String', 'Hash Map', 'Stack', 'Queue / Deque', 'Linked List',
@@ -38,7 +34,6 @@ check('TEST 1: Exact 16 major DSA categories exist', () => {
   });
 });
 
-// 2. Question uniqueness & field validations
 check('TEST 2: Every question has a unique ID and canonical LeetCode URL', () => {
   const ids = new Set();
   const validUrlRegex = /^https:\/\/leetcode\.com\/problems\/[a-z0-9\-]+\/$/;
@@ -67,7 +62,6 @@ check('TEST 2: Every question has a unique ID and canonical LeetCode URL', () =>
   console.log(`  (Verified ${count} questions across all patterns)`);
 });
 
-// 3. Difficulty coverage
 check('TEST 3: Dataset covers Easy, Medium, and Hard tiers across patterns', () => {
   let easy = 0, med = 0, hard = 0;
   dsaRoadmap.forEach(c => c.patterns.forEach(p => p.questions.forEach(q => {
@@ -82,7 +76,6 @@ check('TEST 3: Dataset covers Easy, Medium, and Hard tiers across patterns', () 
   console.log(`  (Breakdown: Easy=${easy}, Medium=${med}, Hard=${hard})`);
 });
 
-// 4. Progress calculation mathematics
 check('TEST 4: Dynamic progress formula and rounding', () => {
   const totalQuestions = 250;
   const solvedQuestions = 75;

@@ -1,8 +1,4 @@
-/**
- * MAD DEV - Main Application Controller
- */
 
-// Strictly enforce Light Mode across all sections
 (function () {
   document.documentElement.classList.remove('dark');
   try {
@@ -22,7 +18,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
-// User Account Widget & Login Modal
 function initUserWidget() {
   const sidebar = document.getElementById('sidebar');
   if (!sidebar) return;
@@ -32,14 +27,12 @@ function initUserWidget() {
 
   let user = auth.getCurrentUser();
 
-  // Create or update user card container in sidebar
   let userContainer = document.getElementById('sidebar-user-widget');
   if (!userContainer) {
     userContainer = document.createElement('div');
     userContainer.id = 'sidebar-user-widget';
     userContainer.className = 'mt-auto px-4 pt-3 pb-1 border-t border-slate-100 sidebar-text';
-    
-    // Find bottom section or append
+
     const bottomPromo = sidebar.querySelector('.mt-auto');
     if (bottomPromo) {
       bottomPromo.replaceWith(userContainer);
@@ -71,7 +64,6 @@ function initUserWidget() {
       btnModal.addEventListener('click', openAuthModal);
     }
 
-    // Dynamic Top Header Bar Profile Button Binding
     const topHeaderBtn = document.getElementById('top-header-user-btn') || document.querySelector('header button:has(img)') || document.querySelector('.top-nav-user-profile');
     if (topHeaderBtn) {
       topHeaderBtn.id = 'top-header-user-btn';
@@ -94,7 +86,6 @@ function initUserWidget() {
   auth.onAuthStateChange(() => renderCard());
 }
 
-// Interactive Authentication & Account Switcher Modal
 function openAuthModal() {
   const auth = window.AuthService;
   if (!auth) return;
@@ -103,7 +94,7 @@ function openAuthModal() {
   if (!modal) {
     modal = document.createElement('div');
     modal.id = 'maddev-auth-modal';
-    modal.className = 'fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4';
+    modal.className = 'fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 overflow-y-auto';
     document.body.appendChild(modal);
   }
 
@@ -111,7 +102,7 @@ function openAuthModal() {
   const knownUsers = auth.listKnownUsers();
 
   modal.innerHTML = `
-    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 border border-slate-100 transform transition-all animate-in fade-in zoom-in-95 duration-200">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 border border-slate-100 transform transition-all animate-in fade-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between pb-4 border-b border-slate-100">
         <div class="flex items-center gap-2.5">
           <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white">
@@ -186,7 +177,6 @@ function openAuthModal() {
 
   modal.classList.remove('hidden');
 
-  // Event handlers
   const btnClose = modal.querySelector('#btn-close-auth-modal');
   if (btnClose) btnClose.onclick = () => modal.classList.add('hidden');
 
@@ -239,7 +229,6 @@ function openAuthModal() {
   }
 }
 
-// Highlight Current Navigation Item based on URL
 function highlightActiveRoute() {
   const currentPath = window.location.pathname.toLowerCase();
   const navLinks = document.querySelectorAll('#sidebar nav a');
@@ -248,16 +237,15 @@ function highlightActiveRoute() {
     const href = link.getAttribute('href');
     if (!href || href === '#') return;
 
-    // Normalize href and current path
     const pageName = href.split('/').pop().toLowerCase();
     const currentFile = currentPath.split('/').pop() || 'index.html';
 
-    const isActive = (currentFile === pageName) || 
+    const isActive = (currentFile === pageName) ||
                      (currentFile === '' && pageName === 'index.html') ||
                      (currentPath.endsWith('/') && pageName === 'index.html');
 
     if (isActive) {
-      // Apply active style
+
       link.className = 'flex items-center gap-3 px-3 py-2.5 rounded-lg bg-secondary-container text-on-secondary-container border-l-[3px] border-primary transition-transform hover:scale-[0.98] duration-200 tooltip relative group';
       const icon = link.querySelector('.material-symbols-outlined');
       if (icon) {
@@ -265,7 +253,7 @@ function highlightActiveRoute() {
         icon.style.fontVariationSettings = '"FILL" 1';
       }
     } else {
-      // Apply inactive style
+
       link.className = 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors duration-200 border-l-[3px] border-transparent tooltip relative group';
       const icon = link.querySelector('.material-symbols-outlined');
       if (icon) {
@@ -276,7 +264,6 @@ function highlightActiveRoute() {
   });
 }
 
-// Prevent blinking caret or text selection focus on non-editable elements
 document.addEventListener('mousedown', (e) => {
   const isEditable = e.target.closest('input, textarea, [contenteditable="true"], select');
   if (!isEditable) {
@@ -286,8 +273,6 @@ document.addEventListener('mousedown', (e) => {
   }
 });
 
-
-// Sidebar Collapsing and Mobile Drawer
 function initSidebar() {
   const sidebar = document.getElementById('sidebar');
   const sidebarToggle = document.getElementById('sidebar-toggle');
@@ -296,7 +281,6 @@ function initSidebar() {
   const mobileOverlay = document.getElementById('mobile-overlay');
   const htmlDoc = document.documentElement;
 
-  // Restore collapsed state
   const isCollapsed = localStorage.getItem('devpilot-sidebar-collapsed') === 'true';
   if (isCollapsed) {
     htmlDoc.classList.add('sidebar-collapsed');
@@ -358,7 +342,6 @@ function initSidebar() {
   });
 }
 
-// Highlight Current Navigation Item based on URL
 function highlightActiveRoute() {
   const currentPath = window.location.pathname.toLowerCase();
   const navLinks = document.querySelectorAll('#sidebar nav a');
@@ -367,16 +350,15 @@ function highlightActiveRoute() {
     const href = link.getAttribute('href');
     if (!href || href === '#') return;
 
-    // Normalize href and current path
     const pageName = href.split('/').pop().toLowerCase();
     const currentFile = currentPath.split('/').pop() || 'index.html';
 
-    const isActive = (currentFile === pageName) || 
+    const isActive = (currentFile === pageName) ||
                      (currentFile === '' && pageName === 'index.html') ||
                      (currentPath.endsWith('/') && pageName === 'index.html');
 
     if (isActive) {
-      // Apply active style
+
       link.className = 'flex items-center gap-3 px-3 py-2.5 rounded-lg bg-secondary-container text-on-secondary-container border-l-[3px] border-primary transition-transform hover:scale-[0.98] duration-200 tooltip relative group';
       const icon = link.querySelector('.material-symbols-outlined');
       if (icon) {
@@ -384,7 +366,7 @@ function highlightActiveRoute() {
         icon.style.fontVariationSettings = '"FILL" 1';
       }
     } else {
-      // Apply inactive style
+
       link.className = 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors duration-200 border-l-[3px] border-transparent tooltip relative group';
       const icon = link.querySelector('.material-symbols-outlined');
       if (icon) {
@@ -395,7 +377,6 @@ function highlightActiveRoute() {
   });
 }
 
-// Prevent blinking caret or text selection focus on non-editable elements
 document.addEventListener('mousedown', (e) => {
   const isEditable = e.target.closest('input, textarea, [contenteditable="true"], select');
   if (!isEditable) {

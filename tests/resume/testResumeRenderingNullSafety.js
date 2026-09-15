@@ -1,13 +1,6 @@
-/**
- * Test Suite: Resume Analyzer Rendering & Null-Safety
- * Verifies that renderAllResults and all sub-renderers execute safely
- * without throwing "Cannot read properties of undefined" for any resume profile
- * (student, experienced, senior, missing sections, partial AI schema).
- */
 
 const assert = require('assert');
 
-// Mock a minimal DOM environment
 global.document = {
   getElementById: (id) => {
     return {
@@ -51,7 +44,6 @@ console.log(`====================================================${colors.reset}
 let passed = 0;
 let total = 0;
 
-// Test 1: Full student resume analysisResult render
 total++;
 if (runTest('TEST 1: Student / Fresher resume analysisResult renders cleanly', () => {
   const evalResult = analyzer.executeMasterAiEvaluation(`
@@ -78,7 +70,6 @@ Bachelor of Technology in Computer Science (2026)
 AKTU University, GPA: 8.5
 `);
 
-  // Build the analysisResult object using the same mapping as runRealAnalysis
   const verified = evalResult.skills?.verifiedSkills || [];
   const listed = evalResult.skills?.listedOnlySkills || [];
   const allSkills = [...new Set(verified.concat(listed))];
@@ -170,9 +161,6 @@ AKTU University, GPA: 8.5
   });
 })) passed++;
 
-// Test 2: 3-Year Experienced Software Engineer Resume (isFresher: false)
-// This is the EXACT scenario that previously failed with:
-// "Cannot read property 'length' of undefined" on exp.techInExperience!
 total++;
 if (runTest('TEST 2: Experienced Software Engineer (isFresher: false) with active techInExperience renders cleanly', () => {
   const evalResult = analyzer.executeMasterAiEvaluation(`
@@ -309,8 +297,6 @@ University of California, Berkeley (2020)
   });
 })) passed++;
 
-// Test 3: Completely Barebones / Degraded Analysis Result (Null fields, missing arrays)
-// Tests that null guards protect against any runtime crashes
 total++;
 if (runTest('TEST 3: Barebones / Malformed result with missing nested arrays does not throw', () => {
   const degradedResult = {
@@ -328,14 +314,14 @@ if (runTest('TEST 3: Barebones / Malformed result with missing nested arrays doe
     parsedSections: {},
     summaryAnalysis: {},
     skills: { all: [] },
-    experienceAnalysis: { isFresher: false }, // techInExperience missing, jobTitles missing
+    experienceAnalysis: { isFresher: false },
     projectsAnalysis: {},
     educationAnalysis: {},
     certificationsAnalysis: {},
     achievementsAnalysis: {},
     contentQuality: {},
-    formattingChecks: null, // null check
-    suggestions: null, // null check
+    formattingChecks: null,
+    suggestions: null,
     bestFitRole: null,
     jobRecommendations: null
   };
@@ -345,7 +331,6 @@ if (runTest('TEST 3: Barebones / Malformed result with missing nested arrays doe
   });
 })) passed++;
 
-// Test 4: Job Match Result Rendering Null Safety
 total++;
 if (runTest('TEST 4: Job Match rendering with partial fields does not throw', () => {
   const partialJdResult = {
@@ -387,7 +372,6 @@ if (runTest('TEST 4: Job Match rendering with partial fields does not throw', ()
   });
 })) passed++;
 
-// Test 5: Re-analyze button listener binding
 total++;
 if (runTest('TEST 5: Re-analyze button is rendered and click handler binds cleanly', () => {
   let boundListener = null;

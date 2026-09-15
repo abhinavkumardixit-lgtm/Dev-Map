@@ -1,8 +1,3 @@
-/**
- * Automated Test Suite for MAD DEV Career Roadmaps
- * Validates catalog integrity, 5-level progression structure,
- * dependency ordering, technology search, and real progress calculation.
- */
 
 const fs = require('fs');
 const path = require('path');
@@ -35,7 +30,6 @@ console.log('===========================================================');
 console.log(' MAD DEV: Running Career Roadmaps Test Suite');
 console.log('===========================================================\n');
 
-// 1. Files & Structural Integrity
 runTest('All core Career Roadmaps files exist in workspace', () => {
   assert.ok(fs.existsSync(path.join(rootDir, 'pages/roadmaps.html')), 'pages/roadmaps.html must exist');
   assert.ok(fs.existsSync(path.join(rootDir, 'css/pages/roadmaps.css')), 'css/pages/roadmaps.css must exist');
@@ -44,7 +38,6 @@ runTest('All core Career Roadmaps files exist in workspace', () => {
   assert.ok(fs.existsSync(path.join(rootDir, 'js/pages/roadmaps.js')), 'js/pages/roadmaps.js must exist');
 });
 
-// 2. Navigation Integrity Across All Pages
 runTest('Sidebar navigation contains link to Career Roadmaps across all pages', () => {
   const pages = [
     'index.html',
@@ -76,7 +69,6 @@ runTest('Sidebar navigation contains link to Career Roadmaps across all pages', 
   });
 });
 
-// 3. Catalog Data Integrity
 runTest('Role catalog contains exactly 20 roles across 4 categories', () => {
   assert.strictEqual(careerRoles.length, 20, 'Catalog must contain exactly 20 roles');
   assert.strictEqual(careerCategories.length, 4, 'Must have 4 categories');
@@ -87,7 +79,6 @@ runTest('Role catalog contains exactly 20 roles across 4 categories', () => {
   assert.ok(categoryIds.has('devops-cloud'), 'Must have devops-cloud category');
   assert.ok(categoryIds.has('security-qa'), 'Must have security-qa category');
 
-  // Verify counts per category
   const counts = {};
   careerRoles.forEach(r => {
     counts[r.category] = (counts[r.category] || 0) + 1;
@@ -104,36 +95,31 @@ runTest('Role catalog contains exactly 20 roles across 4 categories', () => {
   assert.strictEqual(counts['security-qa'], 3, 'Security & QA category must have 3 roles');
 });
 
-// 4. Technology Search Matching
 runTest('Technology search accurately finds relevant multi-role disciplines', () => {
   function searchTech(query) {
     const q = query.toLowerCase();
-    return careerRoles.filter(r => 
+    return careerRoles.filter(r =>
       r.title.toLowerCase().includes(q) ||
       (r.description || '').toLowerCase().includes(q) ||
       (r.featuredTech || []).some(t => t.toLowerCase().includes(q))
     ).map(r => r.title);
   }
 
-  // React search
   const reactMatches = searchTech('React');
   assert.ok(reactMatches.includes('Frontend Developer'), 'React must match Frontend Developer');
   assert.ok(reactMatches.includes('Full Stack Developer'), 'React must match Full Stack Developer');
 
-  // Docker search
   const dockerMatches = searchTech('Docker');
   assert.ok(dockerMatches.includes('Backend Developer'), 'Docker must match Backend Developer');
   assert.ok(dockerMatches.includes('Full Stack Developer'), 'Docker must match Full Stack Developer');
   assert.ok(dockerMatches.includes('DevOps Engineer'), 'Docker must match DevOps Engineer');
   assert.ok(dockerMatches.includes('Cloud Engineer'), 'Docker must match Cloud Engineer');
 
-  // PyTorch search
   const pytorchMatches = searchTech('PyTorch');
   assert.ok(pytorchMatches.includes('AI Engineer'), 'PyTorch must match AI Engineer');
   assert.ok(pytorchMatches.includes('AI Research Engineer'), 'PyTorch must match AI Research Engineer');
 });
 
-// 5. Roadmap Data Integrity & Schema Validation
 runTest('All 20 roles have matching roadmaps with 5 levels and valid node schemas', () => {
   careerRoles.forEach(role => {
     const roadmap = careerRoadmaps[role.roadmapId];
@@ -158,14 +144,12 @@ runTest('All 20 roles have matching roadmaps with 5 levels and valid node schema
       });
     });
 
-    // Verify projects and checklist exist
     assert.ok(Array.isArray(roadmap.projects) && roadmap.projects.length > 0, `Roadmap ${role.roadmapId} must have projects`);
     assert.ok(roadmap.jobReadyChecklist, `Roadmap ${role.roadmapId} must have jobReadyChecklist`);
     assert.ok(Array.isArray(roadmap.jobReadyChecklist.technical), `Must have technical checklist`);
   });
 });
 
-// 6. Prerequisite Topological Integrity (No Broken or Cyclic Prereqs)
 runTest('Prerequisite references are fully resolvable and strictly acyclic', () => {
   Object.entries(careerRoadmaps).forEach(([k, rm]) => {
     const allSkillIds = new Set();
@@ -182,14 +166,9 @@ runTest('Prerequisite references are fully resolvable and strictly acyclic', () 
   });
 });
 
-// 7. Dynamic Dependency Resolution & Status Calculation
 runTest('resolveRoadmapNodeStatuses computes locked, available, in-progress, and completed states accurately', () => {
   const feRoadmap = careerRoadmaps['frontend'];
 
-  // Case A: Fresh user (no completed skills)
-  // fe-html has no prerequisites -> should be available
-  // fe-css requires fe-html -> should be locked
-  // Mock global storage state
   global.localStorage = {
     getItem: () => JSON.stringify({ 'frontend-developer': { completed: [], inProgress: [] } }),
     setItem: () => {}
@@ -199,8 +178,6 @@ runTest('resolveRoadmapNodeStatuses computes locked, available, in-progress, and
   assert.strictEqual(statusMapInitial['fe-html'], 'available', 'fe-html has no prereqs, must be available');
   assert.strictEqual(statusMapInitial['fe-css'], 'locked', 'fe-css has uncompleted prereq fe-html, must be locked');
 
-  // Case B: User completes fe-html
-  // fe-css should now be unlocked to 'available'
   global.localStorage = {
     getItem: () => JSON.stringify({ 'frontend-developer': { completed: ['fe-html'], inProgress: [] } }),
     setItem: () => {}
@@ -210,7 +187,6 @@ runTest('resolveRoadmapNodeStatuses computes locked, available, in-progress, and
   assert.strictEqual(statusMapAfterHtml['fe-html'], 'completed', 'fe-html must be completed');
   assert.strictEqual(statusMapAfterHtml['fe-css'], 'available', 'fe-css must unlock to available when fe-html completed');
 
-  // Case C: User sets fe-css to in-progress
   global.localStorage = {
     getItem: () => JSON.stringify({ 'frontend-developer': { completed: ['fe-html'], inProgress: ['fe-css'] } }),
     setItem: () => {}
@@ -220,14 +196,12 @@ runTest('resolveRoadmapNodeStatuses computes locked, available, in-progress, and
   assert.strictEqual(statusMapProgress['fe-css'], 'in-progress', 'fe-css must resolve to in-progress');
 });
 
-// 8. Real Progress Percentage Calculation
 runTest('calculateRoleProgress computes non-fake, verified completion percentage', () => {
   const feRole = careerRoles.find(r => r.id === 'frontend-developer');
   const feRoadmap = careerRoadmaps['frontend'];
   let totalSkills = 0;
   feRoadmap.levels.forEach(l => totalSkills += l.skills.length);
 
-  // When 0 completed
   global.localStorage = {
     getItem: () => JSON.stringify({ 'frontend-developer': { completed: [] } }),
     setItem: () => {}
@@ -237,7 +211,6 @@ runTest('calculateRoleProgress computes non-fake, verified completion percentage
   assert.strictEqual(prog0.completed, 0);
   assert.strictEqual(prog0.total, totalSkills);
 
-  // When 2 completed
   global.localStorage = {
     getItem: () => JSON.stringify({ 'frontend-developer': { completed: ['fe-html', 'fe-css'] } }),
     setItem: () => {}
@@ -249,11 +222,9 @@ runTest('calculateRoleProgress computes non-fake, verified completion percentage
   assert.strictEqual(prog2.total, totalSkills);
 });
 
-// 9. Next Recommended Skill Finder
 runTest('findNextRecommendedSkill identifies next priority skill in learning order', () => {
   const feRoadmap = careerRoadmaps['frontend'];
 
-  // Status with fe-html available
   const nodeStatusMap = {
     'fe-html': 'available',
     'fe-css': 'locked'
@@ -263,28 +234,23 @@ runTest('findNextRecommendedSkill identifies next priority skill in learning ord
   assert.strictEqual(nextSkill.skill.id, 'fe-html', 'Should recommend first available skill');
 });
 
-// 10. Intelligent AI Relevance Representation
 runTest('AI relevance is sensibly represented across diverse roles without generic hype', () => {
   const feRoadmap = careerRoadmaps['frontend'];
   const beRoadmap = careerRoadmaps['backend'];
   const genaiRoadmap = careerRoadmaps['llm-genai'];
 
-  // Frontend has UI/streaming AI
   const feAi = feRoadmap.levels[3].skills.find(s => s.id === 'fe-ai-integration');
   assert.ok(feAi, 'Frontend must have AI UI integration');
   assert.ok(feAi.technologies.includes('Server-Sent Events (SSE)'));
 
-  // Backend has LLM API & Vector search
   const beAi = beRoadmap.levels[3].skills.find(s => s.id === 'be-ai-integration');
   assert.ok(beAi, 'Backend must have AI service integration');
   assert.ok(beAi.technologies.includes('Embeddings') || beAi.technologies.includes('Vector Search'));
 
-  // GenAI Engineer has RAG and Agentic frameworks
   const genRag = genaiRoadmap.levels[1].skills.find(s => s.id === 'gen-rag-core');
   assert.ok(genRag, 'GenAI must have RAG core');
 });
 
-// 11. Section 10: Progressive Milestone Projects
 runTest('All 20 roles contain exactly 3 progressive projects (Beginner, Intermediate, Production)', () => {
   const { getAllRoadmaps } = require(path.join(rootDir, 'js/data/careerRoadmapsData.js'));
   const allRoadmaps = getAllRoadmaps();
@@ -305,7 +271,6 @@ runTest('All 20 roles contain exactly 3 progressive projects (Beginner, Intermed
   });
 });
 
-// 12. Section 11: 9-Category Job-Ready Checklists
 runTest('All 20 roles contain 9 standard Job-Ready checklist categories', () => {
   const { getAllRoadmaps } = require(path.join(rootDir, 'js/data/careerRoadmapsData.js'));
   const expectedCategories = [
@@ -330,7 +295,6 @@ runTest('All 20 roles contain 9 standard Job-Ready checklist categories', () => 
   });
 });
 
-// 13. Section 5: Rich Skill Schema Validation
 runTest('Skills across roadmaps have rich practical fields (productionUse, aiWorkflow, handsOnTask, resources)', () => {
   const { getAllRoadmaps } = require(path.join(rootDir, 'js/data/careerRoadmapsData.js'));
   getAllRoadmaps().forEach(rm => {
@@ -345,17 +309,15 @@ runTest('Skills across roadmaps have rich practical fields (productionUse, aiWor
   });
 });
 
-// 14. Section 19: Registry Retrieval Helper API
 runTest('getRoadmap, getAllRoadmaps, and getRoadmapsByCategory work across all lookups', () => {
   const { getRoadmap, getAllRoadmaps, getRoadmapsByCategory } = require(path.join(rootDir, 'js/data/careerRoadmapsData.js'));
-  
+
   assert.strictEqual(getAllRoadmaps().length, 20);
   assert.strictEqual(getRoadmapsByCategory('development').length, 7);
   assert.strictEqual(getRoadmapsByCategory('data-ai').length, 7);
   assert.strictEqual(getRoadmapsByCategory('devops-cloud').length, 3);
   assert.strictEqual(getRoadmapsByCategory('security-qa').length, 3);
 
-  // Lookups by various identifiers
   assert.ok(getRoadmap('frontend-developer'));
   assert.ok(getRoadmap('frontend'));
   assert.ok(getRoadmap('Frontend Developer'));

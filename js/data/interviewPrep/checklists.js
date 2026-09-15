@@ -1,8 +1,3 @@
-/**
- * MAD DEV — Core Interview Checklists
- * Comprehensive, independently trackable checklists for the 8 core CS/IT interview subjects.
- * Persisted in localStorage (devpilot_interview_prep_checklists).
- */
 
 (function () {
   'use strict';
@@ -243,12 +238,10 @@
     }
   };
 
-  // Expose to Browser
   if (typeof window !== 'undefined') {
     window.interviewPrepChecklists = coreChecklists;
   }
 
-  // Expose to Node.js / CommonJS
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = coreChecklists;
   }

@@ -1,11 +1,3 @@
-/**
- * MAD DEV — DSA Pattern Learning & 1000+ Questions Dataset
- * Features:
- * - 28 In-Depth Pattern Guides across 16 major DSA categories with complete 12-point curriculum.
- * - 1,000+ authentic, real LeetCode problems (real titles, numbers, canonical URLs, difficulty, recognition signals).
- * - 32 'Identify the Pattern' Training Arena recognition drills.
- * - 100% synchronized with devpilot_dsa_progress and existing 260 roadmap questions.
- */
 
 const dsaPatternsRoadmap = [
   {
@@ -22241,7 +22233,6 @@ const dsaArenaDrills = [
   }
 ];
 
-// Expose on window / exports for browser & node test runners
 if (typeof window !== 'undefined') {
   window.dsaPatternsRoadmap = dsaPatternsRoadmap;
   window.dsaAllQuestions = dsaAllQuestions;

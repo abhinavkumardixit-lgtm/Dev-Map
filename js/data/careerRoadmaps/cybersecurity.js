@@ -1,7 +1,3 @@
-/**
- * MAD DEV — Career Roadmap: Cybersecurity Analyst
- * Complete 5-level dependency path, practical skill tasks, progressive projects, and job-ready checklist.
- */
 
 const cybersecurityRoadmap = {
   roleId: 'cybersecurity-analyst',

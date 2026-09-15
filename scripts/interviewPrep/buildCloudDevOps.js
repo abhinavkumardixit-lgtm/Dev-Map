@@ -1,4 +1,4 @@
-// scripts/interviewPrep/buildCloudDevOps.js
+
 const fs = require('fs');
 const path = require('path');
 
@@ -9,7 +9,7 @@ function q(id, topic, difficulty, question, options, correctAnswer, explanation)
 
 console.log('Generating Cloud & DevOps questions (11 topics * 10 = 110 MCQs)...');
 const cloudQuestions = [
-  // 1. Cloud Service Models (IaaS, PaaS, SaaS, FaaS)
+
   q('cld_sm_1', 'Cloud Service Models', 'Easy',
     'Which cloud service model provides virtualized computing infrastructure (VMs, storage, firewalls) where users manage the OS and middleware?',
     ['SaaS (Software as a Service)', 'IaaS (Infrastructure as a Service)', 'PaaS (Platform as a Service)', 'FaaS (Function as a Service)'], 1,
@@ -51,7 +51,6 @@ const cloudQuestions = [
     ['They replace local Wi-Fi routers', 'Physical cloud hardware racks installed inside on-premise corporate data centers, managed seamlessly by cloud provider control planes to satisfy strict data sovereignty/latency requirements', 'They run purely off solar power', 'They are software-only simulators'], 1,
     'Cloud appliances deploy physical provider hardware directly on customer premises while extending provider APIs, management, and tooling locally for ultra-low latency or regulatory compliance.'),
 
-  // 2. Cloud Deployment Models
   q('cld_dm_1', 'Cloud Deployment Models', 'Easy',
     'What is a "Public Cloud"?',
     ['A cloud managed by government agencies only', 'Computing infrastructure owned and operated by a third-party cloud provider and delivered over the public internet, shared among multiple tenants', 'A cloud open to anyone without passwords', 'A local computer lab in a university'], 1,
@@ -93,7 +92,6 @@ const cloudQuestions = [
     ['The cost of buying domain names', 'Cloud providers generally allow free inbound data transfer (ingress) but charge expensive rates per gigabyte for outbound data leaving their network (egress) to internet or other clouds', 'The cost of CPU cooling electricity', 'The cost of developer salaries'], 1,
     'Public clouds encourage data accumulation with free ingress, but impose heavy bandwidth egress fees when transferring data out to another cloud or on-premise center, creating financial gravity.'),
 
-  // 3. AWS Core Services
   q('cld_aws_1', 'AWS Core Services', 'Easy',
     'What is Amazon EC2 (Elastic Compute Cloud)?',
     ['An email service', 'A web service providing resizable virtual computing capacity (Virtual Machines) in the cloud', 'A relational database', 'A DNS management tool'], 1,
@@ -135,7 +133,6 @@ const cloudQuestions = [
     ['A relational database using SQL joins', 'A fully managed distributed NoSQL key-value and document database that automatically partitions data across SSD storage clusters based on partition keys with synchronous triple-AZ replication', 'A cache running on user browsers', 'A hard drive file system'], 1,
     'DynamoDB partitions data across distributed SSD storage nodes using consistent hashing on partition keys. It automatically scales throughput and storage infinitely with predictable single-digit millisecond latency.'),
 
-  // 4. Containerization Fundamentals & Docker
   q('cld_dk_1', 'Containerization & Docker', 'Easy',
     'What is the fundamental difference between a Virtual Machine (VM) and a Docker Container?',
     ['VMs are written in C; containers in JavaScript', 'A VM includes a full Guest OS and virtualizes hardware via a hypervisor; a Container shares the host OS kernel and isolates processes using Linux namespaces and cgroups (lightweight)', 'Containers are much slower than VMs', 'Containers require dedicated hardware per container'], 1,
@@ -177,7 +174,6 @@ const cloudQuestions = [
     ['Because root user consumes double the memory', 'If a container breakout vulnerability occurs, an attacker escaping to the host kernel inherits full root privileges on the host machine, compromising the entire infrastructure', 'Because Docker images fail to start as root', 'Linux disables networking for root containers'], 1,
     'By default, container `root` maps to host `UID 0`. A security exploit breaking out of container isolation grants the attacker unrestricted root control over the host operating system. Production images must specify `USER node` or non-root user.'),
 
-  // 5. Docker Networking, Compose & Multi-Stage Builds
   q('cld_dc_1', 'Docker Networking & Compose', 'Easy',
     'What is Docker Compose?',
     ['A text editor for Dockerfiles', 'A tool for defining and running multi-container Docker applications using a declarative YAML file (`docker-compose.yml`)', 'A compiler for Docker images', 'A tool to convert Docker to Kubernetes'], 1,
@@ -219,7 +215,6 @@ const cloudQuestions = [
     ['An image with no Linux distribution', 'An ultra-minimal image containing strictly your compiled application binary and runtime dependencies, omitting package managers (apt/yum), shells (bash/sh), and standard utilities to maximize security', 'An image with no operating system', 'A corrupted Docker image'], 1,
     'Distroless images strip away all non-essential binaries: no package managers, no shells, and no standard coreutils. This reduces attack surface drastically, preventing attackers from executing commands even if an RCE vulnerability exists.'),
 
-  // 6. Container Orchestration & Kubernetes Architecture
   q('cld_k8s_1', 'Container Orchestration & Kubernetes', 'Easy',
     'What is Kubernetes (K8s)?',
     ['A programming language developed by Google', 'An open-source container orchestration platform for automating the deployment, scaling, and management of containerized applications', 'A database for Docker images', 'A tool for writing Dockerfiles'], 1,
@@ -261,7 +256,6 @@ const cloudQuestions = [
     ['It buys more physical computer servers', 'It automatically scales the number of Pod replicas in a deployment up or down based on observed CPU utilization, memory metrics, or custom metrics (e.g. queue length)', 'It increases pod CPU allocation', 'It scales pods horizontally on the screen'], 1,
     'HPA periodically queries the metrics server and adjusts the `replicas` field of a Deployment/StatefulSet based on target thresholds (e.g. average CPU utilization > 70%), autoscaling pods horizontally.'),
 
-  // 7. CI/CD Pipeline Design & Automation
   q('cld_ci_1', 'CI/CD Pipeline Design & Automation', 'Easy',
     'What is the primary objective of a Continuous Integration (CI) pipeline?',
     ['To invoice clients automatically', 'To automatically build, test, and validate every code commit pushed to a repository to catch errors early and maintain software quality', 'To publish marketing blog posts', 'To format code indentation only'], 1,
@@ -303,7 +297,6 @@ const cloudQuestions = [
     ['Running unit tests manually on a whiteboard', 'Executing CI jobs on dedicated private physical servers or cloud VMs owned by the company, required for proprietary hardware access, GPU testing, or internal network access', 'A developer laptop running tests', 'A tool to run CI offline'], 1,
     'Self-hosted runners run the CI runner agent inside private corporate networks or customized hardware (e.g. on-premise Kubernetes clusters, GPUs), enabling access to private internal assets without exposing them to public cloud runners.'),
 
-  // 8. Infrastructure as Code (IaC)
   q('cld_iac_1', 'Infrastructure as Code', 'Easy',
     'What does Infrastructure as Code (IaC) mean?',
     ['Writing code inside computer microchips', 'Managing and provisioning computing infrastructure (networks, VMs, databases, load balancers) through version-controlled configuration files rather than manual UI clicks', 'Writing documentation in markdown', 'Setting up Wi-Fi routers'], 1,
@@ -345,7 +338,6 @@ const cloudQuestions = [
     ['A hardware development kit sold by Amazon', 'A framework allowing developers to define cloud infrastructure using familiar general-purpose programming languages (TypeScript, Python, Java) which synthesize into standard CloudFormation JSON/YAML templates', 'A mobile app development toolkit', 'A replacement for Docker'], 1,
     'AWS CDK brings object-oriented abstraction, loops, conditionals, and type safety to IaC by letting engineers write infrastructure using TypeScript/Python while compiling to native AWS CloudFormation.'),
 
-  // 9. Observability, Logging & Monitoring
   q('cld_obs_1', 'Observability, Logging & Monitoring', 'Easy',
     'What are the "Three Pillars of Observability"?',
     ['Speed, Security, Scalability', 'Metrics, Logs, and Distributed Traces', 'CPU, RAM, and Disk', 'Alerts, Dashboards, and Reports'], 1,
@@ -387,7 +379,6 @@ const cloudQuestions = [
     ['Pull is for servers; Push is for mobile only', 'Pull: monitoring server periodically connects to targets and scrapes metrics endpoints; Push: application agents initiate outbound connections to push metrics to a central collector (ideal for short-lived batch/serverless jobs)', 'Push cannot collect numbers', 'Pull requires running on the same host'], 1,
     'Pull-based systems simplify service discovery and health monitoring (if scraper can\'t reach target, target is down). Push-based systems excel for ephemeral workloads (like Lambda functions or batch jobs that terminate before a scraper runs).'),
 
-  // 10. Cloud Security, IAM Policies & Secrets Management
   q('cld_sec_1', 'Cloud Security & Secrets Management', 'Easy',
     'What is the principle of "Defense in Depth" in cloud security?',
     ['Placing servers deep underground', 'Layering multiple independent security controls (perimeter firewalls, IAM, network segmentation, host protection, data encryption) so that if one layer fails, others stop the breach', 'Using passwords with at least 50 characters', 'Backing up data to 10 hard drives'], 1,
@@ -429,7 +420,6 @@ const cloudQuestions = [
     ['The statement written first in JSON takes precedence', 'An Explicit Deny ALWAYS overrides any Allow statement, regardless of where the deny is defined (Explicit Deny > Explicit Allow > Default Deny)', 'Allow always wins over Deny', 'AWS throws a syntax error'], 1,
     'AWS evaluates permissions deterministically: by default, all access is denied. An explicit allow grants access, BUT any matching explicit DENY immediately and irrevocably overrides all allows.'),
 
-  // 11. SRE Principles
   q('cld_sre_1', 'SRE Principles', 'Easy',
     'What does SRE stand for and who pioneered the discipline?',
     ['Software Regression Engineering (Microsoft)', 'Site Reliability Engineering, pioneered by Google to apply software engineering practices to infrastructure and operations problems', 'System Routing Engine (Cisco)', 'Standard Reliability Evaluation (IBM)'], 1,

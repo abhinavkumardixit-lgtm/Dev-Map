@@ -1,7 +1,3 @@
-/**
- * Generator for Aptitude Question Bank (200 MCQs across 20 topics)
- * Standard placement calculation questions for TCS, Infosys, Wipro, Cognizant, Accenture, Amazon.
- */
 
 const fs = require('fs');
 const path = require('path');
@@ -11,7 +7,6 @@ if (!fs.existsSync(targetDir)) {
   fs.mkdirSync(targetDir, { recursive: true });
 }
 
-// 20 Quantitative Aptitude Topics
 const topics = [
   "Number System",
   "HCF & LCM",
@@ -36,7 +31,7 @@ const topics = [
 ];
 
 const questions = [
-  // ================= 1. Number System =================
+
   {
     id: "apt-num-01",
     category: "aptitude",
@@ -138,7 +133,6 @@ const questions = [
     explanation: "The number is N = 899k + 63. Since 899 = 29 × 31, 899k is divisible by 29. Therefore, remainder = 63 mod 29 = 5."
   },
 
-  // ================= 2. HCF & LCM =================
   {
     id: "apt-hcf-01",
     category: "aptitude",
@@ -240,7 +234,6 @@ const questions = [
     explanation: "LCM(15, 20, 25) = 300. Largest 4-digit number is 9999. 9999 ÷ 300 leaves remainder 99. Greatest multiple = 9999 - 99 = 9900. Adding required remainder 4 gives 9904."
   },
 
-  // ================= 3. Simplification =================
   {
     id: "apt-sim-01",
     category: "aptitude",
@@ -342,7 +335,6 @@ const questions = [
     explanation: "√(x + 5) = 5 - √x. Squaring both sides: x + 5 = 25 - 10√x + x => 10√x = 20 => √x = 2 => x = 4."
   },
 
-  // ================= 4. Percentages =================
   {
     id: "apt-pct-01",
     category: "aptitude",
@@ -445,9 +437,8 @@ const questions = [
   }
 ];
 
-// Let's add the remaining 16 topics (10 questions each = 160 more questions)
 const additionalTopicsData = [
-  // 5. Ratio & Proportion
+
   {
     topic: "Ratio & Proportion",
     prefix: "apt-rat",
@@ -465,7 +456,6 @@ const additionalTopicsData = [
     ]
   },
 
-  // 6. Average
   {
     topic: "Average",
     prefix: "apt-avg",
@@ -483,7 +473,6 @@ const additionalTopicsData = [
     ]
   },
 
-  // 7. Profit, Loss & Discount
   {
     topic: "Profit, Loss & Discount",
     prefix: "apt-pld",
@@ -501,7 +490,6 @@ const additionalTopicsData = [
     ]
   },
 
-  // 8. Simple Interest
   {
     topic: "Simple Interest",
     prefix: "apt-si",
@@ -519,7 +507,6 @@ const additionalTopicsData = [
     ]
   },
 
-  // 9. Compound Interest
   {
     topic: "Compound Interest",
     prefix: "apt-ci",
@@ -537,7 +524,6 @@ const additionalTopicsData = [
     ]
   },
 
-  // 10. Time & Work
   {
     topic: "Time & Work",
     prefix: "apt-tw",
@@ -555,7 +541,6 @@ const additionalTopicsData = [
     ]
   },
 
-  // 11. Pipes & Cisterns
   {
     topic: "Pipes & Cisterns",
     prefix: "apt-pc",
@@ -573,7 +558,6 @@ const additionalTopicsData = [
     ]
   },
 
-  // 12. Time, Speed & Distance
   {
     topic: "Time, Speed & Distance",
     prefix: "apt-tsd",
@@ -591,7 +575,6 @@ const additionalTopicsData = [
     ]
   },
 
-  // 13. Problems on Trains
   {
     topic: "Problems on Trains",
     prefix: "apt-tr",
@@ -609,7 +592,6 @@ const additionalTopicsData = [
     ]
   },
 
-  // 14. Boats & Streams
   {
     topic: "Boats & Streams",
     prefix: "apt-bs",
@@ -627,7 +609,6 @@ const additionalTopicsData = [
     ]
   },
 
-  // 15. Mixtures & Alligation
   {
     topic: "Mixtures & Alligation",
     prefix: "apt-mix",
@@ -645,7 +626,6 @@ const additionalTopicsData = [
     ]
   },
 
-  // 16. Partnership
   {
     topic: "Partnership",
     prefix: "apt-part",
@@ -663,7 +643,6 @@ const additionalTopicsData = [
     ]
   },
 
-  // 17. Ages
   {
     topic: "Ages",
     prefix: "apt-age",
@@ -681,7 +660,6 @@ const additionalTopicsData = [
     ]
   },
 
-  // 18. Probability
   {
     topic: "Probability",
     prefix: "apt-prob",
@@ -699,7 +677,6 @@ const additionalTopicsData = [
     ]
   },
 
-  // 19. Permutation & Combination
   {
     topic: "Permutation & Combination",
     prefix: "apt-pnc",
@@ -717,7 +694,6 @@ const additionalTopicsData = [
     ]
   },
 
-  // 20. Data Interpretation
   {
     topic: "Data Interpretation",
     prefix: "apt-di",
@@ -736,7 +712,6 @@ const additionalTopicsData = [
   }
 ];
 
-// Combine all additional questions into the main list
 additionalTopicsData.forEach(group => {
   group.items.forEach((item, index) => {
     const qNum = String(index + 1).padStart(2, '0');
@@ -755,7 +730,6 @@ additionalTopicsData.forEach(group => {
 
 console.log(`Total aptitude questions prepared: ${questions.length}`);
 
-// Output JS File Content
 const fileContent = `/**
  * MAD DEV — Quantitative Aptitude Question Bank
  * 200 authentic placement MCQs across 20 topics with step-by-step mathematical explanations.

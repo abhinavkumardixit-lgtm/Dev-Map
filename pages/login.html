@@ -21,16 +21,17 @@
       htmlDoc.classList.remove('preload');
       htmlDoc.classList.add('app-ready');
     })();
-  </script>
+
+</script>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col justify-center items-center p-4 antialiased relative overflow-hidden">
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col justify-center items-center p-4 antialiased relative overflow-y-auto">
   
-  <!-- Glowing Background Orbs -->
+  
   <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-600/20 rounded-full filter blur-3xl pointer-events-none"></div>
   <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-600/20 rounded-full filter blur-3xl pointer-events-none"></div>
 
-  <div class="max-w-md w-full relative z-10">
-    <!-- Brand Header -->
+  <div class="max-w-md w-full relative z-10 my-auto py-8">
+    
     <div class="text-center mb-8">
       <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-indigo-600 text-white shadow-xl shadow-indigo-500/30 mb-3">
         <span class="material-symbols-outlined text-3xl">terminal</span>
@@ -39,10 +40,10 @@
       <p class="text-sm text-slate-400 mt-1">Sign in to your account to save your workspace progress</p>
     </div>
 
-    <!-- Login Card -->
+    
     <div class="bg-slate-800/80 backdrop-blur-xl border border-slate-700/60 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6">
       
-      <!-- Active Account Badge -->
+      
       <div id="active-user-badge" class="hidden p-3.5 rounded-xl bg-indigo-950/60 border border-indigo-500/30 flex items-center justify-between">
         <div class="flex items-center gap-3 overflow-hidden">
           <div id="active-user-avatar" class="w-10 h-10 rounded-full bg-indigo-600 text-white font-bold flex items-center justify-center text-sm shadow-md shrink-0">
@@ -59,7 +60,7 @@
         </a>
       </div>
 
-      <!-- GitHub Authentication Section -->
+      
       <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-700/80 shadow-inner space-y-3">
         <div class="flex items-center gap-2.5">
           <div class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-white shrink-0">
@@ -85,7 +86,7 @@
           </div>
         </div>
 
-        <!-- Preset Profiles -->
+        
         <div class="flex items-center gap-1.5 pt-1">
           <span class="text-[10px] text-slate-400">Quick Try:</span>
           <button type="button" class="btn-gh-preset text-[10px] px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-indigo-300 font-mono transition-colors" data-user="torvalds">@torvalds</button>
@@ -94,7 +95,7 @@
         </div>
       </div>
 
-      <!-- Known Local Accounts Switcher -->
+      
       <div id="known-accounts-container" class="space-y-2">
         <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Saved Accounts on this Device</p>
         <div id="known-accounts-list" class="space-y-1.5 max-h-36 overflow-y-auto"></div>
@@ -106,10 +107,10 @@
         <div class="h-px bg-slate-700/60 flex-1"></div>
       </div>
 
-      <!-- Alert Box -->
+      
       <div id="login-alert" class="hidden p-3.5 rounded-xl text-xs font-semibold"></div>
 
-      <!-- LeetCode Connection Box -->
+      
       <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-700/80 shadow-inner space-y-3">
         <div class="flex items-center gap-2.5">
           <div class="w-8 h-8 rounded-lg bg-amber-950/80 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0">
@@ -142,7 +143,7 @@
         <div class="h-px bg-slate-700/60 flex-1"></div>
       </div>
 
-      <!-- Login Form -->
+      
       <form id="login-form" class="space-y-4 pt-1">
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1" for="login-email">Email Address</label>
@@ -160,7 +161,7 @@
         </button>
       </form>
 
-      <!-- Navigation to Sign Up Page -->
+      
       <div class="flex items-center justify-between pt-3 border-t border-slate-700/60">
         <a href="signup.html" class="text-xs text-indigo-400 hover:text-indigo-300 font-bold transition-colors flex items-center gap-1">
           <span class="material-symbols-outlined text-sm">person_add</span>
@@ -192,7 +193,6 @@
       const current = auth.getCurrentUser();
       const accounts = auth.listKnownUsers();
 
-      // Update Active Badge
       const badge = document.getElementById('active-user-badge');
       const avatar = document.getElementById('active-user-avatar');
       const name = document.getElementById('active-user-name');
@@ -205,7 +205,6 @@
         email.textContent = current.email;
       }
 
-      // Render Known Accounts List
       const listContainer = document.getElementById('known-accounts-list');
       if (listContainer) {
         listContainer.innerHTML = accounts.map(acc => `
@@ -234,7 +233,6 @@
 
       const alertBox = document.getElementById('login-alert');
 
-      // Populate saved GitHub & LeetCode inputs if available
       const inputGh = document.getElementById('github-username-input');
       if (inputGh) {
         inputGh.value = localStorage.getItem('maddev_github_user') || '';
@@ -245,7 +243,6 @@
         inputLc.value = localStorage.getItem('maddev_leetcode_user') || '';
       }
 
-      // Preset profile buttons
       document.querySelectorAll('.btn-gh-preset').forEach(preset => {
         preset.onclick = async () => {
           const userVal = preset.getAttribute('data-user');
@@ -255,7 +252,6 @@
         };
       });
 
-      // Handle GitHub Login Button
       const btnGithub = document.getElementById('btn-github-login');
       if (btnGithub) {
         btnGithub.onclick = async () => {
@@ -270,7 +266,6 @@
         };
       }
 
-      // Handle LeetCode Connect Button
       const btnLeetCode = document.getElementById('btn-leetcode-connect');
       if (btnLeetCode) {
         btnLeetCode.onclick = async () => {
@@ -284,7 +279,6 @@
         };
       }
 
-      // Handle Login Form
       const form = document.getElementById('login-form');
       if (form) {
         form.onsubmit = async (e) => {
@@ -315,7 +309,6 @@
         alertBox.classList.remove('hidden');
       }
 
-      // Handle Sign Out
       const btnLogout = document.getElementById('btn-logout');
       if (btnLogout) {
         btnLogout.onclick = async () => {
@@ -324,6 +317,7 @@
         };
       }
     }
-  </script>
+
+</script>
 </body>
 </html>

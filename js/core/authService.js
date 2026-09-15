@@ -1,10 +1,3 @@
-/**
- * MAD DEV - Authentication & User Identity Service
- * 
- * Provides centralized, user-scoped authentication management.
- * Guarantees that every data operation in the application belongs to an
- * authenticated user ID. Supports both Supabase Auth and isolated local multi-user sessions.
- */
 
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
@@ -15,7 +8,6 @@
 })(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
-  // Default fallback user profile
   const DEFAULT_USER = {
     id: '00000000-0000-4000-a000-000000000001',
     email: 'guest@maddev.io',
@@ -52,9 +44,6 @@
     } catch (e) {}
   }
 
-  /**
-   * Initializes the known accounts list.
-   */
   function initKnownUsers() {
     let users = getStorageItem(USERS_LIST_KEY, null);
     if (!users || !Array.isArray(users) || users.length === 0) {
@@ -64,9 +53,6 @@
     return users;
   }
 
-  /**
-   * Generates a standard v4-like UUID.
-   */
   function generateUuid() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
       const r = Math.random() * 16 | 0;
@@ -75,13 +61,9 @@
     });
   }
 
-  /**
-   * Resolves the active user session.
-   */
   async function init() {
     initKnownUsers();
 
-    // 1. Check if Supabase client is configured
     if (typeof window !== 'undefined' && window.supabase && typeof window.supabase.auth === 'object') {
       try {
         const { data: { session } } = await window.supabase.auth.getSession();
@@ -102,7 +84,6 @@
       }
     }
 
-    // 2. Check saved local session
     const saved = getStorageItem(SESSION_KEY);
     if (saved && saved.id && saved.email) {
       currentUser = saved;
@@ -116,9 +97,6 @@
     return currentUser;
   }
 
-  /**
-   * Returns current authenticated user synchronously.
-   */
   function getCurrentUser() {
     if (!currentUser) {
       const saved = getStorageItem(SESSION_KEY);
@@ -127,16 +105,10 @@
     return currentUser;
   }
 
-  /**
-   * Returns whether authentication has finished resolving.
-   */
   function isReady() {
     return isInitialized;
   }
 
-  /**
-   * Registers a listener for auth changes (sign in, switch user, sign out).
-   */
   function onAuthStateChange(callback) {
     if (typeof callback === 'function') {
       authListeners.push(callback);
@@ -155,7 +127,6 @@
       }
     });
 
-    // Also broadcast auth switch to other tabs
     if (typeof BroadcastChannel !== 'undefined') {
       try {
         const channel = new BroadcastChannel('devpilot_auth_sync');
@@ -165,9 +136,6 @@
     }
   }
 
-  /**
-   * Switches to an existing or new user account.
-   */
   function switchAccount(userIdOrEmail) {
     const users = initKnownUsers();
     const found = users.find(u => u.id === userIdOrEmail || u.email.toLowerCase() === userIdOrEmail.toLowerCase());
@@ -179,17 +147,12 @@
       return currentUser;
     }
 
-    // If not found, create new user account
     return signUp(userIdOrEmail, 'password123', userIdOrEmail.split('@')[0]);
   }
 
-  /**
-   * Signs in user locally or with Supabase.
-   */
   async function signIn(email, password, fullName = '') {
     email = email.trim().toLowerCase();
 
-    // Supabase sign-in
     if (typeof window !== 'undefined' && window.supabase && typeof window.supabase.auth === 'object') {
       try {
         const { data, error } = await window.supabase.auth.signInWithPassword({ email, password });
@@ -210,7 +173,6 @@
       } catch (e) {}
     }
 
-    // Local authentication
     const users = initKnownUsers();
     let found = users.find(u => u.email.toLowerCase() === email);
 
@@ -234,9 +196,6 @@
     return { success: true, user: currentUser };
   }
 
-  /**
-   * Connect LeetCode account for active user.
-   */
   async function connectLeetCode(inputHandle = '') {
     const handle = (inputHandle || '').trim().replace(/^@/, '');
     if (!handle) return { success: false, error: 'Please enter a valid LeetCode handle' };
@@ -251,9 +210,6 @@
     return { success: true, handle };
   }
 
-  /**
-   * Sign in with GitHub account (OAuth or GitHub username profile fetch)
-   */
   async function signInWithGitHub(inputUsername = '') {
     if (typeof window !== 'undefined' && window.supabase && typeof window.supabase.auth === 'object') {
       try {
@@ -282,14 +238,10 @@
     return authRes;
   }
 
-  /**
-   * Registers a new user account with genuine isolation.
-   */
   async function signUp(email, password, fullName = '', githubUser = '', leetcodeHandle = '') {
     email = email.trim().toLowerCase();
     const displayName = fullName.trim() || email.split('@')[0];
 
-    // Supabase sign-up
     if (typeof window !== 'undefined' && window.supabase && typeof window.supabase.auth === 'object') {
       try {
         const { data, error } = await window.supabase.auth.signUp({
@@ -314,7 +266,6 @@
       } catch (e) {}
     }
 
-    // Local registration
     const users = initKnownUsers();
     let existing = users.find(u => u.email.toLowerCase() === email);
     if (existing) {
@@ -349,9 +300,6 @@
     return { success: true, user: currentUser };
   }
 
-  /**
-   * Signs out current user and switches to a guest / new session.
-   */
   async function signOut() {
     if (typeof window !== 'undefined' && window.supabase && typeof window.supabase.auth === 'object') {
       try {
@@ -359,26 +307,18 @@
       } catch (e) {}
     }
 
-    // Clear session
     localStorage.removeItem(SESSION_KEY);
     currentUser = null;
 
     notifyListeners('SIGNED_OUT', null);
 
-    // Auto re-init to default or guest
     return init();
   }
 
-  /**
-   * Returns list of all known accounts on this device.
-   */
   function listKnownUsers() {
     return initKnownUsers();
   }
 
-  /**
-   * Get user-scoped settings (GitHub, LeetCode, Private AI API, UI settings).
-   */
   function getUserSettings() {
     const user = getCurrentUser();
     const userSettingsKey = `maddev_settings_${user.id}`;
@@ -397,16 +337,12 @@
     return getStorageItem(userSettingsKey, defaults);
   }
 
-  /**
-   * Save user-scoped settings.
-   */
   function saveUserSettings(settings) {
     const user = getCurrentUser();
     const userSettingsKey = `maddev_settings_${user.id}`;
     const updated = { ...getUserSettings(), ...settings };
     setStorageItem(userSettingsKey, updated);
 
-    // Sync global shortcuts for backward compatibility
     if (updated.githubUsername) localStorage.setItem('maddev_github_user', updated.githubUsername);
     if (updated.githubToken) localStorage.setItem('maddev_github_token', updated.githubToken);
     if (updated.leetcodeHandle) localStorage.setItem('maddev_leetcode_user', updated.leetcodeHandle);
@@ -415,7 +351,6 @@
     if (updated.privateAiModel) localStorage.setItem('maddev_private_ai_model', updated.privateAiModel);
     if (typeof updated.compactMode === 'boolean') localStorage.setItem('maddev_compact_mode', updated.compactMode);
 
-    // Update currentUser name if changed
     if (updated.fullName && updated.fullName !== user.fullName) {
       user.fullName = updated.fullName;
       user.avatar = updated.fullName.charAt(0).toUpperCase();
@@ -425,14 +360,10 @@
     return updated;
   }
 
-  /**
-   * Update user profile.
-   */
   function updateUserProfile(updates) {
     return saveUserSettings(updates);
   }
 
-  // Cross-tab sync for auth changes
   if (typeof window !== 'undefined' && typeof BroadcastChannel !== 'undefined') {
     try {
       const authChannel = new BroadcastChannel('maddev_auth_sync');

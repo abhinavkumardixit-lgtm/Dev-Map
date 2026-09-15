@@ -1,6 +1,3 @@
-/**
- * MAD DEV - AI Coding Assistant Module
- */
 
 let chatHistory = Storage.get('chat_history', [
   {
@@ -87,7 +84,7 @@ function initChatInputs() {
   const chips = document.querySelectorAll('.suggestion-chip');
 
   if (textarea) {
-    // Auto resize
+
     textarea.addEventListener('input', () => {
       textarea.style.height = 'auto';
       textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
@@ -137,7 +134,6 @@ function sendMessage() {
   const text = textarea.value.trim();
   if (!text) return;
 
-  // Add User Message
   chatHistory.push({
     role: 'user',
     content: text,
@@ -148,7 +144,6 @@ function sendMessage() {
   textarea.style.height = 'auto';
   renderMessages();
 
-  // Simulate AI Response with Typing Animation
   generateAiResponse(text);
 }
 
@@ -156,7 +151,6 @@ async function generateAiResponse(prompt) {
   const modelSelect = document.getElementById('chat-model-select');
   const selectedModel = modelSelect ? modelSelect.value : 'GPT-4o';
 
-  // Add placeholder AI message
   const aiMsgIndex = chatHistory.length;
   chatHistory.push({
     role: 'ai',
@@ -195,22 +189,22 @@ function getMockAiAnswer(prompt, model) {
         code: `// Maximum Sum Subarray of Size K
 function maxSubarraySum(arr, k) {
   if (arr.length < k) return null;
-  
+
   let maxSum = 0;
   let windowSum = 0;
-  
+
   // Calculate sum of first window
   for (let i = 0; i < k; i++) {
     windowSum += arr[i];
   }
   maxSum = windowSum;
-  
+
   // Slide the window across the array
   for (let i = k; i < arr.length; i++) {
     windowSum += arr[i] - arr[i - k];
     maxSum = Math.max(maxSum, windowSum);
   }
-  
+
   return maxSum;
 }
 

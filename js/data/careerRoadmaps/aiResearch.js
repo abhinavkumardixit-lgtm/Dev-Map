@@ -1,7 +1,3 @@
-/**
- * MAD DEV — Career Roadmap: AI Research Engineer
- * Complete 5-level dependency path, practical skill tasks, progressive projects, and job-ready checklist.
- */
 
 const aiResearchRoadmap = {
   roleId: 'ai-research-engineer',

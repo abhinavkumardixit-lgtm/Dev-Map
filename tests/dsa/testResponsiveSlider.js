@@ -12,14 +12,12 @@ const jsPath = path.resolve(__dirname, '../../js/pages/dsa.js');
 const css = fs.readFileSync(cssPath, 'utf8');
 const js = fs.readFileSync(jsPath, 'utf8');
 
-// Test 1: Desktop layout preservation
 console.log('Checking Desktop Layout (> 1099px)...');
 assert.ok(css.includes('.dsa-nav-sidebar {'), 'Desktop sidebar styles must exist');
 assert.ok(css.includes('grid-template-columns: 290px 1fr;'), 'Desktop workspace must retain 290px 1fr grid');
 assert.ok(css.includes('position: sticky;'), 'Desktop sidebar must be sticky');
 console.log('✓ [PASS] Desktop sidebar layout is untouched and sticky with 290px 1fr workspace');
 
-// Test 2: Responsive CSS rules in @media (max-width: 1099px)
 console.log('\nChecking Tablet/Responsive breakpoint (max-width: 1099px)...');
 const tabletBreakpointIdx = css.indexOf('@media (max-width: 1099px)');
 assert.ok(tabletBreakpointIdx !== -1, 'Must contain @media (max-width: 1099px)');
@@ -32,7 +30,6 @@ assert.ok(tabletBlock.includes('flex-shrink: 0'), 'Category item must have flex-
 assert.ok(tabletBlock.includes('white-space: nowrap'), 'Category item must have white-space: nowrap');
 console.log('✓ [PASS] @media (max-width: 1099px) correctly defines single-row horizontal slider');
 
-// Test 3: Responsive CSS rules in @media (max-width: 480px)
 console.log('\nChecking Mobile Small breakpoint (max-width: 480px)...');
 const mobileBreakpointIdx = css.indexOf('@media (max-width: 480px)');
 assert.ok(mobileBreakpointIdx !== -1, 'Must contain @media (max-width: 480px)');
@@ -43,7 +40,6 @@ assert.ok(mobileBlock.includes('overflow-x: auto'), 'Mobile small must retain ov
 assert.ok(mobileBlock.includes('flex-wrap: nowrap'), 'Mobile small must retain flex-wrap: nowrap');
 console.log('✓ [PASS] @media (max-width: 480px) keeps single-row horizontal slider without vertical grid collapse');
 
-// Test 4: JS detection and dynamic synchronization
 console.log('\nChecking JS Viewport Detection & Dynamic Event Handling...');
 assert.ok(js.includes('handleResponsiveLayout();'), 'init() must call handleResponsiveLayout() on direct load');
 assert.ok(js.includes("window.addEventListener('resize', handleResponsiveLayout);"), 'attachEventListeners() must handle window resize');

@@ -1,7 +1,4 @@
-/**
- * AI / ML Prompts Collection (11 Prompts)
- * Covers ML Pipelines, Data Preprocessing, Prompt Engineering, RAG, Vector Databases, and FastAPI Serving.
- */
+
 module.exports = [
   {
     id: 'ai-ml-metric-selection-formulation',

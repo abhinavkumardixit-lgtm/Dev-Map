@@ -1,8 +1,4 @@
-/* ==========================================================================
-   DevPilot-AI - Components CSS (Snippets, Prompts, Habits, Timer, Badges, etc.)
-   ========================================================================== */
 
-/* Card Base */
 .dev-card {
   background: var(--color-surface);
   border: 1px solid var(--color-outline-variant);
@@ -26,7 +22,6 @@
   transform: translateY(-2px);
 }
 
-/* Section Header */
 .page-title {
   font-size: 1.75rem;
   font-weight: 700;
@@ -42,7 +37,6 @@
   margin-top: 0.25rem;
 }
 
-/* Badges & Pills */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -74,7 +68,6 @@
   color: var(--color-on-surface-variant);
 }
 
-/* Filter Tabs */
 .filter-tabs {
   display: flex;
   align-items: center;
@@ -108,7 +101,6 @@
   box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);
 }
 
-/* Buttons */
 .btn-primary {
   background-color: var(--color-primary);
   color: #ffffff;
@@ -173,7 +165,6 @@
   border-color: var(--color-primary);
 }
 
-/* Global Form Controls */
 .form-group {
   margin-bottom: 1.125rem !important;
   display: flex !important;
@@ -222,7 +213,6 @@
   min-height: 80px;
 }
 
-/* Code Snippet Vault Cards */
 .code-block-wrapper {
   background: #0f172a;
   border-radius: var(--radius-md);
@@ -265,7 +255,6 @@
   line-height: 1.6;
 }
 
-/* Prompt Library Cards */
 .prompt-card {
   display: flex;
   flex-direction: column;
@@ -284,7 +273,6 @@
   font-family: 'Inter', system-ui, sans-serif;
 }
 
-/* Habits Tracker Components */
 .habit-item {
   display: flex;
   align-items: center;
@@ -325,7 +313,6 @@
   transition: width 0.4s ease;
 }
 
-/* Heatmap Grid */
 .heatmap-grid {
   display: flex;
   gap: 4px;
@@ -351,7 +338,6 @@
 .heatmap-l3 { background: #4f46e5; }
 .heatmap-l4 { background: #312e81; }
 
-/* Pomodoro Timer Components */
 .timer-circle-container {
   position: relative;
   width: 280px;
@@ -411,10 +397,6 @@
   letter-spacing: 0.05em;
 }
 
-/* ==========================================================================
-   GLOBAL FLOATING MINI TIMER (Matching DevPilot Timer Card UI)
-   ========================================================================== */
-
 .global-floating-timer {
   position: fixed;
   bottom: 24px;
@@ -450,7 +432,6 @@
   cursor: grabbing !important;
 }
 
-/* Strictly hide floating timer on timer.html and during focus mode */
 body.timer-page .global-floating-timer,
 body[data-page="timer"] .global-floating-timer,
 body.focus-mode-active .global-floating-timer,
@@ -458,7 +439,6 @@ body.focus-mode-active #global-floating-timer {
   display: none !important;
 }
 
-/* Top Drag Handle & Bar */
 .gft-drag-bar {
   display: flex;
   align-items: center;
@@ -538,7 +518,6 @@ body.focus-mode-active #global-floating-timer {
   border-color: #fca5a5;
 }
 
-/* Clickable Body */
 .gft-body {
   padding: 0.875rem 1rem 0.625rem;
   cursor: pointer;
@@ -546,7 +525,6 @@ body.focus-mode-active #global-floating-timer {
   border-radius: 0 0 1rem 1rem;
 }
 
-/* Circular Clock Area */
 .gft-circle-container {
   position: relative;
   width: 124px;
@@ -622,7 +600,6 @@ body.focus-mode-active #global-floating-timer {
   white-space: nowrap;
 }
 
-/* Task Label Row */
 .gft-task-row {
   display: flex;
   align-items: center;
@@ -645,7 +622,6 @@ body.focus-mode-active #global-floating-timer {
   max-width: 230px;
 }
 
-/* Controls Row */
 .gft-controls-row {
   display: flex;
   align-items: center;
@@ -697,7 +673,6 @@ body.focus-mode-active #global-floating-timer {
   transform: translateY(-1px);
 }
 
-/* Cycle Row */
 .gft-cycle-row {
   display: flex;
   align-items: center;
@@ -751,7 +726,6 @@ body.focus-mode-active #global-floating-timer {
   font-size: 0.6875rem;
 }
 
-/* Footer link */
 .gft-footer-hint {
   display: flex;
   align-items: center;
@@ -768,10 +742,6 @@ body.focus-mode-active #global-floating-timer {
 .gft-footer-hint:hover {
   color: #4338ca;
 }
-
-/* ==========================================================================
-   GLOBAL HEADER TIMER STATUS INDICATOR
-   ========================================================================== */
 
 .global-header-timer-pill {
   display: inline-flex;
@@ -840,7 +810,6 @@ body.focus-mode-active #global-floating-timer {
   }
 }
 
-/* Sidebar timer badge */
 .sidebar-timer-badge {
   margin-left: auto;
   padding: 0.125rem 0.45rem;
@@ -857,10 +826,6 @@ body.focus-mode-active #global-floating-timer {
 .sidebar-timer-badge.is-paused {
   background: #f59e0b;
 }
-
-/* ==========================================================================
-   MOBILE RESPONSIVENESS FOR FLOATING TIMER
-   ========================================================================== */
 
 @media (max-width: 640px) {
   .global-floating-timer {

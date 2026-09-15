@@ -1,6 +1,3 @@
-/**
- * Automated Test Suite for MAD DEV DSA Roadmap Integration & Logic
- */
 
 const fs = require('fs');
 const path = require('path');
@@ -28,7 +25,6 @@ console.log('====================================================');
 console.log(' MAD DEV: Running DSA Roadmap Verification Suite');
 console.log('====================================================\n');
 
-// 1. Verify dsa.html exists and has required semantic structure & IDs
 runTest('DSA HTML file has all critical IDs and semantic components', () => {
   const dsaHtmlPath = path.join(rootDir, 'pages/dsa.html');
   assert.ok(fs.existsSync(dsaHtmlPath), 'pages/dsa.html must exist');
@@ -59,14 +55,12 @@ runTest('DSA HTML file has all critical IDs and semantic components', () => {
     assert.ok(content.includes(`id="${id}"`), `Missing required element id: ${id}`);
   });
 
-  // Verify scripts loaded in correct order
   assert.ok(content.includes('utils.js'), 'Must load utils.js');
   assert.ok(content.includes('app.js'), 'Must load app.js');
   assert.ok(content.includes('dsaData.js'), 'Must load dsaData.js');
   assert.ok(content.includes('dsa.js'), 'Must load dsa.js');
 });
 
-// 2. Verify all navigation sidebars include DSA Roadmap
 runTest('All 10 project pages include DSA Roadmap navigation item with alt_route icon', () => {
   const pages = [
     { file: 'index.html', href: 'pages/dsa.html' },
@@ -92,7 +86,6 @@ runTest('All 10 project pages include DSA Roadmap navigation item with alt_route
   });
 });
 
-// 3. Verify CSS file exists and has responsive queries
 runTest('dsa.css contains responsive layout and breakpoint rules', () => {
   const cssPath = path.join(rootDir, 'css/pages/dsa.css');
   assert.ok(fs.existsSync(cssPath), 'css/pages/dsa.css must exist');
@@ -108,7 +101,6 @@ runTest('dsa.css contains responsive layout and breakpoint rules', () => {
   assert.ok(css.includes('@media (max-width: 480px)'), 'Must contain mobile breakpoint');
 });
 
-// 4. Verify search and filter algorithm
 runTest('Filter algorithm handles search queries, difficulty tiers, and status correctly', () => {
   const queryFilter = (q, query) => {
     const s = query.toLowerCase().trim();
@@ -120,15 +112,12 @@ runTest('Filter algorithm handles search queries, difficulty tiers, and status c
   const allQuestions = [];
   dsaRoadmap.forEach(c => c.patterns.forEach(p => p.questions.forEach(q => allQuestions.push(q))));
 
-  // Search by exact problem number
   const matchesNum = allQuestions.filter(q => queryFilter(q, '15'));
   assert.ok(matchesNum.some(q => (q.leetcodeNumber || q.number) === 15), 'Should find 3Sum (#15)');
 
-  // Search by problem title keyword
   const matchesTitle = allQuestions.filter(q => queryFilter(q, 'binary tree'));
   assert.ok(matchesTitle.length >= 5, 'Should find multiple binary tree questions');
 
-  // Filter by difficulty
   const easyQuestions = allQuestions.filter(q => q.difficulty === 'Easy');
   const medQuestions = allQuestions.filter(q => q.difficulty === 'Medium');
   const hardQuestions = allQuestions.filter(q => q.difficulty === 'Hard');
@@ -139,25 +128,20 @@ runTest('Filter algorithm handles search queries, difficulty tiers, and status c
   assert.strictEqual(easyQuestions.length + medQuestions.length + hardQuestions.length, 260, 'Total questions must equal 260');
 });
 
-// 5. Verify local storage serialization requirement: only { [id]: boolean }
 runTest('Progress state payload stores strictly minimal boolean dictionary', () => {
   const mockProgress = {};
   const sampleQuestionId = dsaRoadmap[0].patterns[0].questions[0].id;
 
-  // Toggle on
   mockProgress[sampleQuestionId] = true;
   assert.strictEqual(mockProgress[sampleQuestionId], true);
 
-  // Toggle off (delete key)
   delete mockProgress[sampleQuestionId];
   assert.strictEqual(mockProgress[sampleQuestionId], undefined);
 
-  // Stringify check
   const serialized = JSON.stringify(mockProgress);
   assert.strictEqual(serialized, '{}');
 });
 
-// 6. Verify category names are defined for all 16 categories in sidebar
 runTest('All 16 categories have valid non-empty names for sidebar index', () => {
   dsaRoadmap.forEach((cat, idx) => {
     const catName = cat.name || cat.title;
@@ -165,7 +149,6 @@ runTest('All 16 categories have valid non-empty names for sidebar index', () => 
   });
 });
 
-// 7. Verify every question has a Data Structure (pattern) and Algorithmic Pattern (subPattern)
 runTest('Every question provides Data Structure (pattern) and Pattern (subPattern) tags', () => {
   dsaRoadmap.forEach(cat => {
     cat.patterns.forEach(pat => {
@@ -179,7 +162,6 @@ runTest('Every question provides Data Structure (pattern) and Pattern (subPatter
   });
 });
 
-// 8. Verify Pro Search UI elements, multi-token search, and padding protection
 runTest('Pro search UI elements, multi-token search, and non-overlapping icon padding exist', () => {
   const dsaHtml = fs.readFileSync(path.join(rootDir, 'pages/dsa.html'), 'utf8');
   assert.ok(dsaHtml.includes('id="dsa-search-kbd"'), 'Must contain Ctrl+K kbd badge');
@@ -190,7 +172,6 @@ runTest('Pro search UI elements, multi-token search, and non-overlapping icon pa
   assert.ok(dsaCss.includes('padding-left: 2.75rem !important'), 'CSS must enforce padding-left on search input to prevent icon overlap');
   assert.ok(dsaCss.includes('.dsa-search-highlight'), 'CSS must include highlight style');
 
-  // Test multi-token search
   const allQuestions = [];
   dsaRoadmap.forEach(c => c.patterns.forEach(p => p.questions.forEach(q => allQuestions.push({ ...q, catName: c.name }))));
 
@@ -209,11 +190,9 @@ runTest('Pro search UI elements, multi-token search, and non-overlapping icon pa
   assert.ok(treeHardMatches.every(q => q.difficulty === 'Hard'), 'All matches must be Hard');
 });
 
-// 9. Verify DSA Roadmap has honesty evaluation boxes and pills WITHOUT any locked features
 runTest('DSA Roadmap integrates honesty evaluation boxes and pills without any locking restrictions', () => {
   const dsaJs = fs.readFileSync(path.join(rootDir, 'js/pages/dsa.js'), 'utf8');
 
-  // Verify honesty evaluation box and pills exist in roadmap rendering
   assert.ok(dsaJs.includes('dsa-trigger-eval'), 'Must support dsa-trigger-eval to open 4-tier honesty modal');
   assert.ok(dsaJs.includes('pl-eval-box'), 'Must render pl-eval-box in roadmap questions');
   assert.ok(dsaJs.includes('pl-eval-pill'), 'Must render pl-eval-pill on roadmap question rows');
@@ -222,12 +201,10 @@ runTest('DSA Roadmap integrates honesty evaluation boxes and pills without any l
   assert.ok(dsaJs.includes('smart_toy'), 'Must support smart_toy icon');
   assert.ok(dsaJs.includes('content_paste_off'), 'Must support content_paste_off icon');
 
-  // Verify that lock feature is NOT applied to DSA Roadmap
   assert.ok(!dsaJs.includes('pl-locked-pill'), 'DSA Roadmap must NOT include pl-locked-pill (no locking)');
   assert.ok(!dsaJs.includes('pl-locked-question'), 'DSA Roadmap must NOT include pl-locked-question (no locking)');
   assert.ok(!dsaJs.includes('isQuestionLocked'), 'DSA Roadmap must NOT enforce sequential locking');
 
-  // Verify HTML has honesty stats
   const dsaHtml = fs.readFileSync(path.join(rootDir, 'pages/dsa.html'), 'utf8');
   assert.ok(dsaHtml.includes('id="dsa-count-self"'), 'Hero must include dsa-count-self');
   assert.ok(dsaHtml.includes('id="dsa-count-help30"'), 'Hero must include dsa-count-help30');

@@ -1,7 +1,4 @@
-/**
- * JavaScript Prompts Collection (15 Prompts)
- * Covers Event Loop, Async/Await, Closures, this binding, Memory Leaks, DOM, ES6+, and Architecture.
- */
+
 module.exports = [
   {
     id: 'js-event-loop-analyzer',

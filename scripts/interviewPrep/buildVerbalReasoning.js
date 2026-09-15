@@ -1,16 +1,9 @@
-/**
- * Builder for English & Verbal Ability (100 questions) and Logical Reasoning (120 questions)
- * Standard placement tests (TCS NQT, Infosys verbal/reasoning, Wipro, Cognizant, AMCAT, eLitmus).
- */
 
 const fs = require('fs');
 const path = require('path');
 
 const targetDir = path.join(__dirname, '../../js/data/interviewPrep');
 
-// =========================================================================
-// 1. ENGLISH & VERBAL ABILITY
-// =========================================================================
 const englishTopics = [
   "Reading Comprehension",
   "Grammar",
@@ -25,7 +18,7 @@ const englishTopics = [
 ];
 
 const englishQuestions = [
-  // 1. Reading Comprehension (Passage-based placement questions)
+
   {
     id: "eng-rc-01",
     category: "english",
@@ -127,7 +120,6 @@ const englishQuestions = [
     explanation: "The paradox demonstrates that increased efficiency lowers the unit cost of using a resource, driving higher aggregate demand and overall consumption."
   },
 
-  // 2. Grammar (Subject-Verb, Tenses, Articles, Modifiers)
   {
     id: "eng-grm-01",
     category: "english",
@@ -229,7 +221,6 @@ const englishQuestions = [
     explanation: "Verbs of demand or insistence (insist, demand, recommend, request) require the subjunctive mood base form of the verb without 'to' ('be submitted')."
   },
 
-  // 3. Sentence Correction
   {
     id: "eng-sc-01",
     category: "english",
@@ -376,7 +367,6 @@ const englishQuestions = [
     explanation: "Inverted third conditional structure: 'Had + subject + past participle, subject + would have + past participle' is the standard, precise grammatical formulation."
   },
 
-  // 4. Error Detection
   {
     id: "eng-ed-01",
     category: "english",
@@ -479,9 +469,8 @@ const englishQuestions = [
   }
 ];
 
-// Additional English Topics (Vocab, Syn/Ant, Blanks, Para Jumbles, Sentence Completion, Cloze Test)
 const extraEnglish = [
-  // 5. Vocabulary
+
   {
     topic: "Vocabulary",
     prefix: "eng-voc",
@@ -499,7 +488,6 @@ const extraEnglish = [
     ]
   },
 
-  // 6. Synonyms & Antonyms
   {
     topic: "Synonyms & Antonyms",
     prefix: "eng-sa",
@@ -517,7 +505,6 @@ const extraEnglish = [
     ]
   },
 
-  // 7. Fill in the Blanks
   {
     topic: "Fill in the Blanks",
     prefix: "eng-fib",
@@ -535,7 +522,6 @@ const extraEnglish = [
     ]
   },
 
-  // 8. Para Jumbles
   {
     topic: "Para Jumbles",
     prefix: "eng-pj",
@@ -553,7 +539,6 @@ const extraEnglish = [
     ]
   },
 
-  // 9. Sentence Completion
   {
     topic: "Sentence Completion",
     prefix: "eng-scmp",
@@ -571,7 +556,6 @@ const extraEnglish = [
     ]
   },
 
-  // 10. Cloze Test
   {
     topic: "Cloze Test",
     prefix: "eng-clz",
@@ -608,7 +592,6 @@ extraEnglish.forEach(group => {
 
 console.log(`Total English questions: ${englishQuestions.length}`);
 
-// Write english.js
 const englishFileContent = `/**
  * MAD DEV — English & Verbal Ability Question Bank
  * 100 placement MCQs across 10 subsections covering reading comprehension, grammar, vocabulary, and verbal logic.
@@ -641,10 +624,6 @@ const englishFileContent = `/**
 fs.writeFileSync(path.join(targetDir, 'english.js'), englishFileContent, 'utf8');
 console.log('Successfully written english.js!');
 
-
-// =========================================================================
-// 2. LOGICAL REASONING (120 questions across 12 topics)
-// =========================================================================
 const lrTopics = [
   "Number Series",
   "Alphabet Series",
@@ -661,7 +640,7 @@ const lrTopics = [
 ];
 
 const lrGroups = [
-  // 1. Number Series
+
   {
     topic: "Number Series",
     prefix: "lr-ns",
@@ -679,7 +658,6 @@ const lrGroups = [
     ]
   },
 
-  // 2. Alphabet Series
   {
     topic: "Alphabet Series",
     prefix: "lr-as",
@@ -697,7 +675,6 @@ const lrGroups = [
     ]
   },
 
-  // 3. Coding-Decoding
   {
     topic: "Coding-Decoding",
     prefix: "lr-cd",
@@ -715,7 +692,6 @@ const lrGroups = [
     ]
   },
 
-  // 4. Blood Relations
   {
     topic: "Blood Relations",
     prefix: "lr-br",
@@ -733,7 +709,6 @@ const lrGroups = [
     ]
   },
 
-  // 5. Direction Sense
   {
     topic: "Direction Sense",
     prefix: "lr-ds",
@@ -751,7 +726,6 @@ const lrGroups = [
     ]
   },
 
-  // 6. Seating Arrangement
   {
     topic: "Seating Arrangement",
     prefix: "lr-sa",
@@ -769,7 +743,6 @@ const lrGroups = [
     ]
   },
 
-  // 7. Puzzles
   {
     topic: "Puzzles",
     prefix: "lr-puz",
@@ -787,7 +760,6 @@ const lrGroups = [
     ]
   },
 
-  // 8. Syllogisms
   {
     topic: "Syllogisms",
     prefix: "lr-syl",
@@ -805,7 +777,6 @@ const lrGroups = [
     ]
   },
 
-  // 9. Statement & Conclusions
   {
     topic: "Statement & Conclusions",
     prefix: "lr-sc",
@@ -823,7 +794,6 @@ const lrGroups = [
     ]
   },
 
-  // 10. Analogy
   {
     topic: "Analogy",
     prefix: "lr-ana",
@@ -841,7 +811,6 @@ const lrGroups = [
     ]
   },
 
-  // 11. Classification (Odd One Out)
   {
     topic: "Classification",
     prefix: "lr-cls",
@@ -859,7 +828,6 @@ const lrGroups = [
     ]
   },
 
-  // 12. Data Sufficiency
   {
     topic: "Data Sufficiency",
     prefix: "lr-dsuf",
@@ -897,7 +865,6 @@ lrGroups.forEach(group => {
 
 console.log(`Total Logical Reasoning questions: ${lrQuestions.length}`);
 
-// Write logicalReasoning.js
 const lrFileContent = `/**
  * MAD DEV — Logical Reasoning Question Bank
  * 120 authentic placement MCQs across 12 topics with step-by-step logical explanations.

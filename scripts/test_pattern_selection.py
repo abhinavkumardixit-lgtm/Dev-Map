@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+
 import json
 import re
 
@@ -11,7 +11,6 @@ patterns = json.loads(m.group(1))
 m_q = re.search(r'const dsaAllQuestions\s*=\s*(\[[\s\S]*?\]);\s*const dsaArenaDrills', content)
 all_questions = json.loads(m_q.group(1))
 
-# Check available questions per pattern
 pat_map = {p['id']: p for p in patterns}
 pat_qs = {p['id']: {'Easy': [], 'Medium': [], 'Hard': []} for p in patterns}
 

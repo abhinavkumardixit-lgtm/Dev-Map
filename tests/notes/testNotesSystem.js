@@ -1,8 +1,3 @@
-/**
- * Automated Test Suite for MAD DEV Developer Notes System
- * Verifies Categories, Subcategories, Starter Knowledge Base,
- * Search, Filtering, and Data Schema Integrity.
- */
 
 const assert = require('assert');
 const path = require('path');
@@ -35,7 +30,6 @@ console.log('====================================================');
 console.log('Running MAD DEV Developer Notes System Test Suite');
 console.log('====================================================\n');
 
-// 1. Category System Verification
 console.log('1. Category System Verification:');
 
 test('Exactly 27 categories are registered', () => {
@@ -88,7 +82,6 @@ test('Each category has a valid shortName, id, colorClass, and non-empty subcate
   }
 });
 
-// 2. Subcategory Mappings Verification
 console.log('\n2. Subcategories Verification:');
 
 test('DSA has required subcategories', () => {
@@ -123,7 +116,6 @@ test('Aptitude has required subcategories', () => {
   }
 });
 
-// 3. Preservation of Original Notes
 console.log('\n3. Preserved Original Notes Verification:');
 
 test('The 6 original notes exist and have preserved IDs (n1 to n6)', () => {
@@ -157,7 +149,6 @@ test('Original notes are mapped into appropriate new categories and subcategorie
   assert.strictEqual(n6.category, 'DBMS');
 });
 
-// 4. Starter Notes Quality & Technical Structure
 console.log('\n4. Starter Notes Quality & Technical Structure:');
 
 test('All starter notes have valid schema fields', () => {
@@ -183,8 +174,7 @@ test('Notes include a QUICK REVISION section', () => {
 test('High-yield interview concepts are tagged isInterviewImportant', () => {
   const interviewNotes = DEFAULT_NOTES.filter(n => n.isInterviewImportant);
   assert.ok(interviewNotes.length >= 10, `Expected at least 10 interview important notes, found ${interviewNotes.length}`);
-  
-  // Verify specific high-yield ones
+
   const titles = interviewNotes.map(n => n.title.toLowerCase());
   assert.ok(titles.some(t => t.includes('sliding window')), 'Sliding window should be interview important');
   assert.ok(titles.some(t => t.includes('event loop')), 'Event loop should be interview important');
@@ -193,7 +183,6 @@ test('High-yield interview concepts are tagged isInterviewImportant', () => {
   assert.ok(titles.some(t => t.includes('profit')), 'Profit & Loss should be interview important');
 });
 
-// 5. Search Engine & Multi-Field Query Simulation
 console.log('\n5. Search Engine Simulation:');
 
 function searchNotes(notes, { category = 'All', interviewOnly = false, query = '' }) {
@@ -276,7 +265,6 @@ test('Tag search finds notes by hashtag keyword', () => {
   assert.ok(res.some(n => n.tags.includes('leetcode')));
 });
 
-// 6. Storage Lifecycle & Persistence Simulation
 console.log('\n6. Storage Lifecycle & Persistence Simulation:');
 
 test('Migration preserves legacy user notes with old tag property', () => {
@@ -290,7 +278,6 @@ test('Migration preserves legacy user notes with old tag property', () => {
     }
   ];
 
-  // Emulate initializeNotes logic
   const existingIds = new Set();
   const migrated = legacyStorage.map(n => {
     existingIds.add(n.id);
@@ -329,7 +316,6 @@ test('Migration preserves legacy user notes with old tag property', () => {
 test('Creating, updating, and deleting notes in state maintains consistency', () => {
   let simulatedNotes = [...DEFAULT_NOTES];
 
-  // 1. Create
   const newNote = {
     id: 'test_user_note_99',
     title: 'Sliding Window Maximum (LeetCode #239)',
@@ -344,17 +330,14 @@ test('Creating, updating, and deleting notes in state maintains consistency', ()
   simulatedNotes.unshift(newNote);
   assert.strictEqual(simulatedNotes[0].id, 'test_user_note_99');
 
-  // Search finds newly created note
   const searchFound = searchNotes(simulatedNotes, { query: 'monotonic-queue' });
   assert.strictEqual(searchFound.length, 1);
   assert.strictEqual(searchFound[0].title, 'Sliding Window Maximum (LeetCode #239)');
 
-  // 2. Edit
   const editIdx = simulatedNotes.findIndex(n => n.id === 'test_user_note_99');
   simulatedNotes[editIdx].title = 'Sliding Window Maximum (Monotonic Queue Optimal)';
   assert.strictEqual(simulatedNotes[editIdx].title, 'Sliding Window Maximum (Monotonic Queue Optimal)');
 
-  // 3. Delete
   simulatedNotes = simulatedNotes.filter(n => n.id !== 'test_user_note_99');
   assert.strictEqual(simulatedNotes.some(n => n.id === 'test_user_note_99'), false);
   assert.strictEqual(simulatedNotes.length, DEFAULT_NOTES.length);

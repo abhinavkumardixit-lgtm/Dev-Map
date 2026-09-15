@@ -1,7 +1,3 @@
-/**
- * MAD DEV — Career Roadmap: LLM / GenAI Engineer
- * Complete 5-level dependency path, practical skill tasks, progressive projects, and job-ready checklist.
- */
 
 const genAIRoadmap = {
   roleId: 'llm-genai-engineer',

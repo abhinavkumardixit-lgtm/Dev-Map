@@ -1,23 +1,9 @@
-/**
- * MAD DEV — DSA Problem Detail & Revision Controller
- * Handles:
- * - Internal Problem Detail view lifecycle (15-section pedagogical model)
- * - Multi-language code tabs (Python, C++, Java, JS) & synchronized line-by-line explanations
- * - Code copy with clipboard feedback
- * - Progressive hint disclosures (Hint 1, 2, 3 + Reveal Approach)
- * - Independent status states: Solved, Review, In Progress, Not Started
- * - Personal notes per question (autosaved in Storage)
- * - Contextual previous/next problem navigation
- * - Revision mode dashboard & review filters
- * - Single source of truth synchronization with dsa_progress, dsa_pattern_stats, dsa_reviews
- */
 
 (function () {
   'use strict';
 
   window.DsaProblemController = {};
 
-  // State
   let currentQuestionId = null;
   let currentExplanation = null;
   let currentLanguage = 'python';
@@ -26,7 +12,6 @@
   let currentSourceView = 'roadmap';
   let revisionFilter = 'all';
 
-  // DOM Elements
   let dom = {
     detailView: null,
     roadmapView: null,
@@ -37,9 +22,6 @@
     tabRevision: null
   };
 
-  /**
-   * Initializes the Problem Detail Controller
-   */
   function init() {
     dom.detailView = document.getElementById('dsa-problem-detail-view');
     dom.roadmapView = document.getElementById('dsa-roadmap-view');
@@ -47,7 +29,6 @@
     dom.tabRoadmap = document.getElementById('tab-btn-roadmap');
     dom.tabPatterns = document.getElementById('tab-btn-patterns');
 
-    // Load preferred language if saved
     currentLanguage = Storage.get('dsa_preferred_lang', 'python');
 
     if (dom.tabRoadmap) {
@@ -66,14 +47,10 @@
       });
     }
 
-    // Listen for progress & review updates
     window.addEventListener('dsaProgressSync', onProgressSync);
     window.addEventListener('dsaReviewSync', onReviewSync);
   }
 
-  /**
-   * Switch between top-level views: 'roadmap' | 'patterns'
-   */
   function switchToView(viewName) {
     if (dom.detailView) dom.detailView.classList.add('hidden');
 
@@ -86,12 +63,6 @@
     currentSourceView = viewName;
   }
 
-  /**
-   * Opens the Problem Detail view for a specific question
-   * @param {string} qid - Unique question ID (e.g. 'lc-367', 'arr-tp-01')
-   * @param {Array} [contextList] - Array of questions or question IDs from active filter
-   * @param {string} [sourceView='roadmap'] - Origin view
-   */
   function openProblemDetail(qid, contextList, sourceView) {
     if (!qid) return;
 
@@ -110,7 +81,6 @@
     currentExplanation = exp;
     if (sourceView) currentSourceView = sourceView;
 
-    // Resolve context list for previous/next navigation
     if (Array.isArray(contextList) && contextList.length > 0) {
       currentContextList = contextList.map(item => typeof item === 'string' ? item : item.id);
       currentContextIndex = currentContextList.indexOf(qid);
@@ -119,7 +89,6 @@
       currentContextIndex = 0;
     }
 
-    // Hide other views and display question explanation view
     if (dom.roadmapView) dom.roadmapView.classList.add('hidden');
     if (dom.patternsView) dom.patternsView.classList.add('hidden');
     if (dom.detailView) {
@@ -127,33 +96,24 @@
       renderProblemDetailContent();
     }
 
-    // Smooth scroll to top of page
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  /**
-   * Closes Problem Detail view and returns to originating view
-   */
   function closeProblemDetail() {
     if (dom.detailView) dom.detailView.classList.add('hidden');
     switchToView(currentSourceView);
 
-    // Notify other views to refresh any progress/review updates
     window.dispatchEvent(new CustomEvent('dsaProgressSync', {
       detail: { qid: currentQuestionId, source: 'problemDetailClose' }
     }));
   }
 
-  /**
-   * Renders the complete 15-section problem detail view
-   */
   function renderProblemDetailContent() {
     if (!dom.detailView || !currentExplanation) return;
 
     const exp = currentExplanation;
     const qid = exp.id;
 
-    // Retrieve storage states
     const progress = Storage.get('dsa_progress', {}) || {};
     const reviews = Storage.get('dsa_reviews', {}) || {};
     const notesData = Storage.get('dsa_notes', {}) || {};
@@ -203,9 +163,6 @@
       `;
     }
 
-
-
-    // Update status badge if progress
     let finalStatusBadgeClass = statusBadgeClass;
     let finalStatusBadgeText = statusBadgeText;
     if (questionHints.revealed.length > 0 || evalType) {
@@ -213,13 +170,11 @@
       finalStatusBadgeClass = 'dp-badge-status-review';
     }
 
-    // Previous & Next navigation buttons state
     const hasPrev = currentContextIndex > 0;
     const hasNext = currentContextIndex >= 0 && currentContextIndex < currentContextList.length - 1;
     const prevQid = hasPrev ? currentContextList[currentContextIndex - 1] : null;
     const nextQid = hasNext ? currentContextList[currentContextIndex + 1] : null;
 
-    // Generate Walkthrough HTML Table if available
     let walkthroughTableHtml = '';
     if (exp.walkthrough && exp.walkthrough.tableHeaders && exp.walkthrough.tableRows) {
       walkthroughTableHtml = `
@@ -242,7 +197,6 @@
       `;
     }
 
-    // Edge Cases HTML Grid
     const edgeCasesHtml = (exp.edgeCases || []).map(ec => `
       <div class="dp-edge-case-card">
         <div class="dp-edge-case-title">${escapeHtml(ec.case)} → ${escapeHtml(ec.expected)}</div>
@@ -250,7 +204,6 @@
       </div>
     `).join('');
 
-    // Recognition signals HTML
     const signalsHtml = (exp.recognitionSignals || []).map(sig => `
       <div class="dp-signal-item">
         <span class="material-symbols-outlined">radar</span>
@@ -258,7 +211,6 @@
       </div>
     `).join('');
 
-    // Approach numbered steps HTML
     const approachHtml = (exp.approach || []).map((step, idx) => `
       <li class="dp-approach-step">
         <span class="dp-step-index">${idx + 1}</span>
@@ -266,7 +218,6 @@
       </li>
     `).join('');
 
-    // Common mistakes HTML
     const mistakesHtml = (exp.commonMistakes || []).map(m => `
       <li class="dp-mistake-item">
         <span class="material-symbols-outlined">close</span>
@@ -274,7 +225,6 @@
       </li>
     `).join('');
 
-    // Build complete markup
     dom.detailView.innerHTML = `
       <div class="dsa-problem-view-container">
 
@@ -584,13 +534,9 @@ ${escapeHtml(exp.algorithm)}
       </div>
     `;
 
-    // Attach listeners for interactive elements inside problem detail
     attachDetailEventListeners();
   }
 
-  /**
-   * Helper: Render line-by-line explanation items
-   */
   function renderExplanationItems(items) {
     if (!items || items.length === 0) {
       return `<li class="dp-explanation-item">Detailed code explanation available for this implementation.</li>`;
@@ -603,9 +549,6 @@ ${escapeHtml(exp.algorithm)}
     `).join('');
   }
 
-  /**
-   * Helper: Return display name for language
-   */
   function getLanguageDisplay(lang) {
     switch (lang) {
       case 'cpp': return 'C++';
@@ -616,20 +559,15 @@ ${escapeHtml(exp.algorithm)}
     }
   }
 
-  /**
-   * Attach interactive listeners inside Problem Detail view
-   */
   function attachDetailEventListeners() {
     const exp = currentExplanation;
     const qid = exp.id;
 
-    // 1. Breadcrumb & Back buttons
     const crumbHome = document.getElementById('dp-crumb-home');
     const btnBack = document.getElementById('dp-btn-back-nav');
     if (crumbHome) crumbHome.addEventListener('click', (e) => { e.preventDefault(); closeProblemDetail(); });
     if (btnBack) btnBack.addEventListener('click', closeProblemDetail);
 
-    // 2. Language Tab switching
     const langTabs = document.querySelectorAll('.dp-lang-tab');
     langTabs.forEach(tab => {
       tab.addEventListener('click', () => {
@@ -641,13 +579,11 @@ ${escapeHtml(exp.algorithm)}
 
         langTabs.forEach(t => t.classList.toggle('active', t.dataset.codeLang === lang));
 
-        // Update code snippet
         const codeBlock = document.getElementById('dp-code-block');
         if (codeBlock && exp.code && exp.code[lang]) {
           codeBlock.textContent = exp.code[lang];
         }
 
-        // Update explanation dynamically
         const explTitle = document.getElementById('dp-expl-lang-label');
         if (explTitle) explTitle.textContent = `12. Code Explanation (${getLanguageDisplay(lang)})`;
 
@@ -658,7 +594,6 @@ ${escapeHtml(exp.algorithm)}
       });
     });
 
-    // 3. Copy Code Button
     const copyBtn = document.getElementById('dp-btn-copy-code');
     if (copyBtn) {
       copyBtn.addEventListener('click', () => {
@@ -677,7 +612,6 @@ ${escapeHtml(exp.algorithm)}
       });
     }
 
-    // 4. Hints trigger buttons
     const hintTriggers = document.querySelectorAll('.dp-hint-trigger[data-hint-idx]');
     hintTriggers.forEach(btn => {
       btn.addEventListener('click', () => {
@@ -693,7 +627,6 @@ ${escapeHtml(exp.algorithm)}
           box.classList.add('open');
           btn.classList.add('revealed');
 
-          // Save hint disclosure
           const hintsData = Storage.get('dsa_hints', {}) || {};
           if (!hintsData[qid]) hintsData[qid] = { revealed: [], approachRevealed: false };
           if (!hintsData[qid].revealed.includes(hintIdx)) {
@@ -701,7 +634,6 @@ ${escapeHtml(exp.algorithm)}
           }
           Storage.set('dsa_hints', hintsData);
 
-          // Update badge
           const badge = document.getElementById('dp-hints-badge');
           if (badge) {
             badge.textContent = `${hintsData[qid].revealed.length} of ${(exp.hints || []).length} Hints Used`;
@@ -710,7 +642,6 @@ ${escapeHtml(exp.algorithm)}
       });
     });
 
-    // 5. Reveal Approach button
     const btnRevealApproach = document.getElementById('dp-btn-reveal-approach');
     if (btnRevealApproach) {
       btnRevealApproach.addEventListener('click', () => {
@@ -730,7 +661,6 @@ ${escapeHtml(exp.algorithm)}
       });
     }
 
-    // 6. Review Later toggle
     const btnReview = document.getElementById('dp-btn-toggle-review');
     if (btnReview) {
       btnReview.addEventListener('click', () => {
@@ -764,7 +694,6 @@ ${escapeHtml(exp.algorithm)}
       });
     }
 
-    // 7. Rate Solve / Mark Solved button
     const btnRateSolve = document.getElementById('dp-btn-rate-solve');
     if (btnRateSolve) {
       btnRateSolve.addEventListener('click', () => {
@@ -776,7 +705,6 @@ ${escapeHtml(exp.algorithm)}
       });
     }
 
-    // 7b. Revision Notice Re-rate button
     const btnNoticeReEval = document.getElementById('dp-btn-notice-re-eval');
     if (btnNoticeReEval) {
       btnNoticeReEval.addEventListener('click', () => {
@@ -788,7 +716,6 @@ ${escapeHtml(exp.algorithm)}
       });
     }
 
-    // 8. Personal Notes Auto-Saving
     const notesInput = document.getElementById('dp-notes-input');
     const notesStatus = document.getElementById('dp-notes-save-status');
     if (notesInput) {
@@ -810,7 +737,6 @@ ${escapeHtml(exp.algorithm)}
       });
     }
 
-    // 9. Previous & Next problem navigation
     const btnPrev = document.getElementById('dp-btn-prev');
     if (btnPrev && currentContextIndex > 0) {
       btnPrev.addEventListener('click', () => {
@@ -828,9 +754,6 @@ ${escapeHtml(exp.algorithm)}
     }
   }
 
-  /**
-   * Renders the Dedicated Revision Dashboard
-   */
   function renderRevisionDashboard() {
     if (!dom.revisionView) return;
 
@@ -842,13 +765,6 @@ ${escapeHtml(exp.algorithm)}
 
     const allQuestions = window.dsaAllQuestions || [];
 
-    // Filter problems that need revision:
-    // 1. Starred in Review Later
-    // 2. Solved with ~30% AI / Hint Help
-    // 3. Solved with ~50% AI / Editorial Help
-    // 4. Solved with Copy / Paste (cross)
-    // 5. Questions where hints were used
-    // 6. Questions in patterns flagged as weak
     const reviewLaterList = allQuestions.filter(q => !!reviews[q.id]);
     const help30List = allQuestions.filter(q => evaluations[q.id] === 'help30' || evaluations[q.id] === 'help');
     const help50List = allQuestions.filter(q => evaluations[q.id] === 'help50');
@@ -856,14 +772,12 @@ ${escapeHtml(exp.algorithm)}
     const hintsUsedList = allQuestions.filter(q => hintsData[q.id] && (hintsData[q.id].revealed || []).length > 0);
     const weakPatternList = allQuestions.filter(q => patternStats.weak && patternStats.weak[q.patternId]);
 
-    // Unique combined set of all questions needing revision
     const allRevisionMap = new Map();
     [...reviewLaterList, ...help30List, ...help50List, ...crossList, ...hintsUsedList, ...weakPatternList].forEach(q => {
       allRevisionMap.set(q.id, q);
     });
     const allRevisionQuestions = Array.from(allRevisionMap.values());
 
-    // Filter by active revision tab
     let displayList = allRevisionQuestions;
     if (revisionFilter === 'starred') displayList = reviewLaterList;
     else if (revisionFilter === 'help30') displayList = help30List;
@@ -1048,7 +962,6 @@ ${escapeHtml(exp.algorithm)}
       </div>
     `;
 
-    // Attach revision filter listeners
     dom.revisionView.querySelectorAll('[data-rev-filter]').forEach(btn => {
       btn.addEventListener('click', () => {
         revisionFilter = btn.dataset.revFilter;
@@ -1056,7 +969,6 @@ ${escapeHtml(exp.algorithm)}
       });
     });
 
-    // Attach star toggle listener
     dom.revisionView.querySelectorAll('[data-toggle-star]').forEach(starEl => {
       starEl.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -1071,7 +983,6 @@ ${escapeHtml(exp.algorithm)}
       });
     });
 
-    // Attach re-rate button listener
     dom.revisionView.querySelectorAll('[data-re-eval-qid]').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -1084,7 +995,6 @@ ${escapeHtml(exp.algorithm)}
       });
     });
 
-    // Attach click listener to open problem detail
     dom.revisionView.querySelectorAll('[data-open-detail]').forEach(el => {
       el.addEventListener('click', (e) => {
         e.preventDefault();
@@ -1096,9 +1006,6 @@ ${escapeHtml(exp.algorithm)}
     });
   }
 
-  /**
-   * Handle progress synchronization from roadmap or pattern learning
-   */
   function onProgressSync(e) {
     if (dom.detailView && !dom.detailView.classList.contains('hidden') && currentQuestionId) {
       renderProblemDetail(currentQuestionId);
@@ -1108,22 +1015,17 @@ ${escapeHtml(exp.algorithm)}
     }
   }
 
-  /**
-   * Handle review toggle synchronization
-   */
   function onReviewSync(e) {
     if (dom.revisionView && !dom.revisionView.classList.contains('hidden')) {
       renderRevisionDashboard();
     }
   }
 
-  // Public API
   window.DsaProblemController.openProblemDetail = openProblemDetail;
   window.DsaProblemController.closeProblemDetail = closeProblemDetail;
   window.DsaProblemController.switchToView = switchToView;
   window.DsaProblemController.renderRevisionDashboard = renderRevisionDashboard;
 
-  // Initialize on DOM ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {

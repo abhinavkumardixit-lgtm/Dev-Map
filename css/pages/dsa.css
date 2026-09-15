@@ -1,19 +1,10 @@
-/* ==========================================================================
-   DevPilot-AI - DSA Roadmap Styles
-   ========================================================================== */
 
-/* --------------------------------------------------------------------------
-   1. DSA Layout & Container
-   -------------------------------------------------------------------------- */
 .dsa-page-container {
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
 }
 
-/* --------------------------------------------------------------------------
-   2. Global Progress Dashboard Hero Card
-   -------------------------------------------------------------------------- */
 .dsa-hero-card {
   background: var(--color-surface);
   border: 1px solid var(--color-outline-variant);
@@ -92,7 +83,6 @@
   border: 1px solid rgba(79, 70, 229, 0.15);
 }
 
-/* Master Progress Bar */
 .dsa-progress-track {
   width: 100%;
   height: 10px;
@@ -111,7 +101,6 @@
   width: 0%;
 }
 
-/* Difficulty Chips Grid */
 .dsa-diff-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -185,9 +174,6 @@
 .diff-medium .dsa-diff-mini-fill { background-color: #d97706; }
 .diff-hard .dsa-diff-mini-fill { background-color: #dc2626; }
 
-/* --------------------------------------------------------------------------
-   3. Workspace Layout (Sticky Index Sidebar + Main Question Feed)
-   -------------------------------------------------------------------------- */
 .dsa-workspace {
   display: grid;
   grid-template-columns: 290px 1fr;
@@ -195,7 +181,6 @@
   align-items: start;
 }
 
-/* Sidebar Index */
 .dsa-nav-sidebar {
   position: sticky;
   top: 96px;
@@ -333,9 +318,6 @@
   color: var(--color-primary);
 }
 
-/* --------------------------------------------------------------------------
-   4. Controls Toolbar (Pro Search, Quick Chips, Filters, Reset)
-   -------------------------------------------------------------------------- */
 .dsa-toolbar {
   background: var(--color-surface);
   border: 1px solid var(--color-outline-variant);
@@ -357,7 +339,6 @@
   gap: 0.875rem;
 }
 
-/* Smart Command-Bar Search Box */
 .dsa-search-wrap {
   position: relative;
   flex: 1;
@@ -461,7 +442,6 @@
   color: #ef4444;
 }
 
-/* Segmented Filter Pills */
 .dsa-segmented-group {
   display: inline-flex;
   background: var(--color-surface-container);
@@ -500,7 +480,6 @@
   gap: 0.75rem;
 }
 
-/* Quick Suggestions Bar */
 .dsa-toolbar-bottom {
   display: flex;
   flex-wrap: wrap;
@@ -570,7 +549,6 @@
   white-space: nowrap;
 }
 
-/* Matching Text Highlight */
 .dsa-search-highlight {
   background: #fef08a;
   color: #854d0e;
@@ -579,9 +557,6 @@
   font-weight: 700;
 }
 
-/* --------------------------------------------------------------------------
-   5. Category Card & Pattern Sections
-   -------------------------------------------------------------------------- */
 .dsa-category-card {
   background: var(--color-surface);
   border: 1px solid var(--color-outline-variant);
@@ -663,7 +638,6 @@
   border: 1px solid #a7f3d0;
 }
 
-/* Subpattern Group */
 .dsa-pattern-group {
   padding: 1.25rem 1.5rem;
   border-bottom: 1px solid var(--color-outline-variant);
@@ -708,9 +682,6 @@
   color: var(--color-on-surface-variant);
 }
 
-/* --------------------------------------------------------------------------
-   6. Question Row Styles
-   -------------------------------------------------------------------------- */
 .dsa-question-list {
   display: flex;
   flex-direction: column;
@@ -736,7 +707,6 @@
   box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
 }
 
-/* Solved State */
 .dsa-question-row.is-solved {
   background: #f8fafc;
   border-color: #e2e8f0;
@@ -746,7 +716,6 @@
   color: #64748b;
 }
 
-/* Left part of row */
 .dsa-question-left {
   display: flex;
   align-items: center;
@@ -755,7 +724,6 @@
   flex: 1;
 }
 
-/* Custom Checkbox */
 .dsa-checkbox-container {
   position: relative;
   display: flex;
@@ -815,7 +783,6 @@
   display: block;
 }
 
-/* Problem Number Badge */
 .dsa-lc-num {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 0.75rem;
@@ -829,7 +796,6 @@
   flex-shrink: 0;
 }
 
-/* Problem Content & Meta */
 .dsa-question-info {
   display: flex;
   flex-direction: column;
@@ -900,7 +866,6 @@
   border-color: #E2E8F0;
 }
 
-/* Right part of row */
 .dsa-question-right {
   display: flex;
   align-items: center;
@@ -908,7 +873,6 @@
   flex-shrink: 0;
 }
 
-/* Difficulty Badges */
 .dsa-badge-diff {
   font-size: 0.75rem;
   font-weight: 700;
@@ -936,7 +900,6 @@
   color: #b91c1c;
 }
 
-/* Question Explain Button (Opens Clean 15-Point Code Explanation) */
 .dsa-btn-explain {
   display: inline-flex;
   align-items: center;
@@ -973,7 +936,6 @@
   transform: scale(1.1);
 }
 
-/* Primary Internal Solve Button */
 .dsa-btn-solve {
   display: inline-flex;
   align-items: center;
@@ -1010,7 +972,6 @@
   transform: translateX(2px);
 }
 
-/* Secondary direct LeetCode icon button */
 .dsa-btn-lc-icon {
   display: inline-flex;
   align-items: center;
@@ -1037,7 +998,6 @@
   font-size: 15px;
 }
 
-/* External LeetCode Action Button */
 .dsa-btn-leetcode {
   display: inline-flex;
   align-items: center;
@@ -1065,9 +1025,6 @@
   font-size: 16px;
 }
 
-/* --------------------------------------------------------------------------
-   7. Empty States & Search Results Info
-   -------------------------------------------------------------------------- */
 .dsa-empty-state {
   padding: 3.5rem 1.5rem;
   text-align: center;
@@ -1104,10 +1061,6 @@
   margin: 0 auto 1.25rem;
 }
 
-/* --------------------------------------------------------------------------
-   9. Responsive Breakpoints
-   -------------------------------------------------------------------------- */
-/* Large Tablet / Small Desktop */
 @media (max-width: 1099px) {
   .dsa-workspace {
     grid-template-columns: 1fr;
@@ -1212,7 +1165,6 @@
   }
 }
 
-/* Tablet */
 @media (max-width: 768px) {
   .dsa-hero-header {
     flex-direction: column;
@@ -1296,7 +1248,6 @@
   }
 }
 
-/* Mobile Small */
 @media (max-width: 480px) {
   .dsa-hero-card {
     padding: 1.25rem 1rem;
@@ -1335,11 +1286,6 @@
   }
 }
 
-/* ==========================================================================
-   10. Pattern Learning & Training Arena Styles
-   ========================================================================== */
-
-/* View Switcher Dual Pill Tabs */
 .dsa-view-switcher {
   display: inline-flex;
   align-items: center;
@@ -1389,7 +1335,6 @@
   box-shadow: 0 0 8px rgba(99, 102, 241, 0.4);
 }
 
-/* Hero Intro Section */
 .pl-hero-intro {
   background: #ffffff;
   border: 1px solid #e2e8f0;
@@ -1431,7 +1376,6 @@
   box-shadow: 0 6px 20px rgba(79, 70, 229, 0.45);
 }
 
-/* 4 Summary Metrics Cards */
 .pl-stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -1480,7 +1424,6 @@
   margin-top: 0.2rem;
 }
 
-/* Today's Recommended Pattern Card */
 .pl-feature-row {
   display: grid;
   grid-template-columns: 1fr;
@@ -1555,7 +1498,6 @@
   border-radius: var(--radius-md);
 }
 
-/* Weak Patterns Notice Section */
 .pl-weak-section {
   background: #fffbeb;
   border: 1px solid #fef3c7;
@@ -1583,7 +1525,6 @@
   border-color: #f59e0b;
 }
 
-/* Catalog Toolbar & Category Chips */
 .pl-catalog-toolbar {
   background: #ffffff;
   border: 1px solid #e2e8f0;
@@ -1625,7 +1566,6 @@
   box-shadow: 0 2px 6px rgba(79, 70, 229, 0.25);
 }
 
-/* Pattern Cards Grid */
 .pl-pattern-cards-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1827,7 +1767,6 @@
   border-color: #4f46e5;
 }
 
-/* Dedicated Pattern Study View */
 .pl-study-view-section {
   max-width: 1000px;
   margin: 0 auto;
@@ -1915,7 +1854,6 @@
   margin-bottom: 0.4rem;
 }
 
-/* Anchor Navigation Bar */
 .pl-study-anchor-bar {
   display: flex;
   align-items: center;
@@ -1951,7 +1889,6 @@
   background: #eef2ff;
 }
 
-/* Study Card Sections */
 .pl-study-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
@@ -2109,7 +2046,6 @@
   padding: 0.65rem 0.875rem;
 }
 
-/* C++ Code Block Container */
 .pl-code-block-container {
   background: #0f172a;
   border-radius: var(--radius-lg);
@@ -2148,7 +2084,6 @@
   border-color: #c7d2fe;
 }
 
-/* Walkthrough Trace Steps */
 .pl-trace-steps-container {
   display: flex;
   flex-direction: column;
@@ -2175,7 +2110,6 @@
   white-space: nowrap;
 }
 
-/* Quizzes */
 .pl-quiz-list {
   display: flex;
   flex-direction: column;
@@ -2268,7 +2202,6 @@
   border-color: #fecaca;
 }
 
-/* Training Arena Modal & Drill UI */
 .pl-arena-header {
   display: flex;
   align-items: center;
@@ -2468,7 +2401,6 @@
   background: #4338ca;
 }
 
-/* Arena Summary */
 .pl-arena-summary-card {
   text-align: center;
   padding: 1.5rem;
@@ -2500,7 +2432,6 @@
   flex-direction: column;
 }
 
-/* Responsive Media Queries for Pattern Learning */
 @media (max-width: 1024px) {
   .pl-pattern-cards-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -2538,9 +2469,6 @@
   }
 }
 
-/* ================================================== */
-/* Modal Dialog & Backdrop System                     */
-/* ================================================== */
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -2615,9 +2543,6 @@
   box-shadow: 0 0 0 8px #fef2f2;
 }
 
-/* ==========================================================================
-   Pattern Learning Modals (Clean Light SaaS Theme matching Resume Modal)
-   ========================================================================== */
 .modal-card.pl-modal-card,
 .pl-modal-card {
   background: #ffffff !important;
@@ -2695,7 +2620,6 @@
   border-color: #cbd5e1 !important;
 }
 
-/* Question Solve Honesty Evaluation Options */
 .pl-solve-opt-btn {
   display: flex !important;
   align-items: center !important;
@@ -2812,7 +2736,6 @@
   border: 1px solid #fecdd3 !important;
 }
 
-/* Modal Footer & Action Buttons */
 #pl-solve-modal-clear {
   color: #64748b !important;
   font-family: 'Inter', system-ui, sans-serif !important;
@@ -2883,7 +2806,6 @@
   color: #0f172a !important;
 }
 
-/* Question Row Evaluation Pill */
 .pl-eval-pill {
   display: inline-flex;
   align-items: center;
@@ -2963,7 +2885,6 @@
   background: rgba(239, 68, 68, 0.18);
 }
 
-/* Locked Sequential Question Rows */
 .dsa-question-row.is-locked {
   opacity: 0.65;
   background: #f8fafc;
@@ -3009,7 +2930,6 @@
   color: #64748b;
 }
 
-/* Pattern Learning Question Row Evaluation Boxes (Matching Modal Icons) */
 .dsa-checkbox-custom.pl-eval-box::after,
 .pl-eval-box::after {
   display: none !important;
@@ -3029,7 +2949,6 @@
   position: relative !important;
 }
 
-/* Empty / Unattempted */
 .pl-eval-box.pl-eval-box-empty {
   background: #ffffff !important;
   border: 2px solid #cbd5e1 !important;
@@ -3051,7 +2970,6 @@
   background: #273549 !important;
 }
 
-/* 100% Solved on my own -> verified (Emerald) */
 .pl-eval-box.pl-eval-box-self {
   background: #10b981 !important;
   border: 1.5px solid #059669 !important;
@@ -3065,7 +2983,6 @@
   transform: scale(1.06);
 }
 
-/* ~30% Help from AI / Hints -> psychology (Amber) */
 .pl-eval-box.pl-eval-box-help30 {
   background: #f59e0b !important;
   border: 1.5px solid #d97706 !important;
@@ -3079,7 +2996,6 @@
   transform: scale(1.06);
 }
 
-/* ~50% Help from AI / Editorial -> smart_toy (Orange) */
 .pl-eval-box.pl-eval-box-help50 {
   background: #f97316 !important;
   border: 1.5px solid #ea580c !important;
@@ -3093,7 +3009,6 @@
   transform: scale(1.06);
 }
 
-/* Copy / Paste / Direct Solution -> content_paste_off (Rose / Red) */
 .pl-eval-box.pl-eval-box-cross {
   background: #ef4444 !important;
   border: 1.5px solid #dc2626 !important;
@@ -3107,7 +3022,6 @@
   transform: scale(1.06);
 }
 
-/* Locked Question Box */
 .pl-eval-box.pl-eval-box-locked {
   background: #f1f5f9 !important;
   border: 1.5px dashed #cbd5e1 !important;
@@ -3248,9 +3162,6 @@
   color: #fcd34d;
 }
 
-/* ==========================================================================
-   11. Floating Jump-to-Section Up Button
-   ========================================================================== */
 .dsa-scroll-up-btn {
   position: fixed;
   bottom: 2rem;
@@ -3279,7 +3190,6 @@
   transform: translateY(0) scale(1);
 }
 
-/* Remove floating jump arrow in Pattern Learning view only */
 #dsa-pattern-learning-view:not(.hidden) ~ #dsa-scroll-to-section-btn,
 #dsa-roadmap-view.hidden ~ #dsa-scroll-to-section-btn,
 body:has(#dsa-pattern-learning-view:not(.hidden)) #dsa-scroll-to-section-btn,

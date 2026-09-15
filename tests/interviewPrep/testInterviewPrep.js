@@ -1,8 +1,7 @@
-// tests/interviewPrep/testInterviewPrep.js
+
 const assert = require('assert');
 const path = require('path');
 
-// Set global window for Node environment
 global.window = global;
 
 const registry = require('../../js/data/interviewPrep/index.js');
@@ -26,7 +25,6 @@ function it(desc, fn) {
   }
 }
 
-// 1. Categories Verification
 it('Should load all 18 placement & interview categories', () => {
   const cats = registry.getAllCategories();
   assert.strictEqual(cats.length, 18, `Expected 18 categories, got ${cats.length}`);
@@ -43,50 +41,42 @@ it('Each category should have valid metadata and question array', () => {
   });
 });
 
-// 2. Question Count Verification
 it('Should have total question count of at least 2,000 authentic MCQs', () => {
   const allQs = registry.getAllQuestions();
   assert.ok(allQs.length >= 2000, `Expected at least 2000 questions, got ${allQs.length}`);
   console.log(`    Total questions verified: ${allQs.length}`);
 });
 
-// 3. Question Schema Validation
 it('Every single question must have unique ID, 4 options, valid correctAnswer (0-3), and detailed explanation', () => {
   const allQs = registry.getAllQuestions();
   const seenIds = new Set();
   const validDifficulties = ['Easy', 'Medium', 'Hard'];
 
   allQs.forEach((q, idx) => {
-    // Unique ID
+
     assert.ok(q.id, `Question at index ${idx} missing id`);
     assert.ok(!seenIds.has(q.id), `Duplicate question id found: ${q.id}`);
     seenIds.add(q.id);
 
-    // Non-empty question
     assert.ok(typeof q.question === 'string' && q.question.trim().length > 5, `Question ${q.id} text too short`);
 
-    // 4 options
     assert.ok(Array.isArray(q.options), `Question ${q.id} options not array`);
     assert.strictEqual(q.options.length, 4, `Question ${q.id} must have exactly 4 options, got ${q.options.length}`);
     q.options.forEach((opt, optIdx) => {
       assert.ok(typeof opt === 'string' && opt.trim().length > 0, `Question ${q.id} option ${optIdx} empty`);
     });
 
-    // Valid correctAnswer index (0 to 3)
     assert.ok(Number.isInteger(q.correctAnswer), `Question ${q.id} correctAnswer must be integer`);
     assert.ok(q.correctAnswer >= 0 && q.correctAnswer <= 3, `Question ${q.id} correctAnswer out of range 0-3: ${q.correctAnswer}`);
 
-    // Explanation
     assert.ok(typeof q.explanation === 'string' && q.explanation.trim().length > 10, `Question ${q.id} explanation missing or too short`);
 
-    // Difficulty
     if (q.difficulty) {
       assert.ok(validDifficulties.map(d => d.toLowerCase()).includes(q.difficulty.toLowerCase()), `Question ${q.id} has invalid difficulty: ${q.difficulty}`);
     }
   });
 });
 
-// 4. Checklists Verification
 it('Should provide comprehensive checklists for 8 core CS subjects', () => {
   const chk = registry.getChecklists();
   const subjects = Object.keys(chk);
@@ -104,7 +94,6 @@ it('Should provide comprehensive checklists for 8 core CS subjects', () => {
   });
 });
 
-// 5. System Design Case Studies Verification
 it('System Design should provide at least 10 complete end-to-end case studies', () => {
   const sd = registry.getCategory('system_design');
   assert.ok(sd, 'System Design category not found');
@@ -122,7 +111,6 @@ it('System Design should provide at least 10 complete end-to-end case studies', 
   });
 });
 
-// 6. GD & HR Content Verification
 it('Communication & HR categories should provide rich GD topics and STAR interview guides', () => {
   const comm = registry.getCategory('communication');
   assert.ok(comm && comm.gdTopics && comm.gdTopics.length === 10, 'Expected 10 GD topics in communication');
@@ -139,12 +127,10 @@ it('Communication & HR categories should provide rich GD topics and STAR intervi
   });
 });
 
-// 7. 60-Minute Mock Test Generator Verification
 it('Mock Test Pool should generate 50 balanced questions spanning all test sections', () => {
   const pool = registry.getMockTestPool(50);
   assert.strictEqual(pool.length, 50, `Expected exactly 50 mock test questions, got ${pool.length}`);
 
-  // Check categories represented
   const catSet = new Set(pool.map(q => q.categoryId));
   assert.ok(catSet.has('aptitude'), 'Mock test missing Aptitude');
   assert.ok(catSet.has('english'), 'Mock test missing English');
@@ -153,7 +139,6 @@ it('Mock Test Pool should generate 50 balanced questions spanning all test secti
   assert.ok(catSet.has('oop'), 'Mock test missing OOP');
 });
 
-// 8. Weak Topics Diagnosis Verification
 it('Weak topics detection should accurately isolate topics with low accuracy', () => {
   const mockProgress = {
     'topic:dbms:Indexing & B/B+ Trees': {

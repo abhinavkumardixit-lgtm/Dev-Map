@@ -1,9 +1,3 @@
-/**
- * Builder for Core CS Part 2:
- * - SQL (150 questions with SQL snippets across 15 topics)
- * - Operating Systems (150 questions across 15 topics)
- * - Computer Networks (160 questions across 16 topics, including browser lifecycle)
- */
 
 const fs = require('fs');
 const path = require('path');
@@ -43,9 +37,6 @@ function createModuleFile(filename, varName, category, title, description, icon,
   console.log(`Successfully generated ${filename} (${questions.length} questions across ${topics.length} topics)`);
 }
 
-// =========================================================================
-// 1. SQL (15 topics × 10 = 150 MCQs with SQL snippets)
-// =========================================================================
 const sqlTopics = [
   "SELECT",
   "WHERE",
@@ -65,7 +56,7 @@ const sqlTopics = [
 ];
 
 const sqlGroups = [
-  // 1. SELECT
+
   {
     topic: "SELECT",
     prefix: "sql-sel",
@@ -83,7 +74,6 @@ const sqlGroups = [
     ]
   },
 
-  // 2. WHERE
   {
     topic: "WHERE",
     prefix: "sql-whr",
@@ -101,7 +91,6 @@ const sqlGroups = [
     ]
   },
 
-  // 3. ORDER BY
   {
     topic: "ORDER BY",
     prefix: "sql-ord",
@@ -119,7 +108,6 @@ const sqlGroups = [
     ]
   },
 
-  // 4. GROUP BY
   {
     topic: "GROUP BY",
     prefix: "sql-grp",
@@ -137,7 +125,6 @@ const sqlGroups = [
     ]
   },
 
-  // 5. HAVING
   {
     topic: "HAVING",
     prefix: "sql-hav",
@@ -156,9 +143,8 @@ const sqlGroups = [
   }
 ];
 
-// Add Remaining SQL topics (6-15)
 const extraSQL = [
-  // 6. Aggregate Functions
+
   {
     topic: "Aggregate Functions",
     prefix: "sql-agg",
@@ -176,7 +162,6 @@ const extraSQL = [
     ]
   },
 
-  // 7. JOINs
   {
     topic: "JOINs",
     prefix: "sql-joi",
@@ -194,7 +179,6 @@ const extraSQL = [
     ]
   },
 
-  // 8. Subqueries
   {
     topic: "Subqueries",
     prefix: "sql-sub",
@@ -212,7 +196,6 @@ const extraSQL = [
     ]
   },
 
-  // 9. CTEs
   {
     topic: "CTEs",
     prefix: "sql-cte",
@@ -230,7 +213,6 @@ const extraSQL = [
     ]
   },
 
-  // 10. Window Functions
   {
     topic: "Window Functions",
     prefix: "sql-win",
@@ -248,7 +230,6 @@ const extraSQL = [
     ]
   },
 
-  // 11. CASE
   {
     topic: "CASE",
     prefix: "sql-cse",
@@ -266,7 +247,6 @@ const extraSQL = [
     ]
   },
 
-  // 12. INSERT / UPDATE / DELETE
   {
     topic: "INSERT / UPDATE / DELETE",
     prefix: "sql-dml",
@@ -284,7 +264,6 @@ const extraSQL = [
     ]
   },
 
-  // 13. Constraints
   {
     topic: "Constraints",
     prefix: "sql-cst",
@@ -302,7 +281,6 @@ const extraSQL = [
     ]
   },
 
-  // 14. Indexes
   {
     topic: "Indexes",
     prefix: "sql-idx",
@@ -320,7 +298,6 @@ const extraSQL = [
     ]
   },
 
-  // 15. Transactions
   {
     topic: "Transactions",
     prefix: "sql-trx",
@@ -367,10 +344,6 @@ createModuleFile(
   sqlQuestions
 );
 
-
-// =========================================================================
-// 2. OPERATING SYSTEMS (15 topics × 10 = 150 MCQs)
-// =========================================================================
 const osTopics = [
   "OS Fundamentals",
   "Processes",
@@ -390,7 +363,7 @@ const osTopics = [
 ];
 
 const osGroups = [
-  // 1. OS Fundamentals
+
   {
     topic: "OS Fundamentals",
     prefix: "os-fnd",
@@ -408,7 +381,6 @@ const osGroups = [
     ]
   },
 
-  // 2. Processes
   {
     topic: "Processes",
     prefix: "os-prc",
@@ -426,7 +398,6 @@ const osGroups = [
     ]
   },
 
-  // 3. Threads
   {
     topic: "Threads",
     prefix: "os-thd",
@@ -444,7 +415,6 @@ const osGroups = [
     ]
   },
 
-  // 4. Process Scheduling
   {
     topic: "Process Scheduling",
     prefix: "os-sch",
@@ -462,7 +432,6 @@ const osGroups = [
     ]
   },
 
-  // 5. CPU Scheduling Algorithms
   {
     topic: "CPU Scheduling Algorithms",
     prefix: "os-alg",
@@ -481,9 +450,8 @@ const osGroups = [
   }
 ];
 
-// Add Remaining OS topics (6-15)
 const extraOS = [
-  // 6. Synchronization
+
   {
     topic: "Synchronization",
     prefix: "os-syn",
@@ -501,7 +469,6 @@ const extraOS = [
     ]
   },
 
-  // 7. Mutex & Semaphore
   {
     topic: "Mutex & Semaphore",
     prefix: "os-sem",
@@ -519,7 +486,6 @@ const extraOS = [
     ]
   },
 
-  // 8. Deadlocks
   {
     topic: "Deadlocks",
     prefix: "os-dlk",
@@ -537,7 +503,6 @@ const extraOS = [
     ]
   },
 
-  // 9. Memory Management
   {
     topic: "Memory Management",
     prefix: "os-mm",
@@ -555,7 +520,6 @@ const extraOS = [
     ]
   },
 
-  // 10. Paging
   {
     topic: "Paging",
     prefix: "os-pag",
@@ -573,7 +537,6 @@ const extraOS = [
     ]
   },
 
-  // 11. Segmentation
   {
     topic: "Segmentation",
     prefix: "os-seg",
@@ -591,7 +554,6 @@ const extraOS = [
     ]
   },
 
-  // 12. Virtual Memory
   {
     topic: "Virtual Memory",
     prefix: "os-vm",
@@ -609,7 +571,6 @@ const extraOS = [
     ]
   },
 
-  // 13. Page Replacement
   {
     topic: "Page Replacement",
     prefix: "os-rep",
@@ -627,7 +588,6 @@ const extraOS = [
     ]
   },
 
-  // 14. File Systems
   {
     topic: "File Systems",
     prefix: "os-fs",
@@ -645,7 +605,6 @@ const extraOS = [
     ]
   },
 
-  // 15. System Calls
   {
     topic: "System Calls",
     prefix: "os-sys",
@@ -692,10 +651,6 @@ createModuleFile(
   osQuestions
 );
 
-
-// =========================================================================
-// 3. COMPUTER NETWORKS (16 topics × 10 = 160 MCQs)
-// =========================================================================
 const cnTopics = [
   "Networking Fundamentals",
   "OSI Model",
@@ -716,7 +671,7 @@ const cnTopics = [
 ];
 
 const cnGroups = [
-  // 1. Networking Fundamentals
+
   {
     topic: "Networking Fundamentals",
     prefix: "cn-fnd",
@@ -734,7 +689,6 @@ const cnGroups = [
     ]
   },
 
-  // 2. OSI Model
   {
     topic: "OSI Model",
     prefix: "cn-osi",
@@ -752,7 +706,6 @@ const cnGroups = [
     ]
   },
 
-  // 3. TCP/IP Model
   {
     topic: "TCP/IP Model",
     prefix: "cn-tcpip",
@@ -771,9 +724,8 @@ const cnGroups = [
   }
 ];
 
-// Combine more CN topics (4-16)
 const extraCN = [
-  // 4. TCP
+
   {
     topic: "TCP",
     prefix: "cn-tcp",
@@ -791,7 +743,6 @@ const extraCN = [
     ]
   },
 
-  // 5. UDP
   {
     topic: "UDP",
     prefix: "cn-udp",
@@ -809,7 +760,6 @@ const extraCN = [
     ]
   },
 
-  // 6. IP Addressing
   {
     topic: "IP Addressing",
     prefix: "cn-ip",
@@ -827,7 +777,6 @@ const extraCN = [
     ]
   },
 
-  // 7. Subnetting
   {
     topic: "Subnetting",
     prefix: "cn-sub",
@@ -845,7 +794,6 @@ const extraCN = [
     ]
   },
 
-  // 8. DNS
   {
     topic: "DNS",
     prefix: "cn-dns",
@@ -863,7 +811,6 @@ const extraCN = [
     ]
   },
 
-  // 9. DHCP
   {
     topic: "DHCP",
     prefix: "cn-dhc",
@@ -881,7 +828,6 @@ const extraCN = [
     ]
   },
 
-  // 10. HTTP / HTTPS
   {
     topic: "HTTP / HTTPS",
     prefix: "cn-http",
@@ -899,7 +845,6 @@ const extraCN = [
     ]
   },
 
-  // 11. TLS
   {
     topic: "TLS",
     prefix: "cn-tls",
@@ -917,7 +862,6 @@ const extraCN = [
     ]
   },
 
-  // 12. Routing
   {
     topic: "Routing",
     prefix: "cn-rtg",
@@ -935,7 +879,6 @@ const extraCN = [
     ]
   },
 
-  // 13. ARP
   {
     topic: "ARP",
     prefix: "cn-arp",
@@ -953,7 +896,6 @@ const extraCN = [
     ]
   },
 
-  // 14. NAT
   {
     topic: "NAT",
     prefix: "cn-nat",
@@ -971,7 +913,6 @@ const extraCN = [
     ]
   },
 
-  // 15. Firewalls
   {
     topic: "Firewalls",
     prefix: "cn-fw",
@@ -989,7 +930,6 @@ const extraCN = [
     ]
   },
 
-  // 16. Network Security & Browser Lifecycle ("google.com" lifecycle)
   {
     topic: "Network Security",
     prefix: "cn-sec",

@@ -1,14 +1,3 @@
-/**
- * MAD DEV — Public Free AI & Private Gateway Engine (FreeAiService)
- * 
- * Out-of-the-box Public Free AI Engine for all MAD DEV users.
- * Automatically handles AI generation across Chat, Resume Analyzer,
- * Interview Prep, and Prompt Assistant.
- * 
- * Supports:
- * 1. Public Free AI Endpoint (Zero Key Required)
- * 2. User-Configured Private AI Gateway (OpenAI / Anthropic / Gemini / Ollama / Custom Proxy)
- */
 
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
@@ -19,12 +8,8 @@
 })(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
-  // Public Free AI Endpoint
   const PUBLIC_FREE_ENDPOINT = 'https://text.pollinations.ai/';
 
-  /**
-   * Main AI Text & Code Generation Handler
-   */
   async function generateResponse(prompt, options = {}) {
     const userSettings = (typeof window !== 'undefined' && window.AuthService)
       ? window.AuthService.getUserSettings()
@@ -35,7 +20,6 @@
     const apiKey = userSettings.privateAiKey || geminiKey;
     const model = userSettings.privateAiModel || options.model || 'gemini-1.5-flash';
 
-    // 1. Primary: Try Google Gemini API Call using user's Gemini Key
     if (geminiKey && geminiKey.length > 5) {
       try {
         const geminiRes = await callGeminiApi(geminiKey, prompt, options);
@@ -47,7 +31,6 @@
       }
     }
 
-    // 2. Secondary: If Private OpenAI-compatible API Key is configured
     if (apiKey && apiKey.length > 5 && !apiKey.startsWith('AQ.')) {
       try {
         const privateRes = await callPrivateGateway(endpoint, apiKey, model, prompt, options);
@@ -59,7 +42,6 @@
       }
     }
 
-    // 3. Fallback: Public Free AI Endpoint
     try {
       const publicRes = await callPublicFreeApi(prompt, options);
       if (publicRes && publicRes.content && !publicRes.content.includes('budget')) {
@@ -69,13 +51,9 @@
       console.warn('[FreeAiService] Public Free API network fallback:', err.message);
     }
 
-    // 4. Guaranteed High-Intelligence Fallback
     return generateIntelligentFallback(prompt, model, options);
   }
 
-  /**
-   * Call Google Gemini API directly
-   */
   async function callGeminiApi(geminiKey, prompt, options) {
     const modelName = options.model && options.model.includes('gemini') ? options.model : 'gemini-1.5-flash';
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(geminiKey)}`;
@@ -107,9 +85,6 @@
     return parseAiMarkdownResponse(rawText);
   }
 
-  /**
-   * Call User Configured Private OpenAI-compatible Gateway
-   */
   async function callPrivateGateway(endpoint, apiKey, model, prompt, options) {
     let url = endpoint.endsWith('/') ? endpoint + 'chat/completions' : endpoint + '/chat/completions';
     if (!endpoint.includes('/v1')) {
@@ -144,9 +119,6 @@
     return parseAiMarkdownResponse(content);
   }
 
-  /**
-   * Call Public Free AI Endpoint
-   */
   async function callPublicFreeApi(prompt, options) {
     const encodedPrompt = encodeURIComponent(prompt);
     const url = `https://text.pollinations.ai/${encodedPrompt}?system=${encodeURIComponent(options.systemPrompt || 'You are MAD DEV AI Assistant.')}`;
@@ -164,13 +136,9 @@
     return parseAiMarkdownResponse(text);
   }
 
-  /**
-   * High-Intelligence Developer Engine Fallback
-   */
   function generateIntelligentFallback(prompt, model, options) {
     const p = prompt.toLowerCase();
 
-    // Code & DSA Queries
     if (p.includes('dsa') || p.includes('sliding window') || p.includes('array') || p.includes('two pointer') || p.includes('solve')) {
       return {
         role: 'ai',
@@ -182,7 +150,6 @@
       };
     }
 
-    // React / Frontend / System Design Queries
     if (p.includes('react') || p.includes('hook') || p.includes('state') || p.includes('api')) {
       return {
         role: 'ai',
@@ -224,7 +191,6 @@ export function useFetchData<T>(url: string) {
       };
     }
 
-    // Default General AI Answer
     return {
       role: 'ai',
       content: `### 🚀 MAD DEV Public Free AI Engine Response\n\nProcessed query: *"**${prompt.slice(0, 80)}${prompt.length > 80 ? '...' : ''}**"*\n\n### Architectural & Coding Insights:\n1. **Modularity & Scalability:** Keep functions single-responsibility and easy to test.\n2. **Error Boundaries:** Wrap async execution calls in resilient try-catch routines.\n3. **Performance Optimization:** Utilize spatial caching and memoized evaluation.\n\n*Powered by MAD DEV Free Public AI Gateway. You can also configure your custom Private API Key in Workspace Settings.*`,
@@ -232,9 +198,6 @@ export function useFetchData<T>(url: string) {
     };
   }
 
-  /**
-   * Helper to parse AI markdown and extract code blocks automatically
-   */
   function parseAiMarkdownResponse(rawText) {
     if (!rawText) return generateIntelligentFallback('general query', 'gpt-4o', {});
 

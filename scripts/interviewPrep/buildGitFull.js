@@ -1,4 +1,4 @@
-// scripts/interviewPrep/buildGitFull.js
+
 const fs = require('fs');
 const path = require('path');
 
@@ -8,7 +8,7 @@ function q(id, topic, difficulty, question, options, correctAnswer, explanation)
 }
 
 const gitQuestions = [
-  // 1. Git Architecture & Object Model
+
   q('git_arch_1', 'Git Architecture & Object Model', 'Easy',
     'What are the four fundamental object types stored inside the `.git/objects` directory?',
     ['File, Folder, Branch, Tag', 'Blob, Tree, Commit, and Annotated Tag', 'Head, Index, Remote, Config', 'Delta, Patch, Stash, Pack'], 1,
@@ -50,7 +50,6 @@ const gitQuestions = [
     ['It is an SQLite database storing JSON diffs', 'The Index is a binary file containing a sorted list of file paths, file permissions, timestamps, and corresponding blob SHA-1 hashes representing the proposed next commit state', 'It uploads files directly to GitHub cloud', 'It stores changes in RAM only'], 1,
     'The index is a binary cache mapping file paths to blob SHAs and stat cache info. When you `git add`, blobs are written to `.git/objects` and the index references them. `git commit` writes Tree objects directly from this pre-computed index.'),
 
-  // 2. Basic Commands
   q('git_cmd_1', 'Basic Commands', 'Easy',
     'Which command initializes a new empty Git repository in the current directory?',
     ['git start', 'git create', 'git init', 'git new'], 2,
@@ -92,7 +91,6 @@ const gitQuestions = [
     ['`git rm` deletes from index only; `--cached` deletes from disk', '`git rm` stages deletion AND deletes the physical file from the local filesystem; `git rm --cached` un-tracks the file from Git index while preserving the physical file safely on disk', '`git rm` cannot be undone', '`--cached` is only for web browsers'], 1,
     '`git rm --cached` is the standard command when a file was accidentally committed (like `.env` or credentials): it stops tracking the file in Git without deleting the file from your local hard drive.'),
 
-  // 3. Git Branching & Merging
   q('git_bm_1', 'Git Branching & Merging', 'Easy',
     'What physically is a "Branch" in Git?',
     ['A complete duplicate copy of the entire codebase in a separate folder', 'A lightweight, movable pointer (a 41-byte text file) containing the 40-character SHA-1 hash of a commit', 'A hardware thread in the CPU', 'An encrypted zip archive'], 1,
@@ -134,7 +132,6 @@ const gitQuestions = [
     ['A merge that fails 8 times', 'A merge strategy that merges more than two branches into a single commit simultaneously, used typically for bundling multiple verified feature branches into a release candidate', 'A GitHub Action with 8 parallel jobs', 'A merge between 8 different repositories'], 1,
     'An octopus merge merges 3 or more branches at once into a single commit with 3+ parents. It refuses to proceed if any merge conflicts exist, requiring clean independent branches.'),
 
-  // 4. Git Rebase vs Merge
   q('git_rb_1', 'Git Rebase vs Merge', 'Easy',
     'What does `git rebase main` do when executed while on a feature branch?',
     ['Deletes the feature branch and switches to main', 'Replays the feature branch commits on top of the tip of the main branch, creating a clean linear project history', 'Merges main with a merge commit', 'Pushes commits to origin/main'], 1,
@@ -176,7 +173,6 @@ const gitQuestions = [
     ['Copies files from featureA to featureB', 'Transplants commits on `featureB` that branched off `featureA` directly onto `master`, severing the dependency on `featureA`', 'Merges all three branches simultaneously', 'Renames featureA to master'], 1,
     '`git rebase --onto <new-base> <old-base> <branch>` extracts only the commits unique to `<branch>` since `<old-base>` and grafts them onto `<new-base>`, ideal for detaching nested feature branches.'),
 
-  // 5. Undoing Changes
   q('git_uc_1', 'Undoing Changes', 'Easy',
     'What does `git checkout -- <file>` (or `git restore <file>`) do to unstaged modifications in your working directory?',
     ['Stages the file for commit', 'Discards all unstaged changes in the file, reverting it to match the staging area/HEAD', 'Deletes the file from disk permanently', 'Pushes the file to GitHub'], 1,
@@ -218,7 +214,6 @@ const gitQuestions = [
     ['1 day', '90 days for reachable reflog entries (30 days for unreachable/dangling objects) before `git gc` prunes them permanently', '10 minutes', 'Infinite (never pruned)'], 1,
     'Git retains reflog entries for 90 days (`gc.reflogExpire`) and unreachable dangling commits for 30 days (`gc.reflogExpireUnreachable`), providing a safety window to recover lost commits.'),
 
-  // 6. Git Stash & Git Cherry-pick
   q('git_sp_1', 'Git Stash & Git Cherry-pick', 'Easy',
     'What does `git stash` do when you have uncommitted work in your working tree?',
     ['Deletes your uncommitted work permanently', 'Temporarily shelves (stashes) your modified tracked files and staged changes, giving you a clean working directory', 'Pushes changes to remote GitHub stash', 'Creates a new branch named stash'], 1,
@@ -260,7 +255,6 @@ const gitQuestions = [
     ['As a temporary text file in `/tmp`', 'As special commit objects with 2 (or 3) parents referenced by `.git/refs/stash`: Parent 1 is current commit, Parent 2 is staged index, Parent 3 is untracked files', 'In an SQLite database', 'In the Windows Registry'], 1,
     'A stash is actually a commit with multiple parents: one parent is HEAD, one parent represents the index state at stash time, and an optional third parent holds untracked files.'),
 
-  // 7. Remote Repositories & Collaboration
   q('git_rc_1', 'Remote Repositories & Collaboration', 'Easy',
     'What is the default conventional name assigned to the primary remote repository when cloning?',
     ['master', 'main', 'origin', 'upstream'], 2,
@@ -302,7 +296,6 @@ const gitQuestions = [
     ['A hard drive sold by GitHub', 'An extension that replaces large files (videos, models, datasets) in the Git repository with small pointer text files, storing the actual heavy binary payloads on external storage servers', 'A tool that zips Git repositories', 'A cloud backup service for RAM'], 1,
     'Because Git tracks all historical file revisions, committing 500 MB binaries bloats repository clone sizes forever. Git LFS stores small pointer text files in Git while moving heavy binary data to cloud blob storage.'),
 
-  // 8. Git Bisect & Debugging Tools
   q('git_bs_1', 'Git Bisect & Debugging Tools', 'Easy',
     'What is `git blame <file>` used for?',
     ['To insult the author of bad code', 'To examine file contents line-by-line, showing the commit hash, author, and date of the last modification for every single line in the file', 'To run automated tests', 'To list all syntax errors in a file'], 1,
@@ -344,7 +337,6 @@ const gitQuestions = [
     ['A tool that formats the hard disk', 'A diagnostic command that verifies the connectivity, cryptographic integrity, and consistency of objects in the Git database, identifying corrupted blobs and dangling commits', 'A tool that checks network latency', 'A unit test framework for Git'], 1,
     '`git fsck` validates the internal object database, checking SHA hashes for corruption, finding unreachable orphan objects, and ensuring the Merkle tree DAG is intact.'),
 
-  // 9. Git Hooks & Workflow Automation
   q('git_hk_1', 'Git Hooks & Workflow Automation', 'Easy',
     'Where are local Git hooks stored by default in a repository?',
     ['.git/hooks/', '.github/workflows/', 'src/hooks/', 'node_modules/git/'], 0,
@@ -386,7 +378,6 @@ const gitQuestions = [
     ['JSON object with pull request info', 'Lines containing: `<old-value> <new-value> <ref-name>` for each ref being updated, allowing rejection of non-fast-forward pushes or unapproved branches', 'The full commit patch file', 'A list of developer SSH keys'], 1,
     '`pre-receive` reads lines from stdin formatted as `<old-sha> <new-sha> <refname>`. If the script exits non-zero, all ref updates in the push are rejected in a single atomic transaction.'),
 
-  // 10. Branching Strategies
   q('git_bs_strat_1', 'Branching Strategies', 'Easy',
     'What are the two permanent, infinite-lifetime branches in the classic "Git Flow" branching model?',
     ['alpha and beta', 'main (or master) and develop', 'feature and bugfix', 'staging and production'], 1,

@@ -1,7 +1,3 @@
-/**
- * MAD DEV — Computer Networks Question Bank
- * 160 authentic placement/interview MCQs across 16 topics.
- */
 
 (function () {
   'use strict';

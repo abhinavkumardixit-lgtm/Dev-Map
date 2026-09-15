@@ -23,7 +23,8 @@
         }
       }
     };
-  </script>
+
+</script>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com" rel="preconnect"/>
   <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -49,22 +50,23 @@
       window.addEventListener('load', () => setTimeout(reveal, 100));
       setTimeout(reveal, 1200);
     })();
-  </script>
+
+</script>
 </head>
 <body class="bg-slate-50 text-slate-900 dark:bg-[#0b0f19] dark:text-slate-100 antialiased min-h-screen">
 
-  <!-- Mobile Overlay -->
+  
   <div class="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm hidden md:hidden" id="mobile-overlay"></div>
 
-  <!-- SideNavBar -->
+  
   <aside class="fixed left-0 top-0 h-full w-[260px] bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col py-6 z-50 transform md:translate-x-0" id="sidebar">
-    <!-- Sidebar Collapse Slider Button -->
+    
     <button aria-label="Toggle Sidebar" class="absolute -right-3.5 top-6 w-7 h-7 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-indigo-600 hover:border-indigo-600 transition-colors z-50 hidden md:flex shadow-sm" id="sidebar-toggle">
       <span class="material-symbols-outlined text-[18px]" id="sidebar-toggle-icon">chevron_left</span>
     </button>
 
     <div class="flex-1 flex flex-col overflow-hidden">
-      <!-- Brand Logo -->
+      
       <div class="px-6 mb-8 flex items-center gap-3 overflow-hidden cursor-pointer" onclick="window.location.href='../index.html'">
         <div class="min-w-[32px] w-8 h-8 rounded bg-brand-gradient flex items-center justify-center text-white shrink-0 shadow-sm">
           <span class="material-symbols-outlined text-xl" style='font-variation-settings: "FILL" 1;'>terminal</span>
@@ -75,7 +77,7 @@
         </div>
       </div>
 
-      <!-- Navigation Links -->
+      
       <nav class="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar px-3 space-y-1">
         <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200 border-l-[3px] border-transparent tooltip relative group" href="../index.html">
           <span class="material-symbols-outlined shrink-0">dashboard</span>
@@ -159,7 +161,7 @@
       </nav>
     </div>
 
-    <!-- Sidebar Bottom Card -->
+    
     <div class="mt-auto px-4 pt-4 sidebar-text">
       <div class="bg-brand-gradient rounded-xl p-4 text-white relative overflow-hidden shadow-sm">
         <p class="font-bold text-sm leading-tight mb-1">Placement Prep.</p>
@@ -168,11 +170,11 @@
     </div>
   </aside>
 
-  <!-- Main Content Area -->
+  
   <main class="md:ml-[260px] min-h-screen p-6 sm:p-8" id="main-content">
     <div class="ip-container">
       
-      <!-- Page Header Bar (Exact DSA Roadmap Pattern) -->
+      
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-200 dark:border-slate-800 no-print">
         <div class="flex items-center gap-3">
           <button class="mobile-nav-toggle md:hidden p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg" id="mobile-menu-trigger" aria-label="Open Sidebar">
@@ -185,7 +187,7 @@
         </div>
 
       </div>
-      <!-- 4 Top Metrics Cards (Matching DevPilot Design System) -->
+      
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div class="dev-card p-4 flex items-center gap-3.5">
           <div class="w-11 h-11 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 border border-indigo-100 dark:border-indigo-900/40">
@@ -228,10 +230,10 @@
         </div>
       </div>
 
-      <!-- Quick Resume Banner -->
+      
       <div id="ipResumeBanner" class="hidden"></div>
 
-      <!-- Mode Navigation Tabs (Matching .filter-tabs) -->
+      
       <div class="filter-tabs mb-6" id="ipNavTabs">
         <button class="filter-tab ip-mode-tab active" data-mode="categories">
           <span class="material-symbols-outlined text-[18px]">grid_view</span>
@@ -259,12 +261,12 @@
         </button>
       </div>
 
-      <!-- Dynamic Content Area (Injected via interviewPrep.js) -->
+      
       <div id="ipMainContent"></div>
     </div>
   </main>
 
-  <!-- Load all 18 Question Bank modules -->
+  
   <script src="../js/data/interviewPrep/aptitude.js"></script>
   <script src="../js/data/interviewPrep/english.js"></script>
   <script src="../js/data/interviewPrep/logicalReasoning.js"></script>
@@ -284,14 +286,14 @@
   <script src="../js/data/interviewPrep/cloudDevOps.js"></script>
   <script src="../js/data/interviewPrep/aiMl.js"></script>
 
-  <!-- Load Checklists & Central Registry -->
+  
   <script src="../js/data/interviewPrep/checklists.js"></script>
   <script src="../js/data/interviewPrep/index.js"></script>
 
-  <!-- Load Page Controller -->
+  
   <script src="../js/pages/interviewPrep.js"></script>
 
-  <!-- Core Application Controllers -->
+  
   <script src="../js/core/utils.js"></script>
   <script src="../js/data/timerData.js"></script>
   <script src="../js/core/globalTimer.js"></script>

@@ -1,14 +1,7 @@
-/**
- * MAD DEV - Code Snippet Vault Controller
- * Handles Multi-Category/Language Filtering, Multi-Field Search,
- * Reliable Copy, Favorites, Recently Viewed History & Deep Learning Modal.
- */
 
-// Fallback dataset if snippetsData.js is loaded asynchronously
 const fallbackSnippets = typeof SNIPPETS_DATA !== 'undefined' ? SNIPPETS_DATA : [];
 const fallbackCategories = typeof SNIPPET_CATEGORIES !== 'undefined' ? SNIPPET_CATEGORIES : [];
 
-// State Management
 let allSnippets = fallbackSnippets;
 let activeCategory = 'All';
 let activeLanguage = 'All';
@@ -17,9 +10,8 @@ let filterRecentOnly = false;
 let searchQuery = '';
 let currentModalSnippet = null;
 
-// Persistent User Storage
 let savedSnippetIds = new Set(Storage.get('saved_snippets', []));
-let recentSnippetIds = Storage.get('recent_snippets', []); // Array of IDs in MRU order
+let recentSnippetIds = Storage.get('recent_snippets', []);
 
 document.addEventListener('DOMContentLoaded', () => {
   initSnippetsData();
@@ -31,18 +23,12 @@ document.addEventListener('DOMContentLoaded', () => {
   renderSnippets();
 });
 
-/**
- * Initializes the snippets dataset and syncs with global data vault.
- */
 function initSnippetsData() {
   if (typeof SNIPPETS_DATA !== 'undefined' && Array.isArray(SNIPPETS_DATA)) {
     allSnippets = SNIPPETS_DATA;
   }
 }
 
-/**
- * Builds category tabs and category jump dropdown.
- */
 function initCategoryUI() {
   const tabsContainer = document.getElementById('snippet-category-tabs');
   const dropdown = document.getElementById('snippet-category-dropdown');
@@ -83,9 +69,6 @@ function initCategoryUI() {
   }
 }
 
-/**
- * Selects a category and synchronizes tabs and dropdown.
- */
 function selectCategory(catName) {
   activeCategory = catName;
 
@@ -107,9 +90,6 @@ function selectCategory(catName) {
   renderSnippets();
 }
 
-/**
- * Initializes language tabs, saved filter, and recent filter.
- */
 function initToolbarFilters() {
   const langTabs = document.querySelectorAll('.snippet-lang-tab');
   langTabs.forEach(tab => {
@@ -125,7 +105,7 @@ function initToolbarFilters() {
   if (savedBtn) {
     savedBtn.addEventListener('click', () => {
       filterSavedOnly = !filterSavedOnly;
-      if (filterSavedOnly) filterRecentOnly = false; // Mutually exclusive quick view
+      if (filterSavedOnly) filterRecentOnly = false;
       updateQuickFilterButtons();
       renderSnippets();
     });
@@ -173,9 +153,6 @@ function updateQuickFilterButtons() {
   }
 }
 
-/**
- * Clears all active filters and search queries.
- */
 window.clearAllFilters = function() {
   activeCategory = 'All';
   activeLanguage = 'All';
@@ -195,9 +172,6 @@ window.clearAllFilters = function() {
   renderSnippets();
 };
 
-/**
- * Initializes multi-field tokenized search.
- */
 function initSearch() {
   const searchInput = document.getElementById('snippets-search-input');
   if (searchInput) {
@@ -208,9 +182,6 @@ function initSearch() {
   }
 }
 
-/**
- * Filter by clicking a tag chip.
- */
 window.filterSnippetByTag = function(tag) {
   const searchInput = document.getElementById('snippets-search-input');
   if (searchInput) {
@@ -222,36 +193,29 @@ window.filterSnippetByTag = function(tag) {
   }
 };
 
-/**
- * Evaluates filter criteria and returns matching snippets.
- */
 function getFilteredSnippets() {
   const q = searchQuery.toLowerCase().trim();
   const searchTokens = q.split(/\s+/).filter(Boolean);
 
   let filtered = allSnippets.filter(s => {
-    // Saved filter
+
     if (filterSavedOnly && !savedSnippetIds.has(s.id)) {
       return false;
     }
 
-    // Recent filter
     if (filterRecentOnly && !recentSnippetIds.includes(s.id)) {
       return false;
     }
 
-    // Category filter
     if (activeCategory !== 'All' && s.category.toLowerCase() !== activeCategory.toLowerCase()) {
       return false;
     }
 
-    // Language filter
     if (activeLanguage !== 'All') {
       const matchLang = s.language.toLowerCase().includes(activeLanguage.toLowerCase());
       if (!matchLang) return false;
     }
 
-    // Multi-field search
     if (searchTokens.length > 0) {
       const tagsStr = Array.isArray(s.tags) ? s.tags.join(' ') : (s.tags || '');
       const searchable = `${s.title || ''} ${s.description || ''} ${s.code || ''} ${s.category || ''} ${s.subcategory || ''} ${tagsStr}`.toLowerCase();
@@ -263,7 +227,6 @@ function getFilteredSnippets() {
     return true;
   });
 
-  // If in Recent mode, sort by Most Recently Used order
   if (filterRecentOnly) {
     filtered.sort((a, b) => {
       return recentSnippetIds.indexOf(a.id) - recentSnippetIds.indexOf(b.id);
@@ -273,9 +236,6 @@ function getFilteredSnippets() {
   return filtered;
 }
 
-/**
- * Renders the snippet cards into the responsive grid.
- */
 function renderSnippets() {
   const container = document.getElementById('snippets-grid');
   const countDisplay = document.getElementById('snippet-results-count');
@@ -284,7 +244,6 @@ function renderSnippets() {
 
   const filtered = getFilteredSnippets();
 
-  // Update counter & clear button visibility
   if (countDisplay) {
     countDisplay.textContent = `Showing ${filtered.length} of ${allSnippets.length} snippets`;
   }
@@ -380,18 +339,12 @@ function renderSnippets() {
   }).join('');
 }
 
-/**
- * Returns clean CSS class for category badges.
- */
 function getCategoryBadgeClass(category) {
   if (!category) return 'badge-general';
   const clean = category.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   return `badge-${clean}`;
 }
 
-/**
- * Returns language dot class.
- */
 function getLangClass(lang) {
   if (!lang) return 'lang-js';
   const l = lang.toLowerCase();
@@ -404,9 +357,6 @@ function getLangClass(lang) {
   return 'lang-js';
 }
 
-/**
- * Copies raw code to clipboard and tracks in Recently Viewed.
- */
 window.copySnippet = function(id, btnElement) {
   const snippet = allSnippets.find(s => s.id === id);
   if (!snippet) return;
@@ -414,7 +364,6 @@ window.copySnippet = function(id, btnElement) {
   copyToClipboard(snippet.code, `Copied "${snippet.title}" code to clipboard!`);
   trackRecentSnippet(id);
 
-  // Button visual confirmation
   if (btnElement) {
     const textSpan = btnElement.querySelector('.copy-text');
     const iconSpan = btnElement.querySelector('.material-symbols-outlined');
@@ -432,9 +381,6 @@ window.copySnippet = function(id, btnElement) {
   }
 };
 
-/**
- * Toggles a snippet in the Saved / Favorites set.
- */
 window.toggleFavorite = function(id) {
   if (savedSnippetIds.has(id)) {
     savedSnippetIds.delete(id);
@@ -447,7 +393,6 @@ window.toggleFavorite = function(id) {
   Storage.set('saved_snippets', Array.from(savedSnippetIds));
   updateSavedCount();
 
-  // Sync modal button if open
   if (currentModalSnippet && currentModalSnippet.id === id) {
     const modalFavBtn = document.getElementById('modal-btn-favorite');
     if (modalFavBtn) {
@@ -465,9 +410,6 @@ function updateSavedCount() {
   }
 }
 
-/**
- * Tracks a snippet in the Recently Viewed history (MRU).
- */
 function trackRecentSnippet(id) {
   recentSnippetIds = recentSnippetIds.filter(x => x !== id);
   recentSnippetIds.unshift(id);
@@ -477,9 +419,6 @@ function trackRecentSnippet(id) {
   Storage.set('recent_snippets', recentSnippetIds);
 }
 
-/**
- * Initializes the Deep Learning Details Modal.
- */
 function initDetailsModal() {
   const modal = document.getElementById('snippet-details-modal');
   const closeBtn = document.getElementById('modal-btn-close');
@@ -519,9 +458,6 @@ function initDetailsModal() {
   }
 }
 
-/**
- * Opens details modal for a specific snippet.
- */
 window.openSnippetDetails = function(id) {
   const snippet = allSnippets.find(s => s.id === id);
   if (!snippet) return;
@@ -529,7 +465,6 @@ window.openSnippetDetails = function(id) {
   currentModalSnippet = snippet;
   trackRecentSnippet(id);
 
-  // Set fields
   document.getElementById('modal-title').textContent = snippet.title;
   document.getElementById('modal-description').textContent = snippet.description;
 
@@ -555,7 +490,6 @@ window.openSnippetDetails = function(id) {
   document.getElementById('modal-code-block').textContent = snippet.code;
   document.getElementById('modal-subcategory').textContent = snippet.subcategory || snippet.category;
 
-  // Complexity
   const timeEl = document.getElementById('modal-time-complexity');
   const spaceEl = document.getElementById('modal-space-complexity');
   if (timeEl && spaceEl) {
@@ -564,21 +498,17 @@ window.openSnippetDetails = function(id) {
     spaceEl.textContent = `Space: ${comp.space || 'O(1)'}`;
   }
 
-  // Explanation, use cases, common mistakes
   document.getElementById('modal-explanation').textContent = snippet.explanation || 'Detailed walkthrough and syntax reference.';
   document.getElementById('modal-use-cases').textContent = snippet.useCases || 'Standard algorithmic and production implementations.';
   document.getElementById('modal-common-mistakes').textContent = snippet.commonMistakes || 'Be mindful of edge cases and syntax bounds.';
 
-  // Favorite button state
   const favBtn = document.getElementById('modal-btn-favorite');
   if (favBtn) {
     favBtn.classList.toggle('active', savedSnippetIds.has(snippet.id));
   }
 
-  // Related Snippets recommendations
   renderRelatedSnippets(snippet);
 
-  // Open modal
   const modal = document.getElementById('snippet-details-modal');
   if (modal) modal.classList.add('open');
 };
@@ -589,9 +519,6 @@ function closeSnippetDetails() {
   currentModalSnippet = null;
 }
 
-/**
- * Renders related snippet recommendation cards inside the modal.
- */
 function renderRelatedSnippets(currentSnippet) {
   const container = document.getElementById('modal-related-snippets');
   if (!container) return;
@@ -616,9 +543,6 @@ function renderRelatedSnippets(currentSnippet) {
   `).join('');
 }
 
-/**
- * HTML Escaping utility.
- */
 function escapeHtml(str) {
   if (!str) return '';
   const div = document.createElement('div');

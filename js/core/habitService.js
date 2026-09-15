@@ -1,11 +1,3 @@
-/**
- * MAD DEV - Habit & Consistency Tracker Data Access Layer (HabitService)
- * 
- * Provides an authoritative, normalized, fully user-isolated service layer.
- * All operations are strictly bound to the authenticated user ID.
- * Supports both Supabase Cloud Database (PostgreSQL with RLS + Realtime)
- * and Isolated Local Database with instant cross-tab BroadcastChannel sync.
- */
 
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
@@ -23,7 +15,6 @@
   let broadcastChannel = null;
   let supabaseChannel = null;
 
-  // Initialize Cross-Tab Realtime Channel
   if (typeof window !== 'undefined' && typeof BroadcastChannel !== 'undefined') {
     try {
       broadcastChannel = new BroadcastChannel('devpilot_habits_realtime');
@@ -31,7 +22,7 @@
         const payload = event.data;
         if (!payload) return;
         const currentUser = AuthService ? AuthService.getCurrentUser() : null;
-        // User isolation check: ignore events for other users
+
         if (currentUser && payload.userId === currentUser.id) {
           notifyRealtimeSubscribers(payload.type, payload.data);
         }
@@ -39,7 +30,6 @@
     } catch (e) {}
   }
 
-  // Cross-tab storage event listener for legacy tab fallbacks
   if (typeof window !== 'undefined') {
     window.addEventListener('storage', (e) => {
       if (e.key && e.key.startsWith('devpilot_u_')) {
@@ -67,9 +57,6 @@
     });
   }
 
-  // --------------------------------------------------------------------------
-  // USER-ISOLATED STORAGE HELPERS
-  // --------------------------------------------------------------------------
   function userKey(resource) {
     return `devpilot_u_${getUserId()}_${resource}`;
   }
@@ -97,14 +84,12 @@
       timestamp: Date.now()
     };
 
-    // Broadcast across tabs
     if (broadcastChannel) {
       try {
         broadcastChannel.postMessage(payload);
       } catch (e) {}
     }
 
-    // Local in-memory notification
     notifyRealtimeSubscribers(type, data);
   }
 
@@ -118,17 +103,9 @@
     });
   }
 
-  // ==========================================================================
-  // 1. HABITS CRUD
-  // ==========================================================================
-
-  /**
-   * Fetches all habits for the authenticated user.
-   */
   async function getHabits(options = {}) {
     const userId = getUserId();
 
-    // Supabase check
     if (typeof window !== 'undefined' && window.supabase && window.supabase.from) {
       try {
         let query = window.supabase.from('habits').select('*').eq('user_id', userId);
@@ -139,7 +116,6 @@
       } catch (e) {}
     }
 
-    // Local isolated store
     const habits = readStore('habits', []);
     if (options.activeOnly) {
       return habits.filter(h => h.active !== false);
@@ -147,9 +123,6 @@
     return habits;
   }
 
-  /**
-   * Creates a new habit for the authenticated user.
-   */
   async function createHabit({ title, category = 'General', description = '', targetFrequency = 'daily', customDays = [1, 2, 3, 4, 5], reminderTime = '' }) {
     const userId = getUserId();
     const cleanTitle = (title || '').trim();
@@ -169,7 +142,6 @@
       updated_at: new Date().toISOString()
     };
 
-    // Supabase insert
     if (typeof window !== 'undefined' && window.supabase && window.supabase.from) {
       try {
         const { data, error } = await window.supabase.from('habits').insert(newHabit).select().single();
@@ -180,7 +152,6 @@
       } catch (e) {}
     }
 
-    // Local store
     const habits = readStore('habits', []);
     habits.unshift(newHabit);
     writeStore('habits', habits);
@@ -189,13 +160,9 @@
     return newHabit;
   }
 
-  /**
-   * Updates an existing habit owned by the authenticated user.
-   */
   async function updateHabit(id, updates = {}) {
     const userId = getUserId();
 
-    // Supabase update
     if (typeof window !== 'undefined' && window.supabase && window.supabase.from) {
       try {
         const { data, error } = await window.supabase
@@ -212,7 +179,6 @@
       } catch (e) {}
     }
 
-    // Local store
     const habits = readStore('habits', []);
     const idx = habits.findIndex(h => h.id === id && h.user_id === userId);
     if (idx === -1) throw new Error('Habit not found or not owned by user.');
@@ -228,44 +194,31 @@
     return habits[idx];
   }
 
-  /**
-   * Archives a habit (active = false).
-   */
   async function archiveHabit(id) {
     return updateHabit(id, { active: false });
   }
 
-  /**
-   * Reactivates an archived habit (active = true).
-   */
   async function reactivateHabit(id) {
     return updateHabit(id, { active: true });
   }
 
-  /**
-   * Permanently deletes a habit and cascades to completions and linked weekly goals.
-   */
   async function deleteHabit(id) {
     const userId = getUserId();
 
-    // Supabase delete
     if (typeof window !== 'undefined' && window.supabase && window.supabase.from) {
       try {
         await window.supabase.from('habits').delete().eq('id', id).eq('user_id', userId);
       } catch (e) {}
     }
 
-    // Local store delete
     let habits = readStore('habits', []);
     habits = habits.filter(h => !(h.id === id && h.user_id === userId));
     writeStore('habits', habits);
 
-    // Cascade delete completions
     let completions = readStore('completions', []);
     completions = completions.filter(c => !(c.habit_id === id && c.user_id === userId));
     writeStore('completions', completions);
 
-    // Unlink weekly goals
     let weeklyGoals = readStore('weekly_goals', []);
     weeklyGoals = weeklyGoals.map(wg => {
       if (wg.habit_id === id) return { ...wg, habit_id: null };
@@ -277,17 +230,9 @@
     return true;
   }
 
-  // ==========================================================================
-  // 2. HABIT COMPLETIONS (Normalized & Idempotent)
-  // ==========================================================================
-
-  /**
-   * Fetches completion records for the authenticated user within an optional date range.
-   */
   async function getCompletions(startDate = null, endDate = null) {
     const userId = getUserId();
 
-    // Supabase check
     if (typeof window !== 'undefined' && window.supabase && window.supabase.from) {
       try {
         let query = window.supabase.from('habit_completions').select('*').eq('user_id', userId);
@@ -298,7 +243,6 @@
       } catch (e) {}
     }
 
-    // Local store
     let completions = readStore('completions', []);
     if (startDate || endDate) {
       completions = completions.filter(c => {
@@ -310,16 +254,10 @@
     return completions;
   }
 
-  /**
-   * Idempotent toggle of habit completion for a specific calendar date.
-   * If record exists -> deletes it (uncheck).
-   * If record does not exist -> creates it (complete).
-   */
   async function toggleCompletion(habitId, dateStr) {
     const userId = getUserId();
     if (!dateStr) dateStr = HabitsData.getTodayStr();
 
-    // Supabase toggle
     if (typeof window !== 'undefined' && window.supabase && window.supabase.from) {
       try {
         const { data: existing } = await window.supabase
@@ -349,7 +287,6 @@
       } catch (e) {}
     }
 
-    // Local store toggle (with atomic duplicate check)
     let completions = readStore('completions', []);
     const existingIdx = completions.findIndex(
       c => c.user_id === userId && c.habit_id === habitId && c.completion_date === dateStr
@@ -357,11 +294,11 @@
 
     let isNowCompleted = false;
     if (existingIdx !== -1) {
-      // Remove (uncheck)
+
       completions.splice(existingIdx, 1);
       isNowCompleted = false;
     } else {
-      // Insert (complete)
+
       completions.push({
         id: generateUuid(),
         user_id: userId,
@@ -377,13 +314,6 @@
     return { completed: isNowCompleted, habitId, dateStr };
   }
 
-  // ==========================================================================
-  // 3. DAILY GOALS (Separate Entity & Numeric Progress)
-  // ==========================================================================
-
-  /**
-   * Fetches daily goals for the authenticated user on a specific date.
-   */
   async function getDailyGoals(dateStr = null) {
     const userId = getUserId();
     const targetDate = dateStr || HabitsData.getTodayStr();
@@ -404,9 +334,6 @@
     return goals.filter(g => g.user_id === userId && g.date === targetDate);
   }
 
-  /**
-   * Creates a new daily goal.
-   */
   async function createDailyGoal({ title, target = 1, category = 'General', date = null }) {
     const userId = getUserId();
     const targetDate = date || HabitsData.getTodayStr();
@@ -444,9 +371,6 @@
     return newGoal;
   }
 
-  /**
-   * Adjusts numeric progress for a daily goal (+1 or -1 or custom delta).
-   */
   async function adjustDailyGoalProgress(id, delta = 1) {
     const userId = getUserId();
 
@@ -477,9 +401,6 @@
     return goals[idx];
   }
 
-  /**
-   * Toggles completion status of a daily goal directly.
-   */
   async function toggleDailyGoalComplete(id) {
     const userId = getUserId();
 
@@ -510,9 +431,6 @@
     return goals[idx];
   }
 
-  /**
-   * Deletes a daily goal.
-   */
   async function deleteDailyGoal(id) {
     const userId = getUserId();
 
@@ -530,13 +448,6 @@
     return true;
   }
 
-  // ==========================================================================
-  // 4. WEEKLY GOALS (Calendar Week Scoped)
-  // ==========================================================================
-
-  /**
-   * Fetches weekly goals for the authenticated user for a specific calendar week key (e.g. '2026-W38').
-   */
   async function getWeeklyGoals(weekKey = null) {
     const userId = getUserId();
     const currentWeekKey = weekKey || HabitsData.getWeekId(HabitsData.getTodayStr());
@@ -557,9 +468,6 @@
     return goals.filter(g => g.user_id === userId && g.week_key === currentWeekKey);
   }
 
-  /**
-   * Creates a new weekly goal.
-   */
   async function createWeeklyGoal({ title, habitId = null, target = 5, unit = 'completions', weekKey = null, category = 'General' }) {
     const userId = getUserId();
     const currentWeekKey = weekKey || HabitsData.getWeekId(HabitsData.getTodayStr());
@@ -598,9 +506,6 @@
     return newGoal;
   }
 
-  /**
-   * Deletes a weekly goal.
-   */
   async function deleteWeeklyGoal(id) {
     const userId = getUserId();
 
@@ -617,10 +522,6 @@
     emitRealtimeChange('WEEKLY_GOAL_CHANGED', { id, deleted: true });
     return true;
   }
-
-  // ==========================================================================
-  // 5. REALTIME SUBSCRIPTION API
-  // ==========================================================================
 
   function onRealtimeChange(callback) {
     if (typeof callback === 'function') {

@@ -1,7 +1,3 @@
-/**
- * MAD DEV — Career Roadmap: Data Scientist
- * Complete 5-level dependency path, practical skill tasks, progressive projects, and job-ready checklist.
- */
 
 const dataScientistRoadmap = {
   roleId: 'data-scientist',

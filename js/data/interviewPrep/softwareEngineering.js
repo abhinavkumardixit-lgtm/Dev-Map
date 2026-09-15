@@ -1,5 +1,3 @@
-// js/data/interviewPrep/softwareEngineering.js
-// Complete Question Bank for Software Engineering (14 topics * 10 = 140 MCQs)
 
 window.interviewPrepSE = {
   id: 'software_engineering',
@@ -1986,7 +1984,6 @@ window.interviewPrepSE = {
   }
 ]
 };
-
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = window.interviewPrepSE;

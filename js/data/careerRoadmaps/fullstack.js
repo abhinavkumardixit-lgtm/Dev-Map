@@ -1,7 +1,3 @@
-/**
- * MAD DEV — Career Roadmap: Full Stack Developer
- * Complete 5-level dependency path, practical skill tasks, progressive projects, and job-ready checklist.
- */
 
 const fullstackRoadmap = {
   roleId: 'full-stack-developer',

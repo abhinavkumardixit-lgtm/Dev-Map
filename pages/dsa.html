@@ -23,7 +23,8 @@
         }
       }
     };
-  </script>
+
+</script>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com" rel="preconnect"/>
   <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -50,20 +51,21 @@
       window.addEventListener('load', () => setTimeout(reveal, 100));
       setTimeout(reveal, 1200);
     })();
-  </script>
+
+</script>
 </head>
 <body class="bg-slate-50 text-slate-900 antialiased min-h-screen">
 
-  <!-- Mobile Overlay -->
+  
   <div class="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm hidden md:hidden" id="mobile-overlay"></div>
 
-  <!-- SideNavBar -->
+  
   <aside class="fixed left-0 top-0 h-full w-[260px] bg-white border-r border-slate-200 flex flex-col py-6 z-50 transform md:translate-x-0" id="sidebar">
     <button aria-label="Toggle Sidebar" class="absolute -right-3.5 top-6 w-7 h-7 bg-white border border-slate-200 rounded-full flex items-center justify-center text-slate-600 hover:text-indigo-600 hover:border-indigo-600 transition-colors z-50 shadow-sm" id="sidebar-toggle">
       <span class="material-symbols-outlined text-[18px]" id="sidebar-toggle-icon">chevron_left</span>
     </button>
     <div class="flex-1 flex flex-col overflow-hidden">
-      <!-- Brand Logo -->
+      
       <div class="px-6 mb-8 flex items-center gap-3 overflow-hidden">
         <div class="min-w-[32px] w-8 h-8 rounded bg-brand-gradient flex items-center justify-center text-white shrink-0 shadow-sm">
           <span class="material-symbols-outlined text-xl" style='font-variation-settings: "FILL" 1;'>terminal</span>
@@ -73,7 +75,7 @@
           <p class="text-xs font-semibold text-slate-400 uppercase mt-0.5">Workspace</p>
         </div>
       </div>
-      <!-- Navigation Links -->
+      
       <nav class="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar px-3 space-y-1">
         <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors duration-200 border-l-[3px] border-transparent tooltip relative group" href="../index.html">
           <span class="material-symbols-outlined shrink-0">dashboard</span>
@@ -165,11 +167,11 @@
     </div>
   </aside>
 
-  <!-- Main Content Area -->
+  
   <main class="md:ml-[260px] min-h-screen p-6 sm:p-8" id="main-content">
     <div class="dsa-page-container">
 
-      <!-- Page Header Bar -->
+      
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-200">
         <div class="flex items-center gap-3">
           <button class="mobile-nav-toggle md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg" id="mobile-menu-trigger" aria-label="Open Sidebar">
@@ -181,7 +183,7 @@
           </div>
         </div>
 
-        <!-- View Switcher Pills -->
+        
         <div class="flex items-center gap-3">
           <div class="dsa-view-switcher" role="tablist" aria-label="DSA Views">
             <button class="dsa-tab-pill active" id="tab-btn-roadmap" role="tab" aria-selected="true">
@@ -197,9 +199,9 @@
         </div>
       </div>
 
-      <!-- Roadmap View Container -->
+      
       <div id="dsa-roadmap-view">
-      <!-- Hero Progress Dashboard -->
+      
       <section class="dsa-hero-card" aria-label="DSA Progress Summary">
         <div class="dsa-hero-header">
           <div class="dsa-hero-title-group">
@@ -217,12 +219,12 @@
           </div>
         </div>
 
-        <!-- Master Progress Track -->
+        
         <div class="dsa-progress-track">
           <div class="dsa-progress-fill" id="dsa-progress-fill" style="width: 0%;"></div>
         </div>
 
-        <!-- Difficulty Stats Grid -->
+        
         <div class="dsa-diff-grid">
           <div class="dsa-diff-card diff-easy">
             <div class="dsa-diff-top">
@@ -255,7 +257,7 @@
           </div>
         </div>
 
-        <!-- Honesty Evaluation Breakdown Chips -->
+        
         <div class="flex flex-wrap items-center gap-2 mt-4 pt-3.5 border-t border-slate-100 dark:border-slate-800">
           <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mr-1">Solve Quality:</span>
           <span class="pl-breakdown-chip bg-emerald-500/10 text-emerald-600 border border-emerald-500/20" id="dsa-stat-self">
@@ -277,10 +279,10 @@
         </div>
       </section>
 
-      <!-- Controls Toolbar: Smart Pro Search & Filters -->
+      
       <section class="dsa-toolbar" aria-label="Roadmap Filters and Controls">
         <div class="dsa-toolbar-top">
-          <!-- Smart Search Box -->
+          
           <div class="dsa-search-wrap" id="dsa-search-wrap">
             <span class="material-symbols-outlined dsa-search-icon">search</span>
             <input type="text" id="dsa-search-input" class="dsa-search-input" placeholder="Search by title, #number, pattern, or tag... (e.g. 15, Sliding Window, DP)" autocomplete="off" spellcheck="false"/>
@@ -292,7 +294,7 @@
             </div>
           </div>
 
-          <!-- Difficulty segmented filter -->
+          
           <div class="dsa-segmented-group" role="group" aria-label="Filter by difficulty">
             <button class="dsa-segment-btn active" data-filter-diff="all">All</button>
             <button class="dsa-segment-btn" data-filter-diff="easy">Easy</button>
@@ -300,7 +302,7 @@
             <button class="dsa-segment-btn" data-filter-diff="hard">Hard</button>
           </div>
 
-          <!-- Status segmented filter -->
+          
           <div class="dsa-segmented-group ml-1 sm:ml-2" role="group" aria-label="Filter by status">
             <button class="dsa-segment-btn active" data-filter-status="all">All</button>
             <button class="dsa-segment-btn" data-filter-status="solved">Solved</button>
@@ -308,7 +310,7 @@
             <button class="dsa-segment-btn" data-filter-status="review">Review</button>
           </div>
 
-          <!-- Reset Button in the last -->
+          
           <div class="dsa-toolbar-actions ml-auto">
             <button id="dsa-btn-reset" class="dsa-reset-btn" aria-label="Reset Progress" title="Reset all solved progress">
               <span class="material-symbols-outlined text-[16px]">restart_alt</span>
@@ -317,7 +319,7 @@
           </div>
         </div>
 
-        <!-- Quick Suggestions & Live Match Counter Bar -->
+        
         <div class="dsa-toolbar-bottom">
           <div class="dsa-quick-chips" aria-label="Quick search suggestions">
             <span class="dsa-quick-chips-label">
@@ -339,10 +341,10 @@
         </div>
       </section>
 
-      <!-- Main Workspace: Sticky Index Sidebar + Questions Container -->
+      
       <div class="dsa-workspace">
 
-        <!-- Pattern Navigation Sidebar -->
+        
         <aside class="dsa-nav-sidebar" aria-label="Pattern Roadmap Index">
           <div class="dsa-nav-sidebar-header">
             <h2 class="dsa-nav-sidebar-title">
@@ -356,7 +358,7 @@
               <span class="material-symbols-outlined">chevron_left</span>
             </button>
             <div class="dsa-nav-list custom-scrollbar" id="dsa-sidebar-nav-list">
-              <!-- Rendered by js/pages/dsa.js -->
+              
             </div>
             <button type="button" class="dsa-nav-arrow dsa-nav-arrow-next" id="dsa-nav-next" aria-label="Next categories" title="Scroll right">
               <span class="material-symbols-outlined">chevron_right</span>
@@ -364,13 +366,13 @@
           </div>
         </aside>
 
-        <!-- Questions Feed -->
+        
         <section class="dsa-feed-container" aria-label="Questions Feed">
           <div id="dsa-questions-container">
-            <!-- Rendered by js/pages/dsa.js -->
+            
           </div>
 
-          <!-- Empty State -->
+          
           <div id="dsa-empty-state" class="dsa-empty-state hidden">
             <div class="dsa-empty-icon">
               <span class="material-symbols-outlined">filter_list_off</span>
@@ -385,14 +387,14 @@
         </section>
 
       </div>
-      <!-- /Roadmap View Container -->
+      
       </div>
 
-      <!-- ================================================== -->
-      <!-- Pattern Learning View Container                   -->
-      <!-- ================================================== -->
+      
+      
+      
       <div id="dsa-pattern-learning-view" class="hidden">
-        <!-- Pattern Learning Header & Subtitle -->
+        
         <div class="pl-hero-intro mb-6">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
@@ -425,7 +427,7 @@
           </div>
         </div>
 
-        <!-- 4 Summary Metrics Cards -->
+        
         <div class="pl-stats-grid mb-6">
           <div class="pl-stat-card">
             <div class="pl-stat-icon-wrap bg-indigo-50 text-indigo-600">
@@ -468,7 +470,7 @@
           </div>
         </div>
 
-        <!-- Weak Patterns Notice Banner -->
+        
         <div class="pl-weak-section hidden mb-6" id="pl-weak-section">
           <div class="flex items-center gap-2 mb-2">
             <span class="material-symbols-outlined text-amber-500 text-[18px]">warning</span>
@@ -478,14 +480,14 @@
           <div class="flex items-center gap-2 flex-wrap" id="pl-weak-chips"></div>
         </div>
 
-        <!-- ================================================== -->
-        <!-- Pattern Catalog Section                            -->
-        <!-- ================================================== -->
+        
+        
+        
         <section class="pl-catalog-section" id="pl-catalog-section">
-          <!-- Controls Toolbar: Smart Pro Search, Filters & Quick Suggestions (Exact Image 2 Style) -->
+          
           <div class="dsa-toolbar mb-6" aria-label="Pattern Recognition Filters and Controls">
             <div class="dsa-toolbar-top">
-              <!-- Smart Search Box -->
+              
               <div class="dsa-search-wrap" id="pl-search-wrap">
                 <span class="material-symbols-outlined dsa-search-icon">search</span>
                 <input type="text" id="pl-catalog-search" class="dsa-search-input" placeholder="Search patterns by name, keyword, or signal... (e.g. Subarray, Top K, Palindrome)" autocomplete="off" spellcheck="false"/>
@@ -496,7 +498,7 @@
                 </div>
               </div>
 
-              <!-- Mastery Segmented Filter: All, Learned, Practiced, Mastered, Weak -->
+              
               <div class="dsa-segmented-group" role="group" aria-label="Filter by pattern status">
                 <button class="dsa-segment-btn active" data-pl-mastery="all">All</button>
                 <button class="dsa-segment-btn" data-pl-mastery="learned">Learned</button>
@@ -505,7 +507,7 @@
                 <button class="dsa-segment-btn" data-pl-mastery="weak">Weak</button>
               </div>
 
-              <!-- Reset Button in the last -->
+              
               <div class="dsa-toolbar-actions ml-auto">
                 <button id="pl-btn-reset" class="dsa-reset-btn" aria-label="Reset Pattern Learning Progress" title="Reset all pattern learning progress">
                   <span class="material-symbols-outlined text-[16px]">restart_alt</span>
@@ -514,7 +516,7 @@
               </div>
             </div>
 
-            <!-- Quick Suggestions & Live Match Counter Bar -->
+            
             <div class="dsa-toolbar-bottom">
               <div class="dsa-quick-chips" aria-label="Quick pattern suggestions" id="pl-quick-chips">
                 <span class="dsa-quick-chips-label">
@@ -535,18 +537,18 @@
               </div>
             </div>
 
-            <!-- Category Chips Track (for full 16 categories) -->
+            
             <div class="pl-category-chips-track custom-scrollbar mt-3 pt-3 border-t border-slate-100" id="pl-category-chips">
-              <!-- Rendered dynamically -->
+              
             </div>
           </div>
 
-          <!-- Pattern Cards Grid -->
+          
           <div class="pl-pattern-cards-grid mt-6" id="pl-pattern-cards-grid">
-            <!-- Rendered dynamically by dsaPatterns.js -->
+            
           </div>
 
-          <!-- Empty State -->
+          
           <div id="pl-catalog-empty" class="dsa-empty-state hidden mt-8">
             <div class="dsa-empty-icon">
               <span class="material-symbols-outlined">search_off</span>
@@ -556,11 +558,11 @@
           </div>
         </section>
 
-        <!-- ================================================== -->
-        <!-- Dedicated Pattern Study View (12-Point Curriculum) -->
-        <!-- ================================================== -->
+        
+        
+        
         <section class="pl-study-view-section hidden" id="pl-study-view-section">
-          <!-- Back button -->
+          
           <div class="mb-4">
             <button class="pl-btn-back" id="pl-btn-back-catalog">
               <span class="material-symbols-outlined text-[18px]">arrow_back</span>
@@ -568,22 +570,22 @@
             </button>
           </div>
 
-          <!-- Container rendered dynamically by dsaPatterns.js -->
+          
           <div id="pl-study-container"></div>
         </section>
       </div>
-      <!-- /dsa-pattern-learning-view -->
+      
 
-      <!-- Dedicated Question Explanation View Container (15-Point Deep Dive) -->
+      
       <div id="dsa-problem-detail-view" class="hidden">
-        <!-- Rendered dynamically by dsaProblem.js -->
+        
       </div>
 
     </div>
   </main>
 
 
-  <!-- Reset Confirmation Modal -->
+  
   <div class="modal-backdrop hidden" id="dsa-reset-modal" role="dialog" aria-modal="true" aria-labelledby="reset-modal-title">
     <div class="modal-card pl-modal-card max-w-md p-6 text-center">
       <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center border border-rose-200 shadow-sm">
@@ -605,7 +607,7 @@
     </div>
   </div>
 
-  <!-- Pattern Learning Reset Confirmation Modal -->
+  
   <div class="modal-backdrop hidden" id="pl-reset-modal" role="dialog" aria-modal="true" aria-labelledby="pl-reset-modal-title">
     <div class="modal-card pl-modal-card max-w-md p-6 text-center">
       <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center border border-rose-200 shadow-sm">
@@ -627,7 +629,7 @@
     </div>
   </div>
 
-  <!-- Question Solve Evaluation Modal (Honesty Check: 100% Self / 30% AI Help / 50% AI Help / Copy-Paste) -->
+  
   <div class="modal-backdrop hidden" id="pl-solve-modal" role="dialog" aria-modal="true" aria-labelledby="pl-solve-modal-title">
     <div class="modal-card pl-modal-card max-w-md p-6">
       <div class="flex items-start justify-between mb-3">
@@ -644,7 +646,7 @@
       </p>
 
       <div class="space-y-2.5 mb-5" id="pl-solve-modal-options">
-        <!-- Option 1: 100% Self / Full Tumne Kiya -->
+        
         <button class="pl-solve-opt-btn" data-solve-type="self">
           <div class="pl-solve-opt-icon pl-icon-self">
             <span class="material-symbols-outlined text-[18px]">verified</span>
@@ -658,7 +660,7 @@
           </div>
         </button>
 
-        <!-- Option 2: ~30% AI / Hints Help -->
+        
         <button class="pl-solve-opt-btn" data-solve-type="help30">
           <div class="pl-solve-opt-icon pl-icon-help30">
             <span class="material-symbols-outlined text-[18px]">psychology</span>
@@ -672,7 +674,7 @@
           </div>
         </button>
 
-        <!-- Option 3: ~50% AI / Editorial Help -->
+        
         <button class="pl-solve-opt-btn" data-solve-type="help50">
           <div class="pl-solve-opt-icon pl-icon-help50">
             <span class="material-symbols-outlined text-[18px]">smart_toy</span>
@@ -686,7 +688,7 @@
           </div>
         </button>
 
-        <!-- Option 4: Copy / Paste / Direct Solution (Cross ✗) -->
+        
         <button class="pl-solve-opt-btn" data-solve-type="cross">
           <div class="pl-solve-opt-icon pl-icon-cross">
             <span class="material-symbols-outlined text-[18px]">content_paste_off</span>
@@ -713,7 +715,7 @@
     </div>
   </div>
 
-  <!-- Locked Question Sequence Alert Modal -->
+  
   <div class="modal-backdrop hidden" id="pl-locked-modal" role="dialog" aria-modal="true" aria-labelledby="pl-locked-modal-title">
     <div class="modal-card pl-modal-card max-w-md p-6 text-center">
       <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-200 shadow-sm">
@@ -736,7 +738,7 @@
     </div>
   </div>
 
-  <!-- Excessive Assistance Alert Modal (>= 2 Non-100% Solves) -->
+  
   <div class="modal-backdrop hidden" id="pl-excessive-help-modal" role="dialog" aria-modal="true" aria-labelledby="pl-excessive-help-title">
     <div class="modal-card pl-modal-card max-w-md p-6 text-center">
       <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-200 shadow-sm animate-pulse">
@@ -766,19 +768,19 @@
     </div>
   </div>
 
-  <!-- Training Arena Modal -->
+  
   <div class="modal-backdrop hidden" id="pl-arena-modal" role="dialog" aria-modal="true" aria-labelledby="arena-modal-title">
     <div class="modal-card max-w-2xl p-6 relative">
       <button class="absolute top-4 right-4 text-slate-400 hover:text-slate-600" id="pl-arena-close" aria-label="Close Arena">
         <span class="material-symbols-outlined">close</span>
       </button>
       <div id="pl-arena-content">
-        <!-- Rendered by dsaPatterns.js -->
+        
       </div>
     </div>
   </div>
 
-  <!-- Floating Jump-to-Section Up Button -->
+  
   <button id="dsa-scroll-to-section-btn" class="dsa-scroll-up-btn" aria-label="Jump to Category Options" title="Jump to Category Options">
     <span class="material-symbols-outlined">arrow_upward</span>
   </button>

@@ -1,8 +1,3 @@
-/**
- * MAD DEV — HR & Behavioral Interview Module
- * 10 Core Placement Interview Frameworks (STAR method, evaluation criteria, traps to avoid, answers)
- * + 10 Situational Judgment Placement MCQs.
- */
 
 (function () {
   'use strict';

@@ -1,8 +1,4 @@
-/* ==========================================================================
-   DevPilot-AI - Code Snippet Vault CSS
-   ========================================================================== */
 
-/* Filter Controls & Navigation Bar */
 .snippet-toolbar-wrapper {
   display: flex;
   flex-direction: column;
@@ -105,7 +101,6 @@
   text-decoration: underline;
 }
 
-/* Snippet Cards */
 .snippet-card {
   display: flex;
   flex-direction: column;
@@ -136,7 +131,6 @@
   letter-spacing: 0.025em;
 }
 
-/* Category Colors */
 .badge-dsa { background: #fee2e2; color: #dc2626; }
 .badge-web-development { background: #e0e7ff; color: #4338ca; }
 .badge-backend { background: #d1fae5; color: #059669; }
@@ -147,7 +141,6 @@
 .badge-htmlcss, .badge-html-css { background: #fdf4ff; color: #c026d3; }
 .badge-general { background: #f1f5f9; color: #475569; }
 
-/* Favorite Star Button */
 .btn-favorite-star {
   background: none;
   border: none;
@@ -174,7 +167,6 @@
   font-variation-settings: 'FILL' 1;
 }
 
-/* Code Preview Block */
 .snippet-code-preview {
   background: #0f172a;
   border: 1px solid #1e293b;
@@ -214,7 +206,6 @@
   border-radius: 4px;
 }
 
-/* Card Actions Footer */
 .snippet-card-footer {
   display: flex;
   align-items: center;
@@ -269,7 +260,6 @@
   text-decoration: underline;
 }
 
-/* Language Dots */
 .repo-lang-dot {
   width: 8px;
   height: 8px;
@@ -284,7 +274,6 @@
 .lang-docker { background-color: #384d54; }
 .lang-bash { background-color: #89e051; }
 
-/* Details Modal */
 .snippet-modal-backdrop {
   position: fixed;
   inset: 0;

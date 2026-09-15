@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+
 """
 DevPilot-AI — Authentic LeetCode Problem Catalog Part 3
 150+ Additional Authentic LeetCode problems to guarantee 1000+ total problems.
@@ -145,7 +145,7 @@ def get_part3_questions():
         (1450, "Number of Students Doing Homework at a Given Time", "Easy", "array", "Array", "array-two-pointers", "Two Pointers", "Interval Check", ["queryTime between startTime[i] and endTime[i]", "linear scan checking start <= time <= end", "count active students"]),
         (1460, "Make Two Arrays Equal by Reversing Subarrays", "Easy", "hash-map", "Hash Map", "hashmap-frequency", "Frequency Based", "Array Multiset", ["any permutation can be reached by reversing subarrays of length 2", "verify target and arr have identical element frequencies", "frequency map"]),
         (1491, "Average Salary Excluding the Minimum and Maximum Salary", "Easy", "array", "Array", "array-two-pointers", "Two Pointers", "Sum Exclude", ["average salary excluding min and max", "find sum, min, and max in single pass", "(sum - min - max) / (n - 2)"]),
-    
+
         (162, 'Find Peak Element', 'Medium', 'array', 'Array', 'array-binary-search', 'Binary Search', 'Peak Finding', ['element strictly greater than neighbors', 'binary search on slope condition nums[mid] > nums[mid+1]', 'O(log n) peak finding']),
         (187, 'Repeated DNA Sequences', 'Medium', 'hash-map', 'Hash Map', 'hashmap-lookup', 'Lookup Based', 'Substrings of Length 10', ['10-letter-long sequences that occur more than once', 'hash set of seen substrings or rolling hash bitmask', 'track duplicates']),
         (223, 'Rectangle Area', 'Medium', 'array', 'Array', 'array-prefix-based', 'Prefix Based', 'Area Overlap', ['total area covered by two rectilinear rectangles', 'area(A) + area(B) - overlap(A, B)', 'compute overlap width and height']),

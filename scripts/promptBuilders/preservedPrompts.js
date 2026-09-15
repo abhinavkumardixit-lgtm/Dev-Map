@@ -1,6 +1,4 @@
-/**
- * Preserved original prompts (p1 to p6) enriched with full schema
- */
+
 module.exports = [
   {
     id: 'p1',

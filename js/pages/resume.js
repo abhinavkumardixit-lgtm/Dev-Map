@@ -1,12 +1,4 @@
-/**
- * MAD DEV — Resume Workspace Module
- * Handles: Hub, Resume Builder (9 real professional formats, live A4 preview, dynamic sections),
- *          Resume Analyzer (ATS checks, job match, GitHub correlation, AI recs)
- */
 
-/* ============================================================
-   DEFAULT STATE (FICTIONAL DEMO / SEED DATA)
-   ============================================================ */
 const defaultResumeState = {
   personal: {
     name: 'Aditya Sharma',
@@ -105,9 +97,6 @@ const defaultResumeState = {
   ]
 };
 
-/* ============================================================
-   REAL PROFESSIONAL TEMPLATE DEFINITIONS (9 REAL FORMATS)
-   ============================================================ */
 const TEMPLATES = [
   {
     id: 0,
@@ -192,19 +181,16 @@ const TEMPLATES = [
   }
 ];
 
-/* ============================================================
-   STATE
-   ============================================================ */
 let currentResume   = Storage.get('resume_data', defaultResumeState);
-// Sanitize any previously cached default seed data so placeholder is strictly used
+
 if (currentResume && currentResume.personal && currentResume.personal.name === 'Aditya Sharma' && currentResume.personal.email === '2k25aiml2513475@gmail.com') {
   if (currentResume.personal.phone !== '+91 XXX XXX XXXX') {
     currentResume.personal.phone = '+91 XXX XXX XXXX';
   }
 }
 let activeTemplate  = getInitialTemplate();
-let currentView     = 'hub';    // 'hub' | 'builder' | 'analyzer'
-let analyzerData    = null;     // holds analysis results
+let currentView     = 'hub';
+let analyzerData    = null;
 let undoStack       = [];
 let redoStack       = [];
 const MAX_UNDO      = 30;
@@ -218,12 +204,9 @@ function getInitialTemplate() {
     const idx = TEMPLATES.findIndex(t => t.key === saved || t.name.toLowerCase() === saved.toLowerCase());
     if (idx !== -1) return idx;
   }
-  return 0; // Default to Classic ATS
+  return 0;
 }
 
-/* ============================================================
-   INIT
-   ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {
   currentResume = deepMerge(defaultResumeState, currentResume);
 
@@ -240,29 +223,23 @@ document.addEventListener('DOMContentLoaded', () => {
   updateHubStatTemplate();
 });
 
-/* ============================================================
-   VIEW NAVIGATION
-   ============================================================ */
 function initViewNavigation() {
-  // Hub → Builder
+
   const hubBuilder = document.getElementById('hub-go-builder');
   if (hubBuilder) {
     hubBuilder.addEventListener('click', () => switchView('builder'));
     hubBuilder.addEventListener('keydown', e => e.key === 'Enter' && switchView('builder'));
   }
 
-  // Hub → Analyzer
   const hubAnalyzer = document.getElementById('hub-go-analyzer');
   if (hubAnalyzer) {
     hubAnalyzer.addEventListener('click', () => switchView('analyzer'));
     hubAnalyzer.addEventListener('keydown', e => e.key === 'Enter' && switchView('analyzer'));
   }
 
-  // Builder ← Back
   const builderBack = document.getElementById('builder-back-btn');
   if (builderBack) builderBack.addEventListener('click', () => switchView('hub'));
 
-  // Analyzer ← Back
   const analyzerBack = document.getElementById('analyzer-back-btn');
   if (analyzerBack) analyzerBack.addEventListener('click', () => switchView('hub'));
 }
@@ -277,9 +254,6 @@ function switchView(view) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-/* ============================================================
-   ACCORDIONS
-   ============================================================ */
 function initAccordions() {
   document.querySelectorAll('.form-accordion').forEach((acc, idx) => {
     const header = acc.querySelector('.accordion-header');
@@ -309,9 +283,6 @@ function initAccordions() {
   });
 }
 
-/* ============================================================
-   TEMPLATE PICKER
-   ============================================================ */
 function initTemplatePicker() {
   renderTemplateCards('all');
 
@@ -327,7 +298,6 @@ function initTemplatePicker() {
     if (e.target === backdrop) closeTemplateModal();
   });
 
-  // Category filter tabs
   document.querySelectorAll('#template-category-tabs .filter-tab').forEach(tab => {
     tab.addEventListener('click', () => {
       document.querySelectorAll('#template-category-tabs .filter-tab').forEach(t => t.classList.remove('active'));
@@ -386,12 +356,9 @@ function renderTemplateCards(category) {
   });
 }
 
-/* ------------------------------------------------------------
-   REALISTIC MINIATURE THUMBNAILS FOR 9 TEMPLATES
-   ------------------------------------------------------------ */
 function buildTemplateThumb(tpl) {
   switch (tpl.id) {
-    case 0: // Classic ATS - Single column, centered name, pure monochrome
+    case 0:
       return `
         <div style="width:100%;height:100%;padding:4px 6px;display:flex;flex-direction:column;gap:3px;background:#fff;">
           <div style="width:45%;height:5px;background:#000;border-radius:1px;margin:1px auto;"></div>
@@ -410,7 +377,7 @@ function buildTemplateThumb(tpl) {
         </div>
       `;
 
-    case 1: // Modern ATS - Single column, left name + blue accent line
+    case 1:
       return `
         <div style="width:100%;height:100%;padding:4px 6px;display:flex;flex-direction:column;gap:3px;background:#fff;">
           <div style="width:55%;height:5px;background:#0f172a;border-radius:1px;"></div>
@@ -429,7 +396,7 @@ function buildTemplateThumb(tpl) {
         </div>
       `;
 
-    case 2: // Reverse Chronological - Experience & right-aligned dates timeline
+    case 2:
       return `
         <div style="width:100%;height:100%;padding:4px 6px;display:flex;flex-direction:column;gap:3px;background:#fff;">
           <div style="width:60%;height:5px;background:#0f172a;border-radius:1px;"></div>
@@ -451,7 +418,7 @@ function buildTemplateThumb(tpl) {
         </div>
       `;
 
-    case 3: // Minimal Professional - Lots of generous whitespace
+    case 3:
       return `
         <div style="width:100%;height:100%;padding:8px 8px;display:flex;flex-direction:column;gap:4px;background:#fff;">
           <div style="width:40%;height:4px;background:#1e293b;border-radius:1px;letter-spacing:1px;"></div>
@@ -466,7 +433,7 @@ function buildTemplateThumb(tpl) {
         </div>
       `;
 
-    case 4: // Modern Developer - Two Column Layout
+    case 4:
       return `
         <div style="width:100%;height:100%;padding:4px;display:flex;gap:4px;background:#fff;">
           <!-- Left Col -->
@@ -494,7 +461,7 @@ function buildTemplateThumb(tpl) {
         </div>
       `;
 
-    case 5: // Executive Professional - Centered header + 2x2 Competencies Matrix
+    case 5:
       return `
         <div style="width:100%;height:100%;padding:4px 6px;display:flex;flex-direction:column;gap:3px;background:#fff;">
           <div style="width:50%;height:5px;background:#0f172a;border-radius:1px;margin:0 auto;"></div>
@@ -514,7 +481,7 @@ function buildTemplateThumb(tpl) {
         </div>
       `;
 
-    case 6: // Academic CV - Centered academic header, double rule, education top
+    case 6:
       return `
         <div style="width:100%;height:100%;padding:4px 6px;display:flex;flex-direction:column;gap:3px;background:#fff;font-family:serif;">
           <div style="width:45%;height:5px;background:#000;border-radius:1px;margin:0 auto;"></div>
@@ -532,7 +499,7 @@ function buildTemplateThumb(tpl) {
         </div>
       `;
 
-    case 7: // Entry-Level / Student - Prominent green education box + project emphasis
+    case 7:
       return `
         <div style="width:100%;height:100%;padding:4px 6px;display:flex;flex-direction:column;gap:3px;background:#fff;">
           <div style="width:50%;height:5px;background:#0f172a;border-radius:1px;"></div>
@@ -555,7 +522,7 @@ function buildTemplateThumb(tpl) {
         </div>
       `;
 
-    case 8: // Custom - DevPilot brand styling
+    case 8:
     default:
       return `
         <div style="width:100%;height:100%;padding:4px 6px;display:flex;flex-direction:column;gap:3px;background:#fff;">
@@ -585,36 +552,28 @@ function selectTemplate(id) {
   const badgeEl = document.getElementById('template-badge-preview');
   if (badgeEl) badgeEl.textContent = label;
 
-  // Refresh modal cards to show selected state
   const activeTab = document.querySelector('#template-category-tabs .filter-tab.active');
   if (activeTab) renderTemplateCards(activeTab.dataset.category);
   closeTemplateModal();
   showToast(`Template changed to "${label}"`, 'success');
 }
 
-/* ============================================================
-   BUILDER CONTROLS
-   ============================================================ */
 function initBuilderControls() {
-  // Save Draft
+
   const saveBtn = document.getElementById('btn-save-draft');
   if (saveBtn) saveBtn.addEventListener('click', saveDraft);
 
-  // Export PDF
   const pdfBtn = document.getElementById('btn-export-pdf');
   if (pdfBtn) pdfBtn.addEventListener('click', exportPDF);
 
-  // Print Preview
   const previewBtn = document.getElementById('btn-print-preview');
   if (previewBtn) previewBtn.addEventListener('click', () => window.print());
 
-  // Undo / Redo
   const undoBtn = document.getElementById('btn-undo');
   const redoBtn = document.getElementById('btn-redo');
   if (undoBtn) undoBtn.addEventListener('click', doUndo);
   if (redoBtn) redoBtn.addEventListener('click', doRedo);
 
-  // Reset / Restore Resume Modal
   const resetBtn = document.getElementById('btn-reset-resume');
   if (resetBtn) resetBtn.addEventListener('click', openResetModal);
 
@@ -640,7 +599,6 @@ function initBuilderControls() {
   const confirmClearAllBtn = document.getElementById('btn-confirm-clear-all');
   if (confirmClearAllBtn) confirmClearAllBtn.addEventListener('click', clearAllResumeFields);
 
-  // Keyboard shortcuts
   document.addEventListener('keydown', e => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) { e.preventDefault(); doUndo(); }
     if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) { e.preventDefault(); doRedo(); }
@@ -651,21 +609,17 @@ function initBuilderControls() {
     }
   });
 
-  // AI Summary Assist
   const aiSummaryBtn = document.getElementById('btn-ai-summary');
   if (aiSummaryBtn) aiSummaryBtn.addEventListener('click', aiImproveSummary);
 
-  // Bind live input events
   bindFormInputs();
 
-  // Dynamic entry "add" buttons
   document.getElementById('btn-add-experience')?.addEventListener('click', () => addEntry('experience'));
   document.getElementById('btn-add-project')?.addEventListener('click', () => addEntry('projects'));
   document.getElementById('btn-add-education')?.addEventListener('click', () => addEntry('education'));
   document.getElementById('btn-add-achievement')?.addEventListener('click', () => addEntry('achievements'));
   document.getElementById('btn-add-certification')?.addEventListener('click', () => addEntry('certifications'));
 
-  // Set initial template label
   const labelEl = document.getElementById('active-template-label');
   if (labelEl) labelEl.textContent = TEMPLATES[activeTemplate]?.name || 'Classic ATS';
   const badgeEl = document.getElementById('template-badge-preview');
@@ -694,9 +648,6 @@ function onFormInput() {
   updateHubStats();
 }
 
-/* ============================================================
-   UNDO / REDO
-   ============================================================ */
 function pushUndo() {
   undoStack.push(JSON.stringify(currentResume));
   if (undoStack.length > MAX_UNDO) undoStack.shift();
@@ -725,9 +676,6 @@ function doRedo() {
   showToast('Redone', 'info');
 }
 
-/* ============================================================
-   RESET / RESTORE RESUME ("JAISA THA BILKUL VAISE")
-   ============================================================ */
 function openResetModal() {
   const backdrop = document.getElementById('reset-modal-backdrop');
   if (backdrop) {
@@ -825,9 +773,6 @@ if (typeof window !== 'undefined') {
   window.clearAllResumeFields = clearAllResumeFields;
 }
 
-/* ============================================================
-   FORM FIELD POPULATION & SYNC
-   ============================================================ */
 function populateFormFields() {
   const p = currentResume.personal;
   setInputVal('res-name',      p.name);
@@ -866,9 +811,6 @@ function syncStateFromForm() {
   currentResume.skills.tools     = getInputVal('res-skills-tools')     || '';
 }
 
-/* ============================================================
-   DYNAMIC SECTION LISTS
-   ============================================================ */
 function renderDynamicLists() {
   renderExperienceList();
   renderProjectsList();
@@ -895,7 +837,6 @@ function getTitleAbbrevSuggestion(val) {
   return null;
 }
 
-/* ---------- Experience ---------- */
 function renderExperienceList() {
   const container = document.getElementById('experience-list');
   if (!container) return;
@@ -949,7 +890,6 @@ function renderExperienceList() {
   attachDynamicHandlers(container, 'experience');
 }
 
-/* ---------- Projects ---------- */
 function renderProjectsList() {
   const container = document.getElementById('projects-list');
   if (!container) return;
@@ -995,7 +935,6 @@ function renderProjectsList() {
   attachDynamicHandlers(container, 'projects');
 }
 
-/* ---------- Education ---------- */
 function renderEducationList() {
   const container = document.getElementById('education-list');
   if (!container) return;
@@ -1041,7 +980,6 @@ function renderEducationList() {
   attachDynamicHandlers(container, 'education');
 }
 
-/* ---------- Achievements ---------- */
 function renderAchievementsList() {
   const container = document.getElementById('achievements-list');
   if (!container) return;
@@ -1083,7 +1021,6 @@ function renderAchievementsList() {
   attachDynamicHandlers(container, 'achievements');
 }
 
-/* ---------- Certifications ---------- */
 function renderCertificationsList() {
   const container = document.getElementById('certifications-list');
   if (!container) return;
@@ -1125,9 +1062,8 @@ function renderCertificationsList() {
   attachDynamicHandlers(container, 'certifications');
 }
 
-/* ---------- Dynamic Event Attachment ---------- */
 function attachDynamicHandlers(container, section) {
-  // Remove buttons
+
   container.querySelectorAll(`.btn-remove-entry[data-section="${section}"]`).forEach(btn => {
     btn.addEventListener('click', () => {
       const idx = parseInt(btn.dataset.index, 10);
@@ -1140,7 +1076,6 @@ function attachDynamicHandlers(container, section) {
     });
   });
 
-  // Live input sync
   container.querySelectorAll(`.dyn-field[data-section="${section}"]`).forEach(input => {
     input.addEventListener('input', () => {
       const idx   = parseInt(input.dataset.index, 10);
@@ -1194,10 +1129,6 @@ function rerenderSection(section) {
   };
   if (fnMap[section]) fnMap[section]();
 }
-
-/* ============================================================
-   SHARED ATS-COMPLIANT RENDER HELPERS (APPLIED GLOBALLY)
-   ============================================================ */
 
 function cleanDate(d) {
   if (!d) return '';
@@ -1324,11 +1255,6 @@ function renderCertifications(crt) {
   `).join('');
 }
 
-/* ============================================================
-   9 DEDICATED TEMPLATE HTML GENERATORS (ALL SINGLE-COLUMN ATS-SAFE)
-   ============================================================ */
-
-/* 1. Classic ATS */
 function renderClassicATS(resume) {
   const p = resume.personal;
   return `
@@ -1375,7 +1301,6 @@ function renderClassicATS(resume) {
   `;
 }
 
-/* 2. Modern ATS */
 function renderModernATS(resume) {
   const p = resume.personal;
   return `
@@ -1422,7 +1347,6 @@ function renderModernATS(resume) {
   `;
 }
 
-/* 3. Reverse Chronological */
 function renderReverseChronological(resume) {
   const p = resume.personal;
   return `
@@ -1469,7 +1393,6 @@ function renderReverseChronological(resume) {
   `;
 }
 
-/* 4. Minimal Professional */
 function renderMinimalProfessional(resume) {
   const p = resume.personal;
   return `
@@ -1511,7 +1434,6 @@ function renderMinimalProfessional(resume) {
   `;
 }
 
-/* 5. Modern Developer (Sequential Single-Column Flow with Modern Styling) */
 function renderModernDeveloper(resume) {
   const p = resume.personal;
   return `
@@ -1558,7 +1480,6 @@ function renderModernDeveloper(resume) {
   `;
 }
 
-/* 6. Executive Professional (Sequential Single-Column Flow with Executive Styling) */
 function renderExecutiveProfessional(resume) {
   const p = resume.personal;
   return `
@@ -1605,7 +1526,6 @@ function renderExecutiveProfessional(resume) {
   `;
 }
 
-/* 7. Academic CV */
 function renderAcademicCV(resume) {
   const p = resume.personal;
   return `
@@ -1652,7 +1572,6 @@ function renderAcademicCV(resume) {
   `;
 }
 
-/* 8. Entry-Level / Student */
 function renderStudentEntry(resume) {
   const p = resume.personal;
   return `
@@ -1701,7 +1620,6 @@ function renderStudentEntry(resume) {
   `;
 }
 
-/* 9. Custom */
 function renderCustom(resume) {
   const p = resume.personal;
   return `
@@ -1748,9 +1666,6 @@ function renderCustom(resume) {
   `;
 }
 
-/* ============================================================
-   LIVE RESUME PREVIEW DISPATCHER
-   ============================================================ */
 function updateLivePreview() {
   const paper = document.getElementById('printable-resume-paper');
   if (!paper) return;
@@ -1761,26 +1676,21 @@ function updateLivePreview() {
   paper.className = `a4-paper tpl-${currentTpl.id} tpl-${currentTpl.key}`;
 
   const renderers = [
-    renderClassicATS,          // 0
-    renderModernATS,           // 1
-    renderReverseChronological,// 2
-    renderMinimalProfessional, // 3
-    renderModernDeveloper,     // 4 (Modern Developer single-column sequential!)
-    renderExecutiveProfessional,// 5 (Executive Professional single-column sequential!)
-    renderAcademicCV,          // 6
-    renderStudentEntry,        // 7
-    renderCustom               // 8
+    renderClassicATS,
+    renderModernATS,
+    renderReverseChronological,
+    renderMinimalProfessional,
+    renderModernDeveloper,
+    renderExecutiveProfessional,
+    renderAcademicCV,
+    renderStudentEntry,
+    renderCustom
   ];
 
   const renderer = renderers[tplId] || renderClassicATS;
   paper.innerHTML = renderer(currentResume);
 }
 
-/* ============================================================
-   BUILDER ATS SCORING ENGINE (ATS Score Lock: 90+)
-   Evaluates ONLY Structure, Formatting & Completeness.
-   Score-neutral on specific job titles/skills/equipment.
-   ============================================================ */
 function computeBuilderAtsScore(resume) {
   const p   = resume.personal || {};
   const sk  = resume.skills || {};
@@ -1792,13 +1702,10 @@ function computeBuilderAtsScore(resume) {
   const checks = [];
   const nudges = [];
 
-  // 1. Structure & parseability (25 pts)
-  // Single logical DOM text flow, standard ATS headers, selectable text
   const structurePts = 25;
   score += structurePts;
   checks.push({ label: 'Single logical text flow & standard ATS headers', pass: true, pts: structurePts });
 
-  // 2. Contact completeness (10 pts)
   let contactPts = 0;
   if (p.name && p.email) contactPts += 6;
   if (p.phone || p.location) contactPts += 4;
@@ -1806,14 +1713,12 @@ function computeBuilderAtsScore(resume) {
   checks.push({ label: 'Contact details present & complete', pass: contactPts === 10, pts: contactPts });
   if (contactPts < 10) nudges.push('Complete your contact details (Email, Phone/Location)');
 
-  // 3. Experience section formatting (20 pts)
   let expPts = 0;
   if (exp.length > 0) {
     expPts += 10;
     const hasDates = exp.every(e => e.startDate);
     if (hasDates) expPts += 5;
-    
-    // Check action verbs
+
     const allBullets = exp.flatMap(e => (e.description || '').split('\n').filter(Boolean));
     const actionVerbRegex = /^(built|developed|implemented|designed|architected|automated|optimized|reduced|improved|led|integrated|created|deployed|analyzed|managed|spearheaded|engineered|orchestrated|established|maintained|installed|repaired|configured|executed|coordinated|authored|resolved|streamlined|delivered|scaled|trained|mentored|programmed|tested|debugged|refactored)\b/i;
     const verbStarts = allBullets.filter(b => actionVerbRegex.test(b.trim()));
@@ -1821,13 +1726,12 @@ function computeBuilderAtsScore(resume) {
     if (verbRatio >= 0.5 || allBullets.length === 0) expPts += 5;
     else nudges.push('Start experience bullets with action verbs (e.g. Built, Led, Optimized)');
   } else if (edu.length > 0 || prj.length > 0) {
-    // For students/entry-level without formal experience, projects/education satisfy structure
+
     expPts = 18;
   }
   score += expPts;
   checks.push({ label: 'Experience formatting & action verbs', pass: expPts >= 18, pts: expPts });
 
-  // 4. Quantification ratio ≥ 60% (15 pts)
   const allExpAndProjBullets = [
     ...exp.flatMap(e => (e.description || '').split('\n').filter(Boolean)),
     ...prj.flatMap(pr => (pr.description || '').split('\n').filter(Boolean))
@@ -1835,7 +1739,7 @@ function computeBuilderAtsScore(resume) {
   const metricRegex = /\d+%|\d+\+|\d+k|\$\d+|\d+\s*(users|clients|hours|days|weeks|months|years|members|teams|projects|systems|customers|students|lines|services|rps|ms|mb|gb|tb)/i;
   const quantifiedBullets = allExpAndProjBullets.filter(b => metricRegex.test(b));
   const quantRatio = allExpAndProjBullets.length > 0 ? (quantifiedBullets.length / allExpAndProjBullets.length) : 1;
-  
+
   let quantPts = 0;
   if (quantRatio >= 0.6) {
     quantPts = 15;
@@ -1849,22 +1753,18 @@ function computeBuilderAtsScore(resume) {
   score += quantPts;
   checks.push({ label: 'Quantified impact metrics (≥60% of bullets)', pass: quantPts === 15, pts: quantPts });
 
-  // 5. Skills & Equipment section (15 pts) — SCORE-NEUTRAL BY DESIGN
-  // Any tools/equipment/skills entered are fully credited
   const hasSkills = !!(sk.languages || sk.frontend || sk.backend || sk.databases || sk.tools);
   const skillsPts = hasSkills ? 15 : 0;
   score += skillsPts;
   checks.push({ label: 'Skills & Tools section filled (Plain text)', pass: hasSkills, pts: skillsPts });
   if (!hasSkills) nudges.push('Add your technical skills, tools, or equipment');
 
-  // 6. Education section (10 pts)
   const hasEdu = edu.length > 0 && edu.some(e => e.degree || e.institution);
   const eduPts = hasEdu ? 10 : 0;
   score += eduPts;
   checks.push({ label: 'Education history formatted', pass: hasEdu, pts: eduPts });
   if (!hasEdu) nudges.push('Add your Education history (Degree & Institution)');
 
-  // 7. Selectable-text PDF export (5 pts)
   const pdfPts = 5;
   score += pdfPts;
   checks.push({ label: 'Selectable-text PDF export compliance', pass: true, pts: pdfPts });
@@ -1885,9 +1785,6 @@ function computeBuilderAtsScore(resume) {
   };
 }
 
-/* ============================================================
-   ATS SCORE & LABEL
-   ============================================================ */
 function updateAtsScore() {
   const { score } = computeBuilderAtsScore(currentResume);
 
@@ -1906,17 +1803,14 @@ function updateAtsScore() {
   return score;
 }
 
-/* ============================================================
-   HUB STATS
-   ============================================================ */
 function updateHubStats() {
   const p  = currentResume.personal;
   const sk = currentResume.skills;
 
   let filled = 0;
-  if (p.name && p.email)        filled++;   // Personal
-  if (currentResume.summary)    filled++;   // Summary
-  if (sk.languages || sk.tools) filled++;   // Skills
+  if (p.name && p.email)        filled++;
+  if (currentResume.summary)    filled++;
+  if (sk.languages || sk.tools) filled++;
   if (currentResume.experience.length) filled++;
   if (currentResume.projects.length)   filled++;
   if (currentResume.education.length)  filled++;
@@ -1935,9 +1829,6 @@ function updateHubStatTemplate() {
   if (el) el.textContent = TEMPLATES[activeTemplate]?.name || 'Classic ATS';
 }
 
-/* ============================================================
-   SAVE DRAFT & EXPORT (WITH ATS SANITIZATION)
-   ============================================================ */
 function sanitizeResumeForATS(res) {
   if (!res) return;
   if (res.experience) {
@@ -1993,9 +1884,6 @@ function exportPDF() {
   }, 150);
 }
 
-/* ============================================================
-   AI SUMMARY ASSIST (DYNAMIC & PERSONALIZED TO LIVE DATA)
-   ============================================================ */
 function aiImproveSummary() {
   syncStateFromForm();
   const summaryEl = document.getElementById('res-summary');
@@ -2009,8 +1897,7 @@ function aiImproveSummary() {
   const cert = currentResume.certifications || [];
 
   const title = (p.title || 'Software Professional').trim();
-  
-  // Extract all user-entered skills cleanly (preserving exact technologies entered)
+
   const allSkillItems = [
     sk.languages,
     sk.frontend,
@@ -2020,18 +1907,15 @@ function aiImproveSummary() {
   ].filter(Boolean)
    .flatMap(s => s.split(',').map(item => item.trim()).filter(Boolean));
 
-  // Determine seniority / career stage based on actual user data
   const hasInternOrStudent = exp.some(e => /intern|fellow|apprentice|student|trainee/i.test(e.role || '')) ||
                              (edu.length > 0 && exp.length <= 1);
   const hasSeniorOrLead = exp.some(e => /senior|lead|principal|architect|director|staff|manager/i.test(e.role || ''));
 
-  // Highlight top 3-4 core technologies from user's actual skills or projects
   let primaryTech = allSkillItems.slice(0, 4).join(', ');
   if (!primaryTech && prj.length && prj[0].tech) {
     primaryTech = prj[0].tech;
   }
 
-  // Sentence 1: Personalized Profile & Domain
   let s1 = '';
   if (hasSeniorOrLead) {
     s1 = `Accomplished ${title} with a proven track record of designing, scaling, and delivering mission-critical systems${primaryTech ? ` using ${primaryTech}` : ''}.`;
@@ -2042,11 +1926,10 @@ function aiImproveSummary() {
     s1 = `Results-oriented ${title} with demonstrated expertise in building and delivering high-quality, scalable software solutions${primaryTech ? ` utilizing ${primaryTech}` : ''}.`;
   }
 
-  // Sentence 2: Experience & Project Accomplishments
   let s2 = '';
   if (exp.length > 0) {
     const companies = exp.map(e => e.company).filter(Boolean).slice(0, 2).join(' and ');
-    // Look for quantified impact or notable achievements in user's bullets
+
     const bulletWithMetrics = exp.flatMap(e => (e.description || '').split('\n'))
       .find(b => /\d+%|\d+\+|\d+k|\$\d+/i.test(b));
 
@@ -2061,7 +1944,6 @@ function aiImproveSummary() {
     s2 = `Demonstrated ability to architect and deliver functional systems independently, evidenced by key projects including ${pNames}.`;
   }
 
-  // Sentence 3: Specialized Competencies, Tools & Business Value
   let s3 = '';
   const secondarySkills = allSkillItems.slice(4, 8).join(', ');
   if (secondarySkills) {
@@ -2083,18 +1965,12 @@ function aiImproveSummary() {
   showToast('Summary personalized & improved with AI ✨', 'success');
 }
 
-/* ============================================================
-   RESUME ANALYZER (Delegated to resumeAnalyzer.js)
-   ============================================================ */
 function initAnalyzerControls() {
   if (typeof initRealAnalyzerControls === 'function') {
     initRealAnalyzerControls();
   }
 }
 
-/* ============================================================
-   UTILITIES
-   ============================================================ */
 function getInputVal(id) {
   const el = document.getElementById(id);
   return el ? el.value.trim() : '';

@@ -12,16 +12,17 @@
   <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet"/>
 
-  <!-- PDF.js for real PDF text extraction -->
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script>
     if (typeof pdfjsLib !== 'undefined') {
       pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     }
-  </script>
-  <!-- Mammoth.js for real DOCX text extraction -->
+
+</script>
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
-  <!-- Tesseract.js for OCR on scanned/image-based resumes -->
+  
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
   <link rel="stylesheet" href="../css/base/global.css"/>
@@ -44,20 +45,21 @@
       window.addEventListener('load', () => setTimeout(reveal, 100));
       setTimeout(reveal, 1200);
     })();
-  </script>
+
+</script>
 </head>
 <body class="bg-slate-50 text-slate-900 antialiased min-h-screen">
 
-  <!-- Mobile Overlay -->
+  
   <div class="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm hidden md:hidden" id="mobile-overlay"></div>
 
-  <!-- SideNavBar -->
+  
   <aside class="fixed left-0 top-0 h-full w-[260px] bg-white border-r border-slate-200 flex flex-col py-6 z-50 transform md:translate-x-0" id="sidebar">
     <button aria-label="Toggle Sidebar" class="absolute -right-3.5 top-6 w-7 h-7 bg-white border border-slate-200 rounded-full flex items-center justify-center text-slate-600 hover:text-indigo-600 hover:border-indigo-600 transition-colors z-50 hidden md:flex shadow-sm" id="sidebar-toggle">
       <span class="material-symbols-outlined text-[18px]" id="sidebar-toggle-icon">chevron_left</span>
     </button>
     <div class="flex-1 flex flex-col overflow-hidden">
-      <!-- Brand Logo -->
+      
       <div class="px-6 mb-8 flex items-center gap-3 overflow-hidden">
         <div class="min-w-[32px] w-8 h-8 rounded bg-brand-gradient flex items-center justify-center text-white shrink-0 shadow-sm">
           <span class="material-symbols-outlined text-xl" style='font-variation-settings: "FILL" 1;'>terminal</span>
@@ -67,7 +69,7 @@
           <p class="text-xs font-semibold text-slate-400 uppercase mt-0.5">Workspace</p>
         </div>
       </div>
-      <!-- Navigation Links -->
+      
       <nav class="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar px-3 space-y-1">
         <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors duration-200 border-l-[3px] border-transparent tooltip relative group" href="../index.html">
           <span class="material-symbols-outlined shrink-0">dashboard</span>
@@ -159,15 +161,13 @@
     </div>
   </aside>
 
-  <!-- Main Content Area -->
+  
   <main class="md:ml-[260px] min-h-screen p-6 sm:p-8" id="main-content">
 
-    <!-- ================================================================
-         VIEW: HUB (Landing)
-         ================================================================ -->
+    
     <div class="resume-view" id="view-hub">
 
-      <!-- Page Header -->
+      
       <div class="flex items-center justify-between gap-3 mb-2 no-print">
         <div class="flex items-center gap-3">
           <button class="mobile-nav-toggle md:hidden" id="mobile-menu-trigger" aria-label="Open Sidebar">
@@ -182,10 +182,10 @@
 
       <div class="rws-divider mb-8"></div>
 
-      <!-- Hub Cards Grid -->
+      
       <div class="resume-hub-grid">
 
-        <!-- Card 1: Resume Builder -->
+        
         <div class="resume-hub-card dev-card dev-card-interactive" id="hub-go-builder" role="button" tabindex="0" aria-label="Open Resume Builder">
           <div class="resume-hub-card-icon">
             <span class="material-symbols-outlined" style='font-variation-settings: "FILL" 1;'>edit_document</span>
@@ -214,7 +214,7 @@
           </button>
         </div>
 
-        <!-- Card 2: Resume Analyzer -->
+        
         <div class="resume-hub-card dev-card dev-card-interactive" id="hub-go-analyzer" role="button" tabindex="0" aria-label="Open Resume Analyzer">
           <div class="resume-hub-card-icon resume-hub-card-icon--analyzer">
             <span class="material-symbols-outlined" style='font-variation-settings: "FILL" 1;'>manage_search</span>
@@ -245,7 +245,7 @@
 
       </div>
 
-      <!-- Quick Stats Row -->
+      
       <div class="resume-hub-stats">
         <div class="resume-stat-item">
           <span class="material-symbols-outlined text-indigo-500" style='font-variation-settings: "FILL" 1;'>layers</span>
@@ -280,15 +280,13 @@
         </div>
       </div>
 
-    </div><!-- /view-hub -->
+    </div>
 
 
-    <!-- ================================================================
-         VIEW: BUILDER
-         ================================================================ -->
+    
     <div class="resume-view" id="view-builder" style="display:none;">
 
-      <!-- Builder Top Bar -->
+      
       <div class="builder-topbar no-print">
         <div class="builder-topbar-left">
           <button class="btn-secondary btn-sm" id="builder-back-btn">
@@ -310,7 +308,7 @@
         </div>
 
         <div class="builder-topbar-right">
-          <!-- ATS Score Badge -->
+          
           <div class="ats-badge" id="ats-badge" title="ATS Compatibility Score">
             <span class="material-symbols-outlined text-[14px]">shield_check</span>
             <span>ATS</span>
@@ -342,13 +340,13 @@
         </div>
       </div>
 
-      <!-- Builder Split Layout -->
+      
       <div class="resume-builder-split">
 
-        <!-- LEFT: Editor Panel -->
+        
         <div class="builder-editor-panel no-print custom-scrollbar">
 
-          <!-- 1. Personal Information -->
+          
           <div class="form-accordion active" id="acc-personal">
             <div class="accordion-header">
               <span class="flex items-center gap-2">
@@ -395,7 +393,7 @@
             </div>
           </div>
 
-          <!-- 2. Professional Summary -->
+          
           <div class="form-accordion" id="acc-summary">
             <div class="accordion-header">
               <span class="flex items-center gap-2">
@@ -416,7 +414,7 @@
             </div>
           </div>
 
-          <!-- 3. Technical Skills -->
+          
           <div class="form-accordion" id="acc-skills">
             <div class="accordion-header">
               <span class="flex items-center gap-2">
@@ -450,7 +448,7 @@
             </div>
           </div>
 
-          <!-- 4. Experience -->
+          
           <div class="form-accordion" id="acc-experience">
             <div class="accordion-header">
               <span class="flex items-center gap-2">
@@ -468,7 +466,7 @@
             </div>
           </div>
 
-          <!-- 5. Projects -->
+          
           <div class="form-accordion" id="acc-projects">
             <div class="accordion-header">
               <span class="flex items-center gap-2">
@@ -486,7 +484,7 @@
             </div>
           </div>
 
-          <!-- 6. Education -->
+          
           <div class="form-accordion" id="acc-education">
             <div class="accordion-header">
               <span class="flex items-center gap-2">
@@ -504,7 +502,7 @@
             </div>
           </div>
 
-          <!-- 7. Achievements -->
+          
           <div class="form-accordion" id="acc-achievements">
             <div class="accordion-header">
               <span class="flex items-center gap-2">
@@ -523,7 +521,7 @@
             </div>
           </div>
 
-          <!-- 8. Certifications -->
+          
           <div class="form-accordion" id="acc-certifications">
             <div class="accordion-header">
               <span class="flex items-center gap-2">
@@ -542,9 +540,9 @@
             </div>
           </div>
 
-        </div><!-- /builder-editor-panel -->
+        </div>
 
-        <!-- RIGHT: Live Resume Preview (A4 Paper) -->
+        
         <div class="builder-preview-panel">
           <div class="preview-panel-header no-print">
             <span class="preview-panel-label">
@@ -562,22 +560,20 @@
           </div>
           <div class="a4-scaler-wrapper">
             <div class="a4-paper" id="printable-resume-paper">
-              <!-- Rendered by JS based on active template -->
+              
             </div>
           </div>
         </div>
 
-      </div><!-- /resume-builder-split -->
+      </div>
 
-    </div><!-- /view-builder -->
+    </div>
 
 
-    <!-- ================================================================
-         VIEW: ANALYZER
-         ================================================================ -->
+    
     <div class="resume-view" id="view-analyzer" style="display:none;">
 
-      <!-- Analyzer Top Bar -->
+      
       <div class="builder-topbar no-print">
         <div class="builder-topbar-left">
           <button class="btn-secondary btn-sm" id="analyzer-back-btn">
@@ -601,7 +597,7 @@
         </div>
       </div>
 
-      <!-- Analyzer Upload State (always visible) -->
+      
       <div id="analyzer-upload-state">
         <div class="analyzer-upload-zone" id="upload-dropzone">
           <div class="upload-zone-icon">
@@ -622,7 +618,7 @@
           </div>
         </div>
 
-        <!-- File Preview Strip (after file selected) -->
+        
         <div class="file-preview-strip" id="file-preview-strip" style="display:none;">
           <span class="material-symbols-outlined text-indigo-500 text-[24px]" style='font-variation-settings: "FILL" 1;'>description</span>
           <div class="file-preview-info">
@@ -635,7 +631,7 @@
         </div>
       </div>
 
-      <!-- Loading Overlay -->
+      
       <div id="analyzer-loading" class="analyzer-loading-overlay" style="display:none;">
         <div class="analyzer-loading-content">
           <span class="material-symbols-outlined analyzer-loading-icon">hourglass_top</span>
@@ -644,16 +640,16 @@
         </div>
       </div>
 
-      <!-- Analysis Results Area (shown BELOW upload area after analysis, page scrolls) -->
+      
       <div id="analyzer-results-area" class="analyzer-results-area" style="display:none;">
-        <!-- Dynamically rendered by resumeAnalyzer.js -->
+        
       </div>
 
-    </div><!-- /view-analyzer -->
+    </div>
 
   </main>
 
-  <!-- Template Picker Modal -->
+  
   <div class="modal-backdrop" id="template-modal-backdrop" style="display:none;" aria-modal="true" role="dialog">
     <div class="template-modal">
       <div class="template-modal-header">
@@ -665,7 +661,7 @@
           <span class="material-symbols-outlined">close</span>
         </button>
       </div>
-      <!-- Category Filters -->
+      
       <div class="filter-tabs" id="template-category-tabs">
         <button class="filter-tab active" data-category="all">All</button>
         <button class="filter-tab" data-category="ats">ATS</button>
@@ -674,14 +670,14 @@
         <button class="filter-tab" data-category="academic">Academic</button>
         <button class="filter-tab" data-category="student">Student</button>
       </div>
-      <!-- Template Cards Grid -->
+      
       <div class="template-cards-grid" id="template-cards-grid">
-        <!-- Rendered by JS -->
+        
       </div>
     </div>
   </div>
 
-  <!-- Reset / Restore Resume Modal -->
+  
   <div class="modal-backdrop" id="reset-modal-backdrop" style="display:none;" aria-modal="true" role="dialog" aria-labelledby="reset-modal-title">
     <div class="reset-modal">
       <div class="reset-modal-header">
@@ -700,7 +696,7 @@
       </div>
 
       <div class="reset-modal-body custom-scrollbar">
-        <!-- Option 1: Restore Original Sample Resume (Recommended) -->
+        
         <div class="reset-option-card recommended">
           <div class="reset-option-header">
             <div class="reset-option-title-wrap">
@@ -720,7 +716,7 @@
           </p>
         </div>
 
-        <!-- Option 2: Revert to Last Saved Draft -->
+        
         <div class="reset-option-card">
           <div class="reset-option-header">
             <div class="reset-option-title-wrap">
@@ -739,7 +735,7 @@
           </p>
         </div>
 
-        <!-- Option 3: Clear All Fields -->
+        
         <div class="reset-option-card">
           <div class="reset-option-header">
             <div class="reset-option-title-wrap">

@@ -1,5 +1,3 @@
-// js/data/interviewPrep/aiMl.js
-// Complete Question Bank for AI & Machine Learning Fundamentals (15 topics * 10 = 150 MCQs)
 
 window.interviewPrepAiMl = {
   id: 'ai_machine_learning',
@@ -2127,7 +2125,6 @@ window.interviewPrepAiMl = {
   }
 ]
 };
-
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = window.interviewPrepAiMl;

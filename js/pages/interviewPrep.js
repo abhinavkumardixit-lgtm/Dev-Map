@@ -1,8 +1,3 @@
-/**
- * MAD DEV — Interview Preparation Controller
- * Coordinates category browsing, question engine, mock test with live timer,
- * weak topic tracking, checklists, and GD/HR prep.
- */
 
 (function () {
   'use strict';
@@ -12,33 +7,30 @@
   const STORAGE_RECENT_KEY = 'devpilot_interview_prep_recent';
 
   const state = {
-    currentMode: 'categories', // 'categories' | 'quiz' | 'mockTest' | 'technical' | 'weakTopics' | 'checklists' | 'gdHr'
+    currentMode: 'categories',
     activeCategory: null,
     activeTopic: null,
     searchQuery: '',
-    
-    // Quiz Engine State
+
     quiz: {
       questions: [],
       currentIndex: 0,
       selectedOption: null,
       isAnswered: false,
-      userAnswers: [], // { questionId, selectedIndex, correctIndex, isCorrect }
+      userAnswers: [],
       sessionStats: { correct: 0, incorrect: 0, total: 0 },
-      sourceMode: 'category' // 'category' | 'weakTopics' | 'mixed'
+      sourceMode: 'category'
     },
 
-    // Mock Test State
     mockTest: {
       active: false,
       questions: [],
       currentIndex: 0,
-      answers: {}, // questionIndex: selectedOption
-      timeRemaining: 3600, // 60 minutes in seconds
+      answers: {},
+      timeRemaining: 3600,
       timerInterval: null
     },
 
-    // Persistent storage
     progress: {},
     checklists: {},
     recentActivity: null
@@ -117,7 +109,7 @@
   }
 
   function setupEventListeners() {
-    // Mode tabs
+
     document.querySelectorAll('.ip-mode-tab').forEach(tab => {
       tab.addEventListener('click', (e) => {
         const mode = e.currentTarget.dataset.mode;
@@ -125,7 +117,6 @@
       });
     });
 
-    // Search bar
     const searchInput = document.getElementById('ipSearchInput');
     if (searchInput) {
       searchInput.addEventListener('input', (e) => {
@@ -224,9 +215,6 @@
     });
   }
 
-  // ==========================================================
-  // CATEGORIES VIEW (Browse & Topic Drilldown)
-  // ==========================================================
   function renderCategoriesView(technicalOnly = false) {
     const mainContainer = document.getElementById('ipMainContent');
     if (!mainContainer) return;
@@ -269,7 +257,6 @@
       const card = document.createElement('div');
       card.className = 'ip-cat-card dev-card dev-card-interactive';
 
-      // Calculate category progress
       let catAttempted = 0;
       let catCorrect = 0;
       if (cat.questions) {
@@ -369,7 +356,7 @@
     const list = document.getElementById('ipTopicList');
     cat.topics.forEach(topicName => {
       const topicQs = cat.questions.filter(q => q.topic && q.topic.toLowerCase() === topicName.toLowerCase());
-      
+
       const tKey = `topic:${cat.id}:${topicName}`;
       const prog = state.progress[tKey] || { attempted: 0, correct: 0 };
       const accuracy = prog.attempted > 0 ? Math.round((prog.correct / prog.attempted) * 100) : 0;
@@ -407,9 +394,6 @@
     });
   }
 
-  // ==========================================================
-  // QUESTION ENGINE (Interactive Quiz & Immediate Feedback)
-  // ==========================================================
   function startTopicQuiz(categoryId, topicName) {
     const cat = window.interviewPrepRegistry.getCategory(categoryId);
     if (!cat) return;
@@ -439,7 +423,6 @@
     const cat = window.interviewPrepRegistry.getCategory(categoryId);
     if (!cat || !cat.questions || cat.questions.length === 0) return;
 
-    // Pick 20 random questions from category
     const shuffled = [...cat.questions].sort(() => 0.5 - Math.random()).slice(0, 20);
 
     state.activeCategory = cat;
@@ -464,7 +447,6 @@
       return;
     }
 
-    // Collect questions from weak topics
     const pool = [];
     weakList.forEach(w => {
       const qs = window.interviewPrepRegistry.getQuestionsByTopic(w.categoryId, w.topic);
@@ -585,7 +567,7 @@
   }
 
   function handleOptionSelection(selectedIndex) {
-    if (state.quiz.isAnswered) return; // Prevent multiple clicks
+    if (state.quiz.isAnswered) return;
 
     state.quiz.isAnswered = true;
     state.quiz.selectedOption = selectedIndex;
@@ -593,14 +575,12 @@
     const q = state.quiz.questions[state.quiz.currentIndex];
     const isCorrect = (selectedIndex === q.correctAnswer);
 
-    // Update session stats
     if (isCorrect) {
       state.quiz.sessionStats.correct++;
     } else {
       state.quiz.sessionStats.incorrect++;
     }
 
-    // Save individual question attempt
     const qKey = `q:${q.id}`;
     if (!state.progress[qKey]) {
       state.progress[qKey] = { attempted: 0, correct: 0, incorrect: 0 };
@@ -609,7 +589,6 @@
     if (isCorrect) state.progress[qKey].correct++;
     else state.progress[qKey].incorrect++;
 
-    // Save topic attempt
     if (state.activeCategory && q.topic) {
       const tKey = `topic:${state.activeCategory.id}:${q.topic}`;
       if (!state.progress[tKey]) {
@@ -629,7 +608,6 @@
     saveProgress();
     updateMetrics();
 
-    // Style the options
     const optionsGrid = document.getElementById('ipOptionsGrid');
     const buttons = optionsGrid.querySelectorAll('.ip-option-btn');
 
@@ -642,7 +620,6 @@
       }
     });
 
-    // Reveal explanation panel
     const explanationBox = document.getElementById('ipExplanationBox');
     if (explanationBox) {
       explanationBox.className = 'ip-explanation-panel';
@@ -658,14 +635,10 @@
       `;
     }
 
-    // Enable Next Question Button
     const nextBtn = document.getElementById('ipNextQuestionBtn');
     if (nextBtn) nextBtn.disabled = false;
   }
 
-  // ==========================================================
-  // QUIZ RESULTS SCREEN & MORE PRACTICE MENU
-  // ==========================================================
   function renderQuizResults() {
     const mainContainer = document.getElementById('ipMainContent');
     if (!mainContainer) return;
@@ -743,15 +716,12 @@
     });
   }
 
-  // ==========================================================
-  // 60-MINUTE MOCK PLACEMENT TEST ENGINE
-  // ==========================================================
   function renderMockTestView() {
     const mainContainer = document.getElementById('ipMainContent');
     if (!mainContainer) return;
 
     if (!state.mockTest.active) {
-      // Full-Width Landing Screen matching 18 Categories width & typography
+
       mainContainer.innerHTML = `
         <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
           <div>
@@ -780,7 +750,7 @@
                   <p class="text-xs text-on-surface-variant">Real exam conditions • Strict 60-minute countdown • Comprehensive analytics</p>
                 </div>
               </div>
-              
+
               <p class="text-sm text-on-surface-variant mb-6 leading-relaxed">
                 This comprehensive mock assessment accurately replicates the pattern of major campus recruitment drives (TCS, Infosys, Cognizant, Wipro, Amazon, product startups). Questions are dynamically sampled across Quantitative Aptitude, Verbal Reasoning, Core Computer Science (OS, DBMS, CN), Programming & OOP, and Modern Tech Stacks.
               </p>
@@ -898,7 +868,6 @@
       return;
     }
 
-    // Active Mock Test Screen
     renderActiveMockTest();
   }
 
@@ -910,7 +879,6 @@
     state.mockTest.answers = {};
     state.mockTest.timeRemaining = 3600;
 
-    // Start timer
     if (state.mockTest.timerInterval) clearInterval(state.mockTest.timerInterval);
     state.mockTest.timerInterval = setInterval(() => {
       state.mockTest.timeRemaining--;
@@ -995,7 +963,6 @@
 
     updateMockTimerDisplay();
 
-    // Render Options
     const optionsGrid = document.getElementById('ipMockOptionsGrid');
     const letters = ['A', 'B', 'C', 'D'];
     q.options.forEach((optText, idx) => {
@@ -1012,7 +979,6 @@
       optionsGrid.appendChild(btn);
     });
 
-    // Render Navigator buttons
     const navGrid = document.getElementById('ipMockQNavGrid');
     for (let i = 0; i < total; i++) {
       const navBtn = document.createElement('button');
@@ -1064,7 +1030,7 @@
     timerDigits.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 
     if (timerBadge) {
-      if (state.mockTest.timeRemaining <= 300) { // 5 minutes remaining
+      if (state.mockTest.timeRemaining <= 300) {
         timerBadge.classList.add('warning');
       } else {
         timerBadge.classList.remove('warning');
@@ -1076,7 +1042,6 @@
     if (state.mockTest.timerInterval) clearInterval(state.mockTest.timerInterval);
     state.mockTest.active = false;
 
-    // Evaluate answers
     let correct = 0;
     const categoryBreakdown = {};
 
@@ -1214,9 +1179,6 @@
     state.mockTest.answers = {};
   }
 
-  // ==========================================================
-  // WEAK TOPICS VIEW
-  // ==========================================================
   function renderWeakTopicsView() {
     const mainContainer = document.getElementById('ipMainContent');
     if (!mainContainer) return;
@@ -1318,7 +1280,7 @@
           </div>
           <h4 class="text-base font-bold text-on-surface" style="font-family: 'Plus Jakarta Sans', system-ui, sans-serif;">${w.topic}</h4>
           <p class="text-xs text-on-surface-variant mt-1">${w.incorrectCount} mistakes across ${w.attempted} attempts</p>
-          
+
           <div class="w-full h-1.5 bg-surface-container rounded-full overflow-hidden mt-3">
             <div class="h-full bg-red-500 rounded-full" style="width: ${w.accuracy}%"></div>
           </div>
@@ -1340,9 +1302,6 @@
     container.appendChild(grid);
   }
 
-  // ==========================================================
-  // CORE SUBJECT CHECKLISTS VIEW
-  // ==========================================================
   function renderChecklistsView() {
     const mainContainer = document.getElementById('ipMainContent');
     if (!mainContainer) return;
@@ -1372,7 +1331,6 @@
       const subject = checklists[subjKey];
       const items = subject.items || [];
 
-      // Count checked items
       const userChecks = state.checklists[subjKey] || {};
       const checkedCount = Object.values(userChecks).filter(Boolean).length;
       const progressPercent = items.length > 0 ? Math.round((checkedCount / items.length) * 100) : 0;
@@ -1405,7 +1363,6 @@
       const itemsContainer = card.querySelector('.ip-checklist-items');
       const chevron = card.querySelector('.ip-chk-chevron');
 
-      // Populate items
       items.forEach(item => {
         const isChecked = !!userChecks[item.id];
         const row = document.createElement('div');
@@ -1435,7 +1392,6 @@
           targetBox.innerHTML = nowChecked ? '<span class="material-symbols-outlined text-xs">check</span>' : '';
           label.classList.toggle('checked', nowChecked);
 
-          // Update header count
           const newCheckedCount = Object.values(state.checklists[subjKey]).filter(Boolean).length;
           const newPct = Math.round((newCheckedCount / items.length) * 100);
           header.querySelector('.ip-chk-count').textContent = `${newCheckedCount} / ${items.length}`;
@@ -1455,9 +1411,6 @@
     });
   }
 
-  // ==========================================================
-  // GD & HR INTERVIEW VIEW
-  // ==========================================================
   function renderGdHrView() {
     const mainContainer = document.getElementById('ipMainContent');
     if (!mainContainer) return;
@@ -1517,7 +1470,6 @@
       gdContent.classList.add('hidden');
     });
 
-    // Render GD topics
     gdTopics.forEach(gd => {
       const card = document.createElement('div');
       card.className = 'ip-gd-card dev-card';
@@ -1550,7 +1502,6 @@
       gdContent.appendChild(card);
     });
 
-    // Render HR questions
     hrQuestions.forEach(hr => {
       const card = document.createElement('div');
       card.className = 'ip-hr-card dev-card';
@@ -1594,9 +1545,6 @@
     });
   }
 
-  // ==========================================================
-  // METRICS & STATS UPDATE
-  // ==========================================================
   function updateMetrics() {
     if (!window.interviewPrepRegistry) return;
     const stats = window.interviewPrepRegistry.getOverallStats(state.progress);
@@ -1610,7 +1558,6 @@
     if (elAccuracy) elAccuracy.textContent = `${stats.accuracy}%`;
     if (elCategories) elCategories.textContent = `${stats.categoriesCount} Available`;
 
-    // Count checked checklist items across subjects
     let totalChecked = 0;
     Object.values(state.checklists).forEach(subj => {
       totalChecked += Object.values(subj).filter(Boolean).length;
@@ -1618,7 +1565,6 @@
     if (elChecklists) elChecklists.textContent = `${totalChecked} Checked`;
   }
 
-  // Global exports
   window.interviewPrepController = {
     init,
     switchMode,
@@ -1627,7 +1573,6 @@
     startMockTest
   };
 
-  // Run on DOM loaded
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {

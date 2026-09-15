@@ -1,7 +1,3 @@
-/**
- * MAD DEV — Career Roadmap: Backend Developer
- * Complete 5-level dependency path, practical skill tasks, progressive projects, and job-ready checklist.
- */
 
 const backendRoadmap = {
   roleId: 'backend-developer',

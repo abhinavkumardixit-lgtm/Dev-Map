@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+
 """
 DevPilot-AI — Authentic LeetCode Problem Catalog (760+ Additional Problems)
 All authentic problem numbers, official titles, canonical slugs, difficulties,
@@ -6,9 +6,9 @@ and pattern recognition cues spanning all 16 categories.
 """
 
 def get_additional_questions():
-    # Each entry: (number, title, difficulty, categoryId, categoryName, patternId, patternName, subPattern, signals)
+
     raw_catalog = [
-        # --- ARRAY: Two Pointers ---
+
         (16, "3Sum Closest", "Medium", "array", "Array", "array-two-pointers", "Two Pointers", "Opposite Direction", ["triplet sum closest to target", "sorted array", "converging pointers"]),
         (18, "4Sum", "Medium", "array", "Array", "array-two-pointers", "Two Pointers", "Opposite Direction", ["quadruplet sum equals target", "skip duplicates", "nested two pointers"]),
         (658, "Find K Closest Elements", "Medium", "array", "Array", "array-two-pointers", "Two Pointers", "Opposite Direction", ["k closest integers to x", "sorted array", "shrink from outer edges"]),
@@ -31,7 +31,6 @@ def get_additional_questions():
         (2570, "Merge Two 2D Arrays by Summing Values", "Easy", "array", "Array", "array-two-pointers", "Two Pointers", "Two Pointers", ["two sorted 2d arrays", "merge by id", "two pointer merge"]),
         (2824, "Count Pairs Whose Sum is Less than Target", "Easy", "array", "Array", "array-two-pointers", "Two Pointers", "Opposite Direction", ["sorted array", "pairs sum less than target", "left and right converging"]),
 
-        # --- ARRAY: Sliding Window ---
         (643, "Maximum Average Subarray I", "Easy", "array", "Array", "array-sliding-window", "Sliding Window", "Fixed Window", ["contiguous subarray of length k", "maximum average", "rolling sum window"]),
         (713, "Subarray Product Less Than K", "Medium", "array", "Array", "array-sliding-window", "Sliding Window", "Dynamic Window", ["product of elements less than k", "positive integers", "expand right shrink left"]),
         (904, "Fruit Into Baskets", "Medium", "array", "Array", "array-sliding-window", "Sliding Window", "Dynamic Window", ["longest subarray with at most 2 types", "two baskets", "frequency map window"]),
@@ -55,7 +54,6 @@ def get_additional_questions():
         (2958, "Length of Longest Subarray With at Most K Frequency", "Medium", "array", "Array", "array-sliding-window", "Sliding Window", "Dynamic Window", ["frequency of each element <= k", "longest subarray", "dynamic sliding window"]),
         (2962, "Count Subarrays Where Max Element Appears at Least K Times", "Medium", "array", "Array", "array-sliding-window", "Sliding Window", "Dynamic Window", ["max element count >= k", "at least k occurrences", "sliding window counter"]),
 
-        # --- ARRAY: Prefix Based ---
         (523, "Continuous Subarray Sum", "Medium", "array", "Array", "array-prefix-based", "Prefix Based", "Prefix Sum Modulo", ["length at least 2", "sum is multiple of k", "prefix remainder map"]),
         (525, "Contiguous Array", "Medium", "array", "Array", "array-prefix-based", "Prefix Based", "Prefix Sum", ["equal number of 0 and 1", "replace 0 with -1", "prefix sum with earliest index"]),
         (724, "Find Pivot Index", "Easy", "array", "Array", "array-prefix-based", "Prefix Based", "Running Sum", ["sum of left equals sum of right", "totalSum minus leftSum", "single pass"]),
@@ -74,7 +72,6 @@ def get_additional_questions():
         (2848, "Points That Intersect With Cars", "Easy", "array", "Array", "array-prefix-based", "Prefix Based", "Difference Array", ["coordinate range coverage", "prefix difference array", "sweep line"]),
         (2971, "Find Polygon With the Largest Perimeter", "Medium", "array", "Array", "array-prefix-based", "Prefix Based", "Prefix Sum & Sort", ["longest side smaller than sum", "sort ascending", "check prefix sum > current"]),
 
-        # --- ARRAY: Kadane's / Subarray ---
         (152, "Maximum Product Subarray", "Medium", "array", "Array", "array-kadanes-subarray", "Kadane's / Subarray", "Dynamic Programming", ["contiguous subarray product", "negative numbers flip sign", "track local min and max"]),
         (918, "Maximum Sum Circular Subarray", "Medium", "array", "Array", "array-kadanes-subarray", "Kadane's / Subarray", "Circular Kadane", ["circular subarray", "totalSum minus minSubarray", "standard Kadane on inverted"]),
         (1186, "Maximum Subarray Sum with One Deletion", "Medium", "array", "Array", "array-kadanes-subarray", "Kadane's / Subarray", "State DP", ["delete at most one element", "two states with and without deletion", "extend Kadane"]),
@@ -90,7 +87,6 @@ def get_additional_questions():
         (714, "Best Time to Buy and Sell Stock with Transaction Fee", "Medium", "array", "Array", "array-kadanes-subarray", "Kadane's / Subarray", "Fee DP", ["transaction fee per trade", "states hold and cash", "linear state transition"]),
         (2110, "Number of Smooth Descent Periods of a Stock", "Medium", "array", "Array", "array-kadanes-subarray", "Kadane's / Subarray", "Streak Length", ["adjacent elements decrease by 1", "streak of length L gives L*(L+1)/2", "running counter"]),
 
-        # --- ARRAY: Binary Search ---
         (74, "Search a 2D Matrix", "Medium", "array", "Array", "array-binary-search", "Binary Search", "Matrix Binary Search", ["rows and columns sorted", "flattened 2D matrix", "binary search row = mid/n col = mid%n"]),
         (81, "Search in Rotated Sorted Array II", "Medium", "array", "Array", "array-binary-search", "Binary Search", "Rotated with Duplicates", ["rotated sorted with duplicates", "handle nums[left]==nums[mid]", "shrink boundaries"]),
         (154, "Find Minimum in Rotated Sorted Array II", "Hard", "array", "Array", "array-binary-search", "Binary Search", "Rotated with Duplicates", ["minimum in rotated array with duplicates", "compare mid with right", "decrement right on equality"]),
@@ -116,7 +112,6 @@ def get_additional_questions():
         (2529, "Maximum Count of Positive Integer and Negative Integer", "Easy", "array", "Array", "array-binary-search", "Binary Search", "Count Boundaries", ["count negative and positive numbers", "binary search for zero transitions", "upper_bound and lower_bound"]),
         (2594, "Minimum Time to Repair Cars", "Medium", "array", "Array", "array-binary-search", "Binary Search", "Answer Space", ["mechanics repair r * n^2 cars", "minimize repair time", "binary search time with sqrt cars"]),
 
-        # --- STRING: Sliding Window & Two Pointers & Pattern Matching ---
         (5, "Longest Palindromic Substring", "Medium", "string", "String", "string-two-pointers", "Two Pointers", "Expand Around Center", ["longest palindrome substring", "odd and even centers", "two pointers expand outward"]),
         (6, "Zigzag Conversion", "Medium", "string", "String", "string-pattern-matching", "Pattern Matching", "Simulation", ["zigzag pattern on numRows", "direction change at boundaries", "row strings concatenation"]),
         (8, "String to Integer (atoi)", "Medium", "string", "String", "string-pattern-matching", "Pattern Matching", "Parsing", ["convert string to 32-bit signed integer", "whitespace and sign parsing", "overflow clamping"]),
@@ -180,7 +175,6 @@ def get_additional_questions():
         (2108, "Find First Palindromic String in the Array", "Easy", "string", "String", "string-two-pointers", "Two Pointers", "Palindrome Check", ["first string that is palindrome", "check each string with two pointers", "return first match"]),
         (2185, "Counting Words With a Given Prefix", "Easy", "string", "String", "string-pattern-matching", "Pattern Matching", "Prefix Count", ["words starting with pref", "startsWith check", "linear count"]),
 
-        # --- HASH MAP ---
         (128, "Longest Consecutive Sequence", "Medium", "hash-map", "Hash Map", "hashmap-lookup", "Lookup Based", "Hash Set Sequence", ["longest consecutive elements sequence in O(N)", "hash set lookup", "start sequence if num-1 not in set"]),
         (217, "Contains Duplicate", "Easy", "hash-map", "Hash Map", "hashmap-lookup", "Lookup Based", "Set Membership", ["check for duplicate elements in array", "hash set insertion", "O(N) time O(N) space"]),
         (219, "Contains Duplicate II", "Easy", "hash-map", "Hash Map", "hashmap-lookup", "Lookup Based", "Sliding Set", ["duplicate within k distance", "hash map with last seen index", "or sliding hash set of size k"]),
@@ -207,7 +201,6 @@ def get_additional_questions():
         (2215, "Find the Difference of Two Arrays", "Easy", "hash-map", "Hash Map", "hashmap-lookup", "Lookup Based", "Set Difference", ["distinct elements present in only one array", "two hash sets", "difference computation"]),
         (2352, "Equal Row and Column Pairs", "Medium", "hash-map", "Hash Map", "hashmap-grouping", "Grouping & Index Mapping", "Vector Hash", ["equal row and column vectors in matrix", "hash map of row vectors", "lookup column vectors"]),
 
-        # --- STACK: Monotonic Stack & Expressions ---
         (84, "Largest Rectangle in Histogram", "Hard", "stack", "Stack", "stack-monotonic", "Monotonic Stack", "Monotonic Increasing", ["largest rectangular area under histogram", "monotonic increasing stack of indices", "pop and compute width = i - st.top() - 1"]),
         (85, "Maximal Rectangle", "Hard", "stack", "Stack", "stack-monotonic", "Monotonic Stack", "Histogram on Matrix", ["maximal rectangle of 1s in binary matrix", "running heights per row", "call largest rectangle in histogram"]),
         (150, "Evaluate Reverse Polish Notation", "Medium", "stack", "Stack", "stack-expressions", "Min/Max & Expression Handling", "RPN Evaluator", ["evaluate postfix expression", "push numbers", "pop two operands on operator"]),
@@ -228,7 +221,6 @@ def get_additional_questions():
         (1673, "Find the Most Competitive Subsequence", "Medium", "stack", "Stack", "stack-monotonic", "Monotonic Stack", "Monotonic Increasing", ["most competitive subsequence of size k", "monotonic increasing stack", "pop if remaining elements allow"]),
         (1762, "Buildings With an Ocean View", "Medium", "stack", "Stack", "stack-monotonic", "Monotonic Stack", "Right Max", ["buildings that can see ocean to the right", "monotonic decreasing stack from right", "or running maximum"]),
 
-        # --- QUEUE / DEQUE ---
         (232, "Implement Queue using Stacks", "Easy", "queue-deque", "Queue / Deque", "queue-processing", "FIFO & Deque Processing", "Two Stacks", ["FIFO queue using two LIFO stacks", "transfer inStack to outStack when empty", "amortized O(1)"]),
         (346, "Moving Average from Data Stream", "Easy", "queue-deque", "Queue / Deque", "queue-processing", "FIFO & Deque Processing", "Sliding Buffer", ["moving average of last size elements", "FIFO queue of size k", "running sum"]),
         (622, "Design Circular Queue", "Medium", "queue-deque", "Queue / Deque", "queue-processing", "FIFO & Deque Processing", "Circular Array", ["circular buffer with fixed capacity", "head and tail modulo arithmetic", "empty and full checks"]),
@@ -240,7 +232,6 @@ def get_additional_questions():
         (1429, "First Unique Number", "Medium", "queue-deque", "Queue / Deque", "queue-processing", "FIFO & Deque Processing", "Queue + Frequency", ["find first unique number in stream", "FIFO queue with frequency map", "lazy eviction of duplicates"]),
         (1696, "Jump Game VI", "Medium", "queue-deque", "Queue / Deque", "queue-processing", "FIFO & Deque Processing", "DP with Monotonic Deque", ["max score reaching last index with jump <= k", "dp[i] = nums[i] + max(dp[i-k..i-1])", "monotonic decreasing deque of DP values"]),
 
-        # --- LINKED LIST ---
         (19, "Remove Nth Node From End of List", "Medium", "linked-list", "Linked List", "ll-pointer-techniques", "Pointer Techniques & Cycle Detection", "Offset Two Pointers", ["remove nth node from list end in one pass", "fast pointer advances n steps ahead", "dummy head node"]),
         (21, "Merge Two Sorted Lists", "Easy", "linked-list", "Linked List", "ll-reversal-merge", "Reversal & Merge Lists", "Sorted Merge", ["splice two sorted linked lists", "dummy head pointer", "advance smaller node pointer"]),
         (23, "Merge k Sorted Lists", "Hard", "linked-list", "Linked List", "ll-reversal-merge", "Reversal & Merge Lists", "Min-Heap / Divide & Conquer", ["merge k sorted linked lists", "min-heap of list head nodes", "or divide and conquer merge"]),
@@ -266,7 +257,6 @@ def get_additional_questions():
         (2095, "Delete the Middle Node of a Linked List", "Medium", "linked-list", "Linked List", "ll-pointer-techniques", "Pointer Techniques & Cycle Detection", "Fast & Slow", ["delete middle node of linked list", "fast and slow pointer with prev", "skip middle node"]),
         (2130, "Maximum Twin Sum of a Linked List", "Medium", "linked-list", "Linked List", "ll-pointer-techniques", "Pointer Techniques & Cycle Detection", "Mid Reversal Twin", ["maximum sum of twin nodes i and n-1-i", "reverse second half from middle", "pair sum traversal"]),
 
-        # --- TREES: Traversal & BST ---
         (94, "Binary Tree Inorder Traversal", "Easy", "trees", "Trees", "trees-traversal", "Traversal & Recursion Patterns", "In-Order DFS", ["in-order traversal (left, root, right)", "sorted order for BST", "recursive or iterative with stack"]),
         (95, "Unique Binary Search Trees II", "Medium", "trees", "Trees", "trees-bst", "Binary Search Trees (BST)", "Catalan Trees", ["generate all structurally unique BSTs", "pick root i, recurse left 1..i-1 and right i+1..n", "combine subtrees"]),
         (96, "Unique Binary Search Trees", "Medium", "trees", "Trees", "trees-bst", "Binary Search Trees (BST)", "Catalan Number", ["count structurally unique BSTs with n nodes", "Catalan number recurrence", "1D DP"]),
@@ -314,7 +304,6 @@ def get_additional_questions():
         (1302, "Deepest Leaves Sum", "Medium", "trees", "Trees", "trees-traversal", "Traversal & Recursion Patterns", "Level-Order BFS", ["sum of values of deepest leaves", "BFS queue tracks sum of each level", "return sum of final level"]),
         (1379, "Find a Corresponding Node of a Binary Tree in a Clone of That Tree", "Easy", "trees", "Trees", "trees-traversal", "Traversal & Recursion Patterns", "Parallel DFS", ["find clone of target node in cloned tree", "traverse original and clone together", "match by reference"]),
 
-        # --- RECURSION & BACKTRACKING ---
         (17, "Letter Combinations of a Phone Number", "Medium", "recursion", "Recursion & Backtracking", "recursion-backtracking", "Backtracking & Exploration", "Combinations", ["phone keypad digit to letters", "backtracking combination generation", "cartesian product"]),
         (22, "Generate Parentheses", "Medium", "recursion", "Recursion & Backtracking", "recursion-backtracking", "Backtracking & Exploration", "Catalan Backtracking", ["generate n pairs of valid parentheses", "open < n and close < open constraints", "systematic backtracking"]),
         (37, "Sudoku Solver", "Hard", "recursion", "Recursion & Backtracking", "recursion-backtracking", "Backtracking & Exploration", "Grid Constraint Backtracking", ["solve 9x9 Sudoku board", "row, column, and 3x3 box validity", "backtrack on empty cells"]),
@@ -334,7 +323,6 @@ def get_additional_questions():
         (301, "Remove Invalid Parentheses", "Hard", "recursion", "Recursion & Backtracking", "recursion-backtracking", "Backtracking & Exploration", "BFS / Backtracking", ["remove minimum invalid parentheses", "count misplaces open and close", "backtracking or level-order BFS"]),
         (494, "Target Sum", "Medium", "recursion", "Recursion & Backtracking", "recursion-backtracking", "Backtracking & Exploration", "Subset Sum DP / Backtrack", ["assign + or - to make target", "reduce to subset sum target = (total + target) / 2", "memoized recursion"]),
 
-        # --- HEAP / PRIORITY QUEUE ---
         (264, "Ugly Numbers II", "Medium", "heap", "Heap / Priority Queue", "heap-top-k", "Top K & Greedy Heaps", "Multi-Pointer / Heap", ["ugly numbers have factors 2, 3, 5", "min-heap generating next multiples", "or three pointers DP"]),
         (295, "Find Median from Data Stream", "Hard", "heap", "Heap / Priority Queue", "heap-top-k", "Top K & Greedy Heaps", "Two Balanced Heaps", ["continuous median from live data stream", "max-heap for small half, min-heap for large half", "O(log n) insert O(1) median"]),
         (347, "Top K Frequent Elements", "Medium", "heap", "Heap / Priority Queue", "heap-top-k", "Top K & Greedy Heaps", "Min-Heap / Bucket Sort", ["k most frequent elements in array", "frequency map with min-heap of size k", "or O(N) bucket sort"]),
@@ -352,7 +340,6 @@ def get_additional_questions():
         (1962, "Remove Stones to Minimize the Total", "Medium", "heap", "Heap / Priority Queue", "heap-top-k", "Top K & Greedy Heaps", "Max-Heap Greedy", ["reduce pile by floor(pile/2) k times", "max-heap greedily picks largest pile", "subtract halved amount"]),
         (2231, "Largest Number After Digit Swaps by Parity", "Easy", "heap", "Heap / Priority Queue", "heap-top-k", "Top K & Greedy Heaps", "Two Heaps", ["swap digits of same parity", "max-heap for even digits and odd digits", "reconstruct number"]),
 
-        # --- GRAPHS: Traversal, Cycles & Shortest Paths ---
         (127, "Word Ladder", "Hard", "graphs", "Graphs", "graphs-traversal-cycles", "Traversal & Topological Sort", "Bidirectional BFS", ["shortest transformation from beginWord to endWord", "change one character at a time", "bidirectional BFS"]),
         (130, "Surrounded Regions", "Medium", "graphs", "Graphs", "graphs-traversal-cycles", "Traversal & Topological Sort", "Boundary DFS", ["capture surrounded regions of O in matrix", "DFS from border O cells", "unconnected Os flipped to X"]),
         (133, "Clone Graph", "Medium", "graphs", "Graphs", "graphs-traversal-cycles", "Traversal & Topological Sort", "Hash Map DFS", ["deep copy of connected undirected graph", "hash map of original to cloned node", "recursive DFS"]),
@@ -375,7 +362,6 @@ def get_additional_questions():
         (1584, "Min Cost to Connect All Points", "Medium", "graphs", "Graphs", "graphs-dsu-shortest-path", "Shortest Path & Union-Find (DSU)", "Prim / Kruskal MST", ["minimum spanning tree on 2D coordinates", "Manhattan distance edges", "Prim's algorithm with min-heap"]),
         (1971, "Find if Path Exists in Graph", "Easy", "graphs", "Graphs", "graphs-traversal-cycles", "Traversal & Topological Sort", "BFS / DSU", ["check path between source and destination", "DSU find(source) == find(destination)", "or simple BFS queue"]),
 
-        # --- TRIE ---
         (211, "Design Add and Search Words Data Structure", "Medium", "trie", "Trie (Prefix Tree)", "trie-prefix-bitwise", "Prefix & Bitwise Trie", "Trie with Wildcard", ["search words with '.' wildcard matching", "Trie with recursive branch exploration on '.'", "standard children array"]),
         (212, "Word Search II", "Hard", "trie", "Trie (Prefix Tree)", "trie-prefix-bitwise", "Prefix & Bitwise Trie", "Trie + Grid DFS", ["find all words from dictionary in 2D grid", "insert all words into Trie", "backtracking DFS pruned by Trie"]),
         (421, "Maximum XOR of Two Numbers in an Array", "Medium", "trie", "Trie (Prefix Tree)", "trie-prefix-bitwise", "Prefix & Bitwise Trie", "Bitwise Trie", ["maximum XOR of two numbers in O(N)", "32-bit binary Trie", "follow opposite bit greedily"]),
@@ -385,7 +371,6 @@ def get_additional_questions():
         (1268, "Search Suggestions System", "Medium", "trie", "Trie (Prefix Tree)", "trie-prefix-bitwise", "Prefix & Bitwise Trie", "Autocomplete Trie", ["suggest top 3 lexicographical products per prefix", "Trie storing top 3 suggestions at each node", "or binary search"]),
         (1707, "Maximum XOR With an Element From Array", "Hard", "trie", "Trie (Prefix Tree)", "trie-prefix-bitwise", "Prefix & Bitwise Trie", "Offline Queries Trie", ["maximum XOR with query limit m", "sort array and queries offline", "insert into bitwise Trie incrementally"]),
 
-        # --- DYNAMIC PROGRAMMING: Linear & Grid ---
         (62, "Unique Paths", "Medium", "dp", "Dynamic Programming", "dp-linear-grid", "1D & 2D Grid / Linear DP", "2D Grid DP", ["paths from top-left to bottom-right of grid", "dp[r][c] = dp[r-1][c] + dp[r][c-1]", "1D row space optimization"]),
         (63, "Unique Paths II", "Medium", "dp", "Dynamic Programming", "dp-linear-grid", "1D & 2D Grid / Linear DP", "Obstacle Grid DP", ["unique paths with obstacle grid cells", "set dp to 0 if obstacle", "transition from valid neighbors"]),
         (64, "Minimum Path Sum", "Medium", "dp", "Dynamic Programming", "dp-linear-grid", "1D & 2D Grid / Linear DP", "Grid Min Cost", ["minimum path sum from top-left to bottom-right", "dp[r][c] = grid[r][c] + min(up, left)", "in-place grid DP"]),
@@ -408,7 +393,6 @@ def get_additional_questions():
         (1137, "N-th Tribonacci Number", "Easy", "dp", "Dynamic Programming", "dp-linear-grid", "1D & 2D Grid / Linear DP", "Recurrence", ["T0=0, T1=1, T2=1, Tn+3 = Tn + Tn+1 + Tn+2", "three variables rolling state", "O(N) time O(1) space"]),
         (1143, "Longest Common Subsequence", "Medium", "dp", "Dynamic Programming", "dp-knapsack-sequences", "Knapsack & Sequences", "2D Sequence DP", ["longest common subsequence of two strings", "dp[i][j] = dp[i-1][j-1]+1 if match else max", "2D table or two rows"]),
 
-        # --- GREEDY: Intervals & Jumps ---
         (45, "Jump Game II", "Medium", "greedy", "Greedy", "greedy-intervals-jumps", "Intervals & Scheduling Greedy", "BFS Levels", ["minimum jumps to reach last index", "track farthest boundary per jump level", "increment jump count"]),
         (55, "Jump Game", "Medium", "greedy", "Greedy", "greedy-intervals-jumps", "Intervals & Scheduling Greedy", "Farthest Reachable", ["can you reach the last index", "running maxReachable = max(maxReachable, i + nums[i])", "if i > maxReachable return false"]),
         (56, "Merge Intervals", "Medium", "greedy", "Greedy", "greedy-intervals-jumps", "Intervals & Scheduling Greedy", "Interval Merging", ["merge all overlapping intervals", "sort by start time", "extend end of last interval"]),
@@ -423,7 +407,6 @@ def get_additional_questions():
         (860, "Lemonade Change", "Easy", "greedy", "Greedy", "greedy-intervals-jumps", "Intervals & Scheduling Greedy", "Greedy Bills", ["give change for $5, $10, $20 bills", "greedily give $10 before $5 for $20 bill", "count $5 and $10 bills"]),
         (1029, "Two City Scheduling", "Medium", "greedy", "Greedy", "greedy-intervals-jumps", "Intervals & Scheduling Greedy", "Cost Difference Sort", ["send n people to city A and n to city B", "sort by costA - costB", "first n go to A rest to B"]),
 
-        # --- BIT MANIPULATION ---
         (136, "Single Number", "Easy", "bit-manipulation", "Bit Manipulation", "bit-core-masking", "XOR & Bit Masking", "XOR Cancellation", ["every element appears twice except one", "xor all elements", "x ^ x = 0 leaves single element"]),
         (137, "Single Number II", "Medium", "bit-manipulation", "Bit Manipulation", "bit-core-masking", "XOR & Bit Masking", "Modulo 3 Bits", ["every element appears three times except one", "count bits at each position modulo 3", "or two bitmask state variables ones and twos"]),
         (190, "Reverse Bits", "Easy", "bit-manipulation", "Bit Manipulation", "bit-core-masking", "XOR & Bit Masking", "Bit Shifting", ["reverse bits of 32-bit unsigned integer", "loop 32 times: res = (res << 1) | (n & 1)", "bit reversal"]),
@@ -438,7 +421,6 @@ def get_additional_questions():
         (1342, "Number of Steps to Reduce a Number to Zero", "Easy", "bit-manipulation", "Bit Manipulation", "bit-core-masking", "XOR & Bit Masking", "Bit Steps", ["divide by 2 if even subtract 1 if odd", "bit length + number of set bits - 1", "bit count simulation"]),
         (1356, "Sort Integers by The Number of 1 Bits", "Easy", "bit-manipulation", "Bit Manipulation", "bit-core-masking", "XOR & Bit Masking", "Custom Bit Comparator", ["sort by set bits count then value", "builtin_popcount comparison", "std::sort comparator"]),
 
-        # --- SORTING ALGORITHMS ---
         (41, "First Missing Positive", "Hard", "sorting", "Sorting Algorithms", "sorting-algorithms", "Classic Sort Algorithms", "Cyclic Sort", ["smallest missing positive in O(N) time and O(1) space", "swap nums[i] to index nums[i]-1", "find first index i where nums[i] != i+1"]),
         (75, "Sort Colors", "Medium", "sorting", "Sorting Algorithms", "sorting-algorithms", "Classic Sort Algorithms", "Dutch National Flag", ["sort array of 0, 1, 2 in-place", "three pointers low, mid, high", "single pass three-way partition"]),
         (179, "Largest Number", "Medium", "sorting", "Sorting Algorithms", "sorting-algorithms", "Classic Sort Algorithms", "Custom Comparator", ["arrange numbers to form largest string", "sort strings by a+b > b+a", "handle all zeros leading zero"]),
@@ -449,7 +431,6 @@ def get_additional_questions():
         (912, "Sort an Array", "Medium", "sorting", "Sorting Algorithms", "sorting-algorithms", "Classic Sort Algorithms", "Merge / Quick / Heap Sort", ["sort array in O(N log N) without built-in sort", "implement Merge Sort or Heap Sort", "stable divide and conquer"]),
         (1051, "Height Checker", "Easy", "sorting", "Sorting Algorithms", "sorting-algorithms", "Classic Sort Algorithms", "Counting Sort", ["count mismatching indices with sorted", "counting sort by heights 1..100", "linear count compare"]),
 
-        # --- RANGE STRUCTURES ---
         (303, "Range Sum Query - Immutable", "Easy", "range-structures", "Range Structures", "range-trees", "Segment & Fenwick Trees", "Prefix Sum Array", ["static range sum queries in O(1)", "prefix sum array precomputation", "pref[r+1] - pref[l]"]),
         (304, "Range Sum Query 2D - Immutable", "Medium", "range-structures", "Range Structures", "range-trees", "Segment & Fenwick Trees", "2D Prefix Sum", ["submatrix sum queries in O(1)", "2D prefix sum inclusion-exclusion", "P[r2][c2] - P[r1-1][c2] - P[r2][c1-1] + P[r1-1][c1-1]"]),
         (307, "Range Sum Query - Mutable", "Medium", "range-structures", "Range Structures", "range-trees", "Segment & Fenwick Trees", "Fenwick / Segment Tree", ["point update and range sum queries in O(log N)", "Fenwick tree (Binary Indexed Tree)", "or Segment Tree with tree[2*i]"]),

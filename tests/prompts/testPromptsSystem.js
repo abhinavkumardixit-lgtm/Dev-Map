@@ -1,6 +1,3 @@
-/**
- * MAD DEV — Automated Validation Test Suite for AI Prompt Vault
- */
 
 const assert = require('assert');
 const {
@@ -29,7 +26,6 @@ function check(name, fn) {
   }
 }
 
-// 1. Categories & Subcategories
 check('TEST 1: Major prompt categories and subcategories exist', () => {
   assert.ok(Array.isArray(PROMPT_CATEGORIES), 'PROMPT_CATEGORIES must be an array');
   assert.ok(PROMPT_CATEGORIES.length >= 8, `Expected at least 8 domains, got ${PROMPT_CATEGORIES.length}`);
@@ -51,7 +47,6 @@ check('TEST 1: Major prompt categories and subcategories exist', () => {
   });
 });
 
-// 2. Curated Preset Collections
 check('TEST 2: Preset prompt collections are properly configured', () => {
   assert.ok(Array.isArray(PROMPT_COLLECTIONS), 'PROMPT_COLLECTIONS must be an array');
   assert.ok(PROMPT_COLLECTIONS.length >= 10, `Expected at least 10 curated collections, got ${PROMPT_COLLECTIONS.length}`);
@@ -63,7 +58,6 @@ check('TEST 2: Preset prompt collections are properly configured', () => {
   });
 });
 
-// 3. Preserved Original Prompts
 check('TEST 3: Original prompts p1 to p6 are preserved and enriched without legacy placeholders', () => {
   const originalIds = ['p1', 'p2', 'p3', 'p4', 'p5', 'p6'];
 
@@ -77,7 +71,6 @@ check('TEST 3: Original prompts p1 to p6 are preserved and enriched without lega
   });
 });
 
-// 4. Unique IDs Constraint
 check('TEST 4: Every prompt has a globally unique ID', () => {
   const ids = new Set();
   PROMPTS_DATA.forEach(p => {
@@ -87,7 +80,6 @@ check('TEST 4: Every prompt has a globally unique ID', () => {
   });
 });
 
-// 5. Strict Schema Validation for all prompts
 check('TEST 5: All 140+ prompts adhere to strict production schema', () => {
   const validDifficulties = ['Beginner', 'Easy', 'Intermediate', 'Advanced', 'Interview'];
   const validCategoryNames = PROMPT_CATEGORIES.map(c => c.name);
@@ -100,31 +92,25 @@ check('TEST 5: All 140+ prompts adhere to strict production schema', () => {
     assert.ok(p.subcategory && p.subcategory.trim().length > 0, `Missing subcategory for prompt ${p.id}`);
     assert.ok(validDifficulties.includes(p.difficulty), `Invalid difficulty "${p.difficulty}" for prompt ${p.id}`);
     assert.ok(p.description && p.description.trim().length >= 10, `Description too short for prompt ${p.id}`);
-    
-    // Prompt text & backwards compatibility
+
     assert.ok(p.prompt && p.prompt.trim().length >= 30, `Prompt text too short for prompt ${p.id}`);
     assert.strictEqual(p.prompt, p.promptText, `prompt and promptText must match for prompt ${p.id}`);
 
-    // No lazy placeholders
     assert.ok(!p.prompt.includes('[PASTE YOUR CODE HERE]'), `Prompt ${p.id} contains lazy placeholder`);
     assert.ok(!p.prompt.includes('// TODO'), `Prompt ${p.id} contains TODO`);
 
-    // Variables validation
     assert.ok(Array.isArray(p.variables), `Prompt ${p.id} variables must be an array`);
     p.variables.forEach(v => {
       assert.ok(/^\{\{[A-Z0-9_]+\}\}$/.test(v), `Invalid variable format "${v}" in prompt ${p.id}`);
     });
 
-    // UseCase & ExpectedOutput
     assert.ok(p.useCase && p.useCase.trim().length > 0, `Missing useCase for prompt ${p.id}`);
     assert.ok(p.expectedOutput && p.expectedOutput.trim().length > 0, `Missing expectedOutput for prompt ${p.id}`);
 
-    // Tags
     assert.ok(Array.isArray(p.tags) && p.tags.length >= 2, `Prompt ${p.id} must have at least 2 tags`);
   });
 });
 
-// 6. Helper functions: getPromptById and getRelatedPrompts
 check('TEST 6: getPromptById and getRelatedPrompts return relevant recommendations', () => {
   const p1 = getPromptById('p1');
   assert.strictEqual(p1.id, 'p1');
@@ -138,7 +124,6 @@ check('TEST 6: getPromptById and getRelatedPrompts return relevant recommendatio
   assert.ok(!related.some(r => r.id === 'p1'), 'Related prompts must not include the current prompt');
 });
 
-// 7. Search Simulation across Title, Description, Body, and Tags
 check('TEST 7: Multi-token search simulation correctly matches keywords', () => {
   function search(query) {
     const tokens = query.toLowerCase().split(/\s+/).filter(Boolean);
@@ -155,24 +140,19 @@ check('TEST 7: Multi-token search simulation correctly matches keywords', () => 
     });
   }
 
-  // Search "promise"
   const promiseResults = search('promise');
   assert.ok(promiseResults.length >= 3, `Expected multiple promise prompts, got ${promiseResults.length}`);
 
-  // Search "leetcode"
   const leetcodeResults = search('leetcode');
   assert.ok(leetcodeResults.length >= 5, `Expected multiple leetcode prompts, got ${leetcodeResults.length}`);
 
-  // Search "docker"
   const dockerResults = search('docker');
   assert.ok(dockerResults.length >= 2, `Expected multiple docker prompts, got ${dockerResults.length}`);
 
-  // Search "system design"
   const sysDesignResults = search('system design');
   assert.ok(sysDesignResults.length >= 5, `Expected multiple system design prompts, got ${sysDesignResults.length}`);
 });
 
-// 8. Variable Substitution Engine
 check('TEST 8: Variable detection and string substitution engine', () => {
   const prompt = getPromptById('p1');
   assert.ok(prompt.variables.includes('{{CODE}}'));
@@ -192,7 +172,6 @@ check('TEST 8: Variable detection and string substitution engine', () => {
   assert.ok(!substituted.includes('{{CODE}}'), 'Substituted text should have no raw {{CODE}} left');
 });
 
-// 9. Preset Collections Coverage
 check('TEST 9: Every preset collection matches relevant items', () => {
   PROMPT_COLLECTIONS.forEach(col => {
     if (col.id === 'all') return;
@@ -207,7 +186,6 @@ check('TEST 9: Every preset collection matches relevant items', () => {
   });
 });
 
-// 10. Saved & Recently Used logic
 check('TEST 10: Saved and Recently Used MRU filtering logic', () => {
   const mockSavedIds = new Set(['p1', 'p2', 'dsa-no-spoiler-level1']);
   const savedFiltered = PROMPTS_DATA.filter(p => mockSavedIds.has(p.id));

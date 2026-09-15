@@ -1,16 +1,9 @@
-/**
- * Builder for Communication & GD (100 scenario MCQs + 10 Practice GD Topics)
- * and HR & Behavioral Interview (10 Framework Guides + 10 Situational MCQs)
- */
 
 const fs = require('fs');
 const path = require('path');
 
 const targetDir = path.join(__dirname, '../../js/data/interviewPrep');
 
-// =========================================================================
-// 1. COMMUNICATION & GROUP DISCUSSION
-// =========================================================================
 const commTopics = [
   "Group Discussion Fundamentals",
   "GD Opening & Closing",
@@ -248,7 +241,7 @@ const gdPracticeTopics = [
 ];
 
 const commGroups = [
-  // 1. Group Discussion Fundamentals
+
   {
     topic: "Group Discussion Fundamentals",
     prefix: "comm-gdf",
@@ -266,7 +259,6 @@ const commGroups = [
     ]
   },
 
-  // 2. GD Opening & Closing
   {
     topic: "GD Opening & Closing",
     prefix: "comm-goc",
@@ -285,9 +277,8 @@ const commGroups = [
   }
 ];
 
-// Add Remaining Comm topics (3-10)
 const extraComm = [
-  // 3. GD Communication Skills
+
   {
     topic: "GD Communication Skills",
     prefix: "comm-gcs",
@@ -305,7 +296,6 @@ const extraComm = [
     ]
   },
 
-  // 4. GD Do's & Don'ts
   {
     topic: "GD Do's & Don'ts",
     prefix: "comm-dd",
@@ -323,7 +313,6 @@ const extraComm = [
     ]
   },
 
-  // 5. Leadership & Team Behaviour
   {
     topic: "Leadership & Team Behaviour",
     prefix: "comm-ltb",
@@ -341,7 +330,6 @@ const extraComm = [
     ]
   },
 
-  // 6. Extempore
   {
     topic: "Extempore",
     prefix: "comm-ext",
@@ -359,7 +347,6 @@ const extraComm = [
     ]
   },
 
-  // 7. Presentation Skills
   {
     topic: "Presentation Skills",
     prefix: "comm-prs",
@@ -377,7 +364,6 @@ const extraComm = [
     ]
   },
 
-  // 8. Active Listening
   {
     topic: "Active Listening",
     prefix: "comm-al",
@@ -395,7 +381,6 @@ const extraComm = [
     ]
   },
 
-  // 9. Professional Communication
   {
     topic: "Professional Communication",
     prefix: "comm-pc",
@@ -413,7 +398,6 @@ const extraComm = [
     ]
   },
 
-  // 10. Email & Workplace Communication
   {
     topic: "Email & Workplace Communication",
     prefix: "comm-ewc",
@@ -432,12 +416,11 @@ const extraComm = [
   }
 ];
 
-// Append all comm questions
 const commQuestions = [];
 commGroups.concat(extraComm).forEach(group => {
   group.items.forEach((item, index) => {
     const qNum = String(index + 1).padStart(2, '0');
-    // Check if ID already exists
+
     const qId = `${group.prefix}-${qNum}`;
     const exists = commQuestions.some(q => q.id === qId);
     if (!exists) {
@@ -457,7 +440,6 @@ commGroups.concat(extraComm).forEach(group => {
 
 console.log(`Total Communication questions: ${commQuestions.length}`);
 
-// Write communication.js
 const commFileContent = `/**
  * MAD DEV — Communication & Group Discussion Module
  * 100 scenario-based MCQs across 10 communication topics + 10 comprehensive GD Practice Topics.
@@ -491,10 +473,6 @@ const commFileContent = `/**
 fs.writeFileSync(path.join(targetDir, 'communication.js'), commFileContent, 'utf8');
 console.log('Successfully written communication.js!');
 
-
-// =========================================================================
-// 2. HR & BEHAVIORAL INTERVIEW
-// =========================================================================
 const hrQuestions = [
   {
     id: "hr-core-01",
@@ -578,7 +556,6 @@ const hrQuestions = [
   }
 ];
 
-// HR Situational / Behavioral MCQs (10 scenario questions)
 const hrMCQs = [
   {
     id: "hr-mcq-01",
@@ -732,7 +709,6 @@ const hrMCQs = [
   }
 ];
 
-// Write hrBehavioral.js
 const hrFileContent = `/**
  * MAD DEV — HR & Behavioral Interview Module
  * 10 Core Placement Interview Frameworks (STAR method, evaluation criteria, traps to avoid, answers)

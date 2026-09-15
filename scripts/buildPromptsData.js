@@ -1,7 +1,4 @@
-/**
- * Builder script to generate js/data/promptsData.js
- * Compiles all modular prompt files into a single production data file.
- */
+
 const fs = require('fs');
 const path = require('path');
 
@@ -116,7 +113,6 @@ const allPromptLists = [
 
 console.log(`Total raw prompts collected: ${allPromptLists.length}`);
 
-// Validation & Normalization
 const seenIds = new Set();
 const validDifficulties = ['Beginner', 'Easy', 'Intermediate', 'Advanced', 'Interview'];
 
@@ -138,25 +134,22 @@ const normalizedPrompts = allPromptLists.map((p, idx) => {
   if (!p.description || p.description.trim().length < 10) {
     throw new Error(`Missing or too short description for prompt ${p.id}`);
   }
-  
+
   const promptText = p.prompt || p.promptText;
   if (!promptText || promptText.trim().length < 30) {
     throw new Error(`Missing or too short prompt text for prompt ${p.id}`);
   }
 
-  // Ensure no old placeholder string remains
   if (promptText.includes('[PASTE YOUR CODE HERE]')) {
     throw new Error(`Prompt ${p.id} still contains legacy placeholder [PASTE YOUR CODE HERE]`);
   }
 
-  // Extract variables if not provided
   let variables = p.variables;
   if (!Array.isArray(variables) || variables.length === 0) {
     const matched = promptText.match(/\{\{[A-Z0-9_]+\}\}/g);
     variables = matched ? Array.from(new Set(matched)) : [];
   }
 
-  // Validate difficulty
   const difficulty = p.difficulty || 'Intermediate';
   if (!validDifficulties.includes(difficulty)) {
     throw new Error(`Invalid difficulty "${difficulty}" for prompt ${p.id}`);
@@ -171,7 +164,7 @@ const normalizedPrompts = allPromptLists.map((p, idx) => {
     subcategory: p.subcategory.trim(),
     description: p.description.trim(),
     prompt: promptText.trim(),
-    promptText: promptText.trim(), // backward compatibility
+    promptText: promptText.trim(),
     tags: tags,
     difficulty: difficulty,
     useCase: p.useCase || 'General Engineering',
@@ -183,7 +176,6 @@ const normalizedPrompts = allPromptLists.map((p, idx) => {
 
 console.log(`Successfully normalized ${normalizedPrompts.length} prompts.`);
 
-// Code template for js/data/promptsData.js
 const fileContent = `/**
  * MAD DEV - AI Prompt Library Vault Dataset
  * Static structured dataset containing 130+ engineered developer prompts across 8 core domains.

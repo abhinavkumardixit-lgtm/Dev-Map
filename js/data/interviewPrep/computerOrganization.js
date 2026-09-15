@@ -1,5 +1,3 @@
-// js/data/interviewPrep/computerOrganization.js
-// Complete Question Bank for Computer Organization & Architecture (12 topics * 10 = 120 MCQs)
 
 window.interviewPrepCO = {
   id: 'computer_organization',
@@ -1704,7 +1702,6 @@ window.interviewPrepCO = {
   }
 ]
 };
-
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = window.interviewPrepCO;

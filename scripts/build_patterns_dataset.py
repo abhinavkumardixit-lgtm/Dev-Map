@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+
 """
 DevPilot-AI: DSA Pattern Learning Curriculum & 1000+ Real LeetCode Problems Builder
 Assembles:
@@ -46,7 +46,6 @@ all_questions = []
 used_ids = set()
 used_lc_numbers = set()
 
-# Pattern signal defaults
 pattern_signal_map = {
     'array-two-pointers': ["sorted array", "find pair", "two elements sum", "opposite direction", "partitioning"],
     'array-sliding-window': ["contiguous subarray", "fixed window size k", "longest/shortest subarray", "at most k", "rolling window"],
@@ -79,7 +78,6 @@ pattern_signal_map = {
     'range-structures': ["range sum query mutable", "segment tree", "binary indexed tree", "fenwick tree", "point update range query"]
 }
 
-# 1. Add all 260 existing questions
 for cat in existing_roadmap:
     c_id = cat['id']
     c_name = cat['name']
@@ -93,7 +91,7 @@ for cat in existing_roadmap:
             used_ids.add(q_id)
             if lc_num:
                 used_lc_numbers.add(lc_num)
-            
+
             signals = pattern_signal_map.get(p_id, ["problem constraint", "pattern cue", "optimal subproblem"])
             all_questions.append({
                 "id": q_id,
@@ -114,25 +112,23 @@ print(f"Loaded {len(all_questions)} existing questions. Adding curated authentic
 
 from assign_10_questions import EXTRA_QUESTIONS
 
-# 2. Add curated authentic questions
 additional_raw = get_additional_questions() + get_part2_questions() + get_part3_questions() + EXTRA_QUESTIONS
 
 added_count = 0
 for entry in additional_raw:
     num, title, diff, cat_id, cat_name, pat_id, pat_name, sub_pat, signals = entry
-    
-    # Generate unique ID
+
     candidate_id = f"lc-{num}"
     if candidate_id in used_ids:
-        # If ID collision with existing or duplicate entry, differentiate
+
         slug = slugify(title)[:10]
         candidate_id = f"lc-{num}-{slug}"
         if candidate_id in used_ids:
             continue
-    
+
     used_ids.add(candidate_id)
     url = canonical_url(title)
-    
+
     all_questions.append({
         "id": candidate_id,
         "title": title,
@@ -151,17 +147,15 @@ for entry in additional_raw:
 
 print(f"Added {added_count} curated questions. Total questions in dataset: {len(all_questions)}")
 
-# 3. Load 29 patterns curriculum and curate exactly 10 practice questions (5 Easy, 3 Medium, 2 Hard)
 patterns = get_patterns_curriculum()
 
 def pick_questions(pid, diff, target_count):
     direct = [q for q in all_questions if q['patternId'] == pid and q['difficulty'] == diff]
     seen = set()
     selected = []
-    
-    # Prioritize original roadmap questions first, then canonical LC order
+
     sorted_direct = sorted(direct, key=lambda q: (1 if q['id'].startswith('lc-') else 0, q.get('leetcodeNumber') or 99999))
-    
+
     for q in sorted_direct:
         num = q.get('leetcodeNumber')
         key = num if num else q['title'].lower()
@@ -170,7 +164,7 @@ def pick_questions(pid, diff, target_count):
             selected.append(q['id'])
             if len(selected) == target_count:
                 return selected
-                
+
     if len(selected) < target_count:
         pat_cat = next((p['categoryId'] for p in patterns if p['id'] == pid), None)
         if pat_cat:
@@ -195,7 +189,7 @@ def pick_questions(pid, diff, target_count):
                 selected.append(q['id'])
                 if len(selected) == target_count:
                     return selected
-                    
+
     return selected
 
 for pat in patterns:
@@ -203,7 +197,7 @@ for pat in patterns:
     e_ids = pick_questions(pid, 'Easy', 5)
     m_ids = pick_questions(pid, 'Medium', 3)
     h_ids = pick_questions(pid, 'Hard', 2)
-    
+
     pat_q_ids = e_ids + m_ids + h_ids
     pat['practiceQuestionIds'] = pat_q_ids
     pat['totalQuestions'] = 10
@@ -213,7 +207,6 @@ for pat in patterns:
 
 print(f"Attached curated 10-question practice set (5 Easy, 3 Med, 2 Hard) across {len(patterns)} patterns.")
 
-# 4. Serialize to js/data/dsaPatternsData.js
 out_path = 'js/data/dsaPatternsData.js'
 print(f"Writing dataset to {out_path}...")
 

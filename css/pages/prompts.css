@@ -1,8 +1,4 @@
-/* ==========================================================================
-   DevPilot-AI - AI Prompt Library Vault CSS
-   ========================================================================== */
 
-/* Curated Collections Horizontal Bar */
 .prompt-collections-wrapper {
   margin-bottom: 1.5rem;
 }
@@ -57,7 +53,6 @@
   box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);
 }
 
-/* Prompt Toolbar */
 .prompt-toolbar-wrapper {
   display: flex;
   flex-direction: column;
@@ -140,7 +135,6 @@
   text-decoration: underline;
 }
 
-/* Category & Difficulty Badges */
 .prompt-badge {
   font-size: 0.6875rem;
   font-weight: 700;
@@ -163,7 +157,6 @@
 .badge-career { background: #fdf4ff; color: #c026d3; }
 .badge-general { background: #f1f5f9; color: #475569; }
 
-/* Difficulty Badges */
 .diff-badge {
   font-size: 0.6875rem;
   font-weight: 700;
@@ -178,7 +171,6 @@
 .diff-advanced { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
 .diff-interview { background: #f5f3ff; color: #7c3aed; border: 1px solid #ddd6fe; }
 
-/* Variable Counter Chip */
 .var-counter-chip {
   display: inline-flex;
   align-items: center;
@@ -192,7 +184,6 @@
   border: 1px solid #e2e8f0;
 }
 
-/* Prompt Card */
 .prompt-card {
   display: flex;
   flex-direction: column;
@@ -237,7 +228,6 @@
   pointer-events: none;
 }
 
-/* Copy Button Feedback */
 .btn-copy-prompt {
   display: inline-flex;
   align-items: center;
@@ -266,7 +256,6 @@
   border-color: #10b981 !important;
 }
 
-/* Prompt Details & Interactive Variable Modal */
 .prompt-modal-backdrop {
   position: fixed;
   inset: 0;
@@ -324,7 +313,6 @@
   gap: 1.25rem;
 }
 
-/* Interactive Variable Input Box */
 .var-fill-section {
   background: #f8fafc;
   border: 1px solid #e2e8f0;
@@ -386,7 +374,6 @@ textarea.var-text-input {
   font-size: 0.75rem;
 }
 
-/* Full Prompt Container */
 .full-prompt-box {
   background: #0f172a;
   color: #f8fafc;
@@ -408,7 +395,6 @@ textarea.var-text-input {
   padding: 0 3px;
 }
 
-/* Related Prompts Grid */
 .related-prompts-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));

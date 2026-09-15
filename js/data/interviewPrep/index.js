@@ -1,8 +1,3 @@
-/**
- * MAD DEV — Interview Preparation Central Registry
- * Aggregates all 18 placement & interview preparation categories,
- * questions, checklists, case studies, and test pool generators.
- */
 
 if (typeof window === 'undefined' && typeof global !== 'undefined') {
   global.window = global;
@@ -16,11 +11,11 @@ if (typeof window === 'undefined' && typeof global !== 'undefined') {
     checklists: null,
 
     init() {
-      // Normalization map for various category IDs
+
       const categorySources = [
-        // Attached to window.interviewPrepData
+
         ...(typeof window !== 'undefined' && window.interviewPrepData ? Object.values(window.interviewPrepData) : []),
-        // Attached directly to window
+
         (typeof window !== 'undefined' && window.interviewPrepCO) || null,
         (typeof window !== 'undefined' && window.interviewPrepSE) || null,
         (typeof window !== 'undefined' && window.interviewPrepSystemDesign) || null,
@@ -30,7 +25,6 @@ if (typeof window === 'undefined' && typeof global !== 'undefined') {
         (typeof window !== 'undefined' && window.interviewPrepAiMl) || null,
       ].filter(Boolean);
 
-      // In Node.js environment, require modules directly
       if (categorySources.length === 0 && typeof require !== 'undefined') {
         const catFiles = [
           './aptitude.js', './english.js', './logicalReasoning.js', './communication.js',
@@ -46,7 +40,7 @@ if (typeof window === 'undefined' && typeof global !== 'undefined') {
               categorySources.push(mod);
             }
           } catch (e) {
-            // Node test environment might require through relative path
+
           }
         });
 
@@ -58,11 +52,10 @@ if (typeof window === 'undefined' && typeof global !== 'undefined') {
         } catch (e) {}
       }
 
-      // Populate registry categories
       categorySources.forEach(cat => {
         const id = cat.id || cat.category;
         if (id) {
-          // Normalize GD practice topics
+
           let normalizedGD = [];
           if (cat.practiceTopics || cat.gdTopics) {
             const rawGD = cat.practiceTopics || cat.gdTopics;
@@ -78,7 +71,6 @@ if (typeof window === 'undefined' && typeof global !== 'undefined') {
             }));
           }
 
-          // Normalize HR questions
           let normalizedHR = [];
           if (cat.coreQuestions || cat.hrQuestions) {
             const rawHR = cat.coreQuestions || cat.hrQuestions;
@@ -99,7 +91,6 @@ if (typeof window === 'undefined' && typeof global !== 'undefined') {
             }));
           }
 
-          // Normalize structure
           this.categories[id] = {
             id: id,
             title: cat.title || id,
@@ -115,7 +106,6 @@ if (typeof window === 'undefined' && typeof global !== 'undefined') {
         }
       });
 
-      // Load checklists if available on window
       if (typeof window !== 'undefined' && window.interviewPrepChecklists) {
         this.checklists = window.interviewPrepChecklists.checklists || window.interviewPrepChecklists;
       }
@@ -128,7 +118,7 @@ if (typeof window === 'undefined' && typeof global !== 'undefined') {
 
     getCategory(categoryId) {
       this.ensureInitialized();
-      // Support aliases
+
       const aliasMap = {
         'aptitude': 'aptitude',
         'english': 'english',
@@ -193,9 +183,6 @@ if (typeof window === 'undefined' && typeof global !== 'undefined') {
       return this.checklists || {};
     },
 
-    /**
-     * Generate 50 balanced questions for the 60-Minute Mock Placement Test
-     */
     getMockTestPool(count = 50) {
       this.ensureInitialized();
       const pool = [];
@@ -211,64 +198,48 @@ if (typeof window === 'undefined' && typeof global !== 'undefined') {
         return cat.questions.map(q => ({ ...q, categoryId: cat.id, categoryTitle: cat.title }));
       };
 
-      // 1. Aptitude (10 questions)
       pool.push(...pickRandom(getCatQs('aptitude'), 10));
 
-      // 2. English (5 questions)
       pool.push(...pickRandom(getCatQs('english'), 5));
 
-      // 3. Logical Reasoning (5 questions)
       pool.push(...pickRandom(getCatQs('logicalReasoning'), 5));
 
-      // 4. Programming & Coding (5 questions)
       pool.push(...pickRandom(getCatQs('programming'), 5));
 
-      // 5. OOP (5 questions)
       pool.push(...pickRandom(getCatQs('oop'), 5));
 
-      // 6. DBMS & SQL (5 questions total: 3 DBMS, 2 SQL)
       pool.push(...pickRandom(getCatQs('dbms'), 3));
       pool.push(...pickRandom(getCatQs('sql'), 2));
 
-      // 7. OS & Networks (5 questions total: 3 OS, 2 Networks)
       pool.push(...pickRandom(getCatQs('operatingSystems'), 3));
       pool.push(...pickRandom(getCatQs('computerNetworks'), 2));
 
-      // 8. Core CS: CO, SE, System Design (5 questions: 2 CO, 2 SE, 1 System Design)
       pool.push(...pickRandom(getCatQs('computer_organization'), 2));
       pool.push(...pickRandom(getCatQs('software_engineering'), 2));
       pool.push(...pickRandom(getCatQs('system_design'), 1));
 
-      // 9. Tech Tracks: Web, Git, Cloud, AI (5 questions: 2 Web, 1 Git, 1 Cloud, 1 AI)
       pool.push(...pickRandom(getCatQs('web_development'), 2));
       pool.push(...pickRandom(getCatQs('git_version_control'), 1));
       pool.push(...pickRandom(getCatQs('cloud_devops'), 1));
       pool.push(...pickRandom(getCatQs('ai_machine_learning'), 1));
 
-      // If pool has fewer than requested due to missing categories, fill from all
       if (pool.length < count) {
         const all = this.getAllQuestions();
         const remaining = pickRandom(all.filter(q => !pool.some(p => p.id === q.id)), count - pool.length);
         pool.push(...remaining);
       }
 
-      // Shuffle final pool
       return pool.sort(() => 0.5 - Math.random()).slice(0, count);
     },
 
-    /**
-     * Detect weak topics based on user's progress history
-     * @param {Object} progressMap stored in localStorage
-     */
     getWeakTopics(progressMap = {}) {
       this.ensureInitialized();
       const weakList = [];
       const allQs = this.getAllQuestions();
 
-      // Group question results by category and topic
       const topicStats = {};
       Object.keys(progressMap).forEach(key => {
-        // key format: topic:categoryId:topicName or q:questionId
+
         const stat = progressMap[key];
         if (stat && stat.topic && stat.categoryId) {
           const tKey = `${stat.categoryId}:::${stat.topic}`;
@@ -308,9 +279,6 @@ if (typeof window === 'undefined' && typeof global !== 'undefined') {
       return weakList.sort((a, b) => a.accuracy - b.accuracy);
     },
 
-    /**
-     * Compute overall stats from progressMap
-     */
     getOverallStats(progressMap = {}) {
       this.ensureInitialized();
       let totalAttempted = 0;
@@ -349,15 +317,12 @@ if (typeof window === 'undefined' && typeof global !== 'undefined') {
     }
   };
 
-  // Auto initialize
   registry.init();
 
-  // Expose to window
   if (typeof window !== 'undefined') {
     window.interviewPrepRegistry = registry;
   }
 
-  // Expose to CommonJS / Node.js
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = registry;
   }

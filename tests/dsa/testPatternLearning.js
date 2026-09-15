@@ -1,6 +1,3 @@
-/**
- * MAD DEV — Automated Validation Suite for Pattern Learning & 1000+ Questions
- */
 
 const fs = require('fs');
 const path = require('path');
@@ -29,14 +26,12 @@ console.log('================================================================');
 console.log(' MAD DEV: Running Pattern Learning & 1000+ Questions Test Suite');
 console.log('================================================================\n');
 
-// TEST 1: Dataset Volume & 1000+ Authentic Questions
 runTest('TEST 1: Dataset contains at least 1,000 authentic LeetCode problems', () => {
   assert.ok(Array.isArray(dsaAllQuestions), 'dsaAllQuestions must be an array');
   assert.ok(dsaAllQuestions.length >= 1000, `Expected >= 1000 questions, got ${dsaAllQuestions.length}`);
   console.log(`  (Verified total question count: ${dsaAllQuestions.length})`);
 });
 
-// TEST 2: Canonical URLs, Unique IDs, and Problem Metadata
 runTest('TEST 2: Every question has unique ID, positive LC number, valid URL, and difficulty', () => {
   const ids = new Set();
   const validUrlRegex = /^https:\/\/leetcode\.com\/problems\/[a-z0-9\-]+\/$/;
@@ -66,7 +61,6 @@ runTest('TEST 2: Every question has unique ID, positive LC number, valid URL, an
   assert.ok(hardCount >= 100, `Expected >= 100 Hard, got ${hardCount}`);
 });
 
-// TEST 3: 100% Backward Compatibility with Existing 260 Questions
 runTest('TEST 3: Retains all 260 existing questions and exact IDs from dsaRoadmap', () => {
   const existingMap = new Map();
   dsaRoadmap.forEach(cat => {
@@ -91,7 +85,6 @@ runTest('TEST 3: Retains all 260 existing questions and exact IDs from dsaRoadma
   console.log(`  (All 260 original questions verified present with identical IDs)`);
 });
 
-// TEST 4: Coverage of all 16 DSA Categories in Questions
 runTest('TEST 4: Questions cover all 16 major DSA categories', () => {
   const expectedCategories = [
     'Array', 'String', 'Hash Map', 'Stack', 'Queue / Deque', 'Linked List',
@@ -106,49 +99,39 @@ runTest('TEST 4: Questions cover all 16 major DSA categories', () => {
   });
 });
 
-// TEST 5: Complete 12-Point Curriculum for Patterns
 runTest('TEST 5: Pattern learning curriculum contains all 28+ patterns with full 12-point guides', () => {
   assert.ok(Array.isArray(dsaPatternsRoadmap), 'dsaPatternsRoadmap must be array');
   assert.ok(dsaPatternsRoadmap.length >= 28, `Expected >= 28 patterns, got ${dsaPatternsRoadmap.length}`);
 
   dsaPatternsRoadmap.forEach((pat, idx) => {
-    // 1. Basic identifiers
+
     assert.ok(pat.id && pat.name, `Pattern at ${idx} missing id/name`);
     assert.ok(pat.categoryId && pat.categoryName, `Pattern ${pat.id} missing category`);
     assert.ok(pat.oneLiner && pat.oneLiner.length > 10, `Pattern ${pat.id} missing oneLiner`);
-    
-    // 2. What is it & When to use
+
     assert.ok(pat.whatIsIt && pat.whatIsIt.length > 20, `Pattern ${pat.id} missing whatIsIt`);
     assert.ok(pat.whenToUse && pat.whenToUse.length > 20, `Pattern ${pat.id} missing whenToUse`);
 
-    // 3. Recognition signals
     assert.ok(Array.isArray(pat.recognitionSignals) && pat.recognitionSignals.length >= 3,
       `Pattern ${pat.id} must have >= 3 recognition signals, got ${pat.recognitionSignals?.length}`);
 
-    // 4. Core idea & Mental model
     assert.ok(pat.coreIdea && pat.coreIdea.length > 20, `Pattern ${pat.id} missing coreIdea`);
 
-    // 5. Common variations
     assert.ok(Array.isArray(pat.variations) && pat.variations.length >= 2,
       `Pattern ${pat.id} must have >= 2 variations, got ${pat.variations?.length}`);
 
-    // 6. Time & space complexity
     assert.ok(pat.complexity && pat.complexity.time && pat.complexity.space,
       `Pattern ${pat.id} missing complexity`);
 
-    // 7. Pitfalls / Common mistakes
     assert.ok(Array.isArray(pat.pitfalls) && pat.pitfalls.length >= 2,
       `Pattern ${pat.id} must have >= 2 pitfalls`);
 
-    // 8. C++ Code template
     assert.ok(pat.cppTemplate && pat.cppTemplate.includes('#include'),
       `Pattern ${pat.id} missing C++ code template`);
 
-    // 9. Step-by-step walkthrough trace
     assert.ok(pat.walkthrough && pat.walkthrough.problem && Array.isArray(pat.walkthrough.steps) && pat.walkthrough.steps.length >= 2,
       `Pattern ${pat.id} missing valid walkthrough trace`);
 
-    // 10. Pattern recognition quizzes
     assert.ok(Array.isArray(pat.quizzes) && pat.quizzes.length >= 1,
       `Pattern ${pat.id} missing quiz questions`);
     pat.quizzes.forEach((qz, qidx) => {
@@ -160,10 +143,9 @@ runTest('TEST 5: Pattern learning curriculum contains all 28+ patterns with full
         `Quiz ${qidx} in ${pat.id} missing explanation`);
     });
 
-    // 11. Practice questions mapping: exactly 10 questions (5 Easy, 3 Medium, 2 Hard)
     assert.ok(Array.isArray(pat.practiceQuestionIds) && pat.practiceQuestionIds.length === 10,
       `Pattern ${pat.id} must have exactly 10 practice questions, got ${pat.practiceQuestionIds?.length}`);
-    
+
     const qMap = new Map(dsaAllQuestions.map(q => [q.id, q]));
     const patternQs = pat.practiceQuestionIds.map(qid => qMap.get(qid));
     assert.ok(patternQs.every(Boolean), `Pattern ${pat.id} has invalid question IDs`);
@@ -177,7 +159,6 @@ runTest('TEST 5: Pattern learning curriculum contains all 28+ patterns with full
   });
 });
 
-// TEST 6: "🎯 Identify the Pattern" Training Arena Drills
 runTest('TEST 6: Training Arena has at least 30 drills with scenarios, options, and explanations', () => {
   assert.ok(Array.isArray(dsaArenaDrills), 'dsaArenaDrills must be array');
   assert.ok(dsaArenaDrills.length >= 30, `Expected >= 30 arena drills, got ${dsaArenaDrills.length}`);
@@ -194,26 +175,21 @@ runTest('TEST 6: Training Arena has at least 30 drills with scenarios, options, 
   });
 });
 
-// TEST 7: HTML & DOM Structure Integration
 runTest('TEST 7: pages/dsa.html contains view switcher tabs, both views, and all pattern elements', () => {
   const dsaHtmlPath = path.join(rootDir, 'pages/dsa.html');
   const html = fs.readFileSync(dsaHtmlPath, 'utf8');
 
-  // Dual view tabs
   assert.ok(html.includes('id="tab-btn-roadmap"'), 'Missing tab-btn-roadmap');
   assert.ok(html.includes('id="tab-btn-patterns"'), 'Missing tab-btn-patterns');
 
-  // View containers
   assert.ok(html.includes('id="dsa-roadmap-view"'), 'Missing dsa-roadmap-view');
   assert.ok(html.includes('id="dsa-pattern-learning-view"'), 'Missing dsa-pattern-learning-view');
 
-  // Dashboard stats
   assert.ok(html.includes('id="pl-stat-learned"'), 'Missing pl-stat-learned');
   assert.ok(html.includes('id="pl-stat-practiced"'), 'Missing pl-stat-practiced');
   assert.ok(html.includes('id="pl-stat-mastered"'), 'Missing pl-stat-mastered');
   assert.ok(html.includes('id="pl-stat-weak"'), 'Missing pl-stat-weak');
 
-  // Reset, quick filters & arena
   assert.ok(!html.includes('id="pl-today-card"'), 'pl-today-card must be removed');
   assert.ok(html.includes('id="pl-btn-reset"'), 'Missing pl-btn-reset');
   assert.ok(html.includes('id="pl-reset-modal"'), 'Missing pl-reset-modal');
@@ -222,22 +198,18 @@ runTest('TEST 7: pages/dsa.html contains view switcher tabs, both views, and all
   assert.ok(html.includes('id="pl-btn-launch-arena"'), 'Missing pl-btn-launch-arena');
   assert.ok(html.includes('id="pl-arena-modal"'), 'Missing pl-arena-modal');
 
-  // Catalog
   assert.ok(html.includes('id="pl-catalog-search"'), 'Missing pl-catalog-search');
   assert.ok(html.includes('id="pl-category-chips"'), 'Missing pl-category-chips');
   assert.ok(html.includes('id="pl-pattern-cards-grid"'), 'Missing pl-pattern-cards-grid');
 
-  // Study View
   assert.ok(html.includes('id="pl-study-view-section"'), 'Missing pl-study-view-section');
   assert.ok(html.includes('id="pl-btn-back-catalog"'), 'Missing pl-btn-back-catalog');
   assert.ok(html.includes('id="pl-study-container"'), 'Missing pl-study-container');
 
-  // Scripts inclusion
   assert.ok(html.includes('src="../js/data/dsaPatternsData.js"'), 'Missing dsaPatternsData.js script inclusion');
   assert.ok(html.includes('src="../js/pages/dsaPatterns.js"'), 'Missing dsaPatterns.js script inclusion');
 });
 
-// TEST 8: CSS Rules for Pattern Learning
 runTest('TEST 8: css/pages/dsa.css contains styling rules for Pattern Learning and Arena', () => {
   const cssPath = path.join(rootDir, 'css/pages/dsa.css');
   const css = fs.readFileSync(cssPath, 'utf8');
@@ -255,7 +227,6 @@ runTest('TEST 8: css/pages/dsa.css contains styling rules for Pattern Learning a
   assert.ok(css.includes('.pl-eval-pill'), 'Missing .pl-eval-pill CSS');
 });
 
-// TEST 9: Pattern Practice & Mastery Increment Logic
 runTest('TEST 9: Solving 1 question increments Practiced Patterns, solving all 10 questions masters pattern', () => {
   let dsaProgress = {};
   let patternStats = { viewed: {}, quizzes: {}, weak: {} };
@@ -297,12 +268,10 @@ runTest('TEST 9: Solving 1 question increments Practiced Patterns, solving all 1
     return { practicedCount, masteredCount };
   }
 
-  // 1. Initially 0
   let m = getMetrics();
   assert.strictEqual(m.practicedCount, 0, 'Initially practicedCount must be 0');
   assert.strictEqual(m.masteredCount, 0, 'Initially masteredCount must be 0');
 
-  // 2. Solve 1 question of Pattern 1 -> mastery is 'Practicing', counted as Practiced Pattern!
   const pat1 = dsaPatternsRoadmap[1];
   dsaProgress[pat1.practiceQuestionIds[0]] = true;
   m = getMetrics();
@@ -310,14 +279,12 @@ runTest('TEST 9: Solving 1 question increments Practiced Patterns, solving all 1
   assert.strictEqual(m.practicedCount, 1, 'Solving 1 question must increment practicedCount to 1');
   assert.strictEqual(m.masteredCount, 0, 'Solving 1 question does not master pattern yet');
 
-  // 3. Complete all 10 questions of Pattern 1 -> Practiced = 1, Mastered = 1
   pat1.practiceQuestionIds.slice(1).forEach(qid => dsaProgress[qid] = true);
   m = getMetrics();
   assert.strictEqual(calculatePatternMastery(pat1), 'Mastered');
   assert.strictEqual(m.practicedCount, 1, 'Practiced remains 1');
   assert.strictEqual(m.masteredCount, 1, 'Solving all 10 questions must increment masteredCount to 1');
 
-  // 4. Solve 1 question of Pattern 2 -> Practiced = 2, Mastered = 1
   const pat2 = dsaPatternsRoadmap[2];
   dsaProgress[pat2.practiceQuestionIds[0]] = true;
   m = getMetrics();
@@ -325,7 +292,6 @@ runTest('TEST 9: Solving 1 question increments Practiced Patterns, solving all 1
   assert.strictEqual(m.practicedCount, 2, 'Solving 1 question of 2nd pattern must increment practicedCount to 2');
   assert.strictEqual(m.masteredCount, 1, 'Mastered remains 1');
 
-  // 5. Complete all 10 questions of Pattern 2 -> Practiced = 2, Mastered = 2
   pat2.practiceQuestionIds.slice(1).forEach(qid => dsaProgress[qid] = true);
   m = getMetrics();
   assert.strictEqual(calculatePatternMastery(pat2), 'Mastered');
@@ -333,7 +299,6 @@ runTest('TEST 9: Solving 1 question increments Practiced Patterns, solving all 1
   assert.strictEqual(m.masteredCount, 2, 'Mastered becomes 2');
 });
 
-// TEST 10: Weak Pattern Detection (>= 5 crosses OR > 3 AI/other help solves)
 runTest('TEST 10: Pattern is flagged Weak when >= 5 crosses or > 3 AI/help solves are recorded', () => {
   let dsaProgress = {};
   let patternStats = { viewed: {}, quizzes: {}, weak: {}, evaluations: {} };
@@ -370,7 +335,6 @@ runTest('TEST 10: Pattern is flagged Weak when >= 5 crosses or > 3 AI/help solve
   const pat = dsaPatternsRoadmap[0];
   const qids = pat.practiceQuestionIds;
 
-  // Case 1: 5 crosses -> MUST BE WEAK (5 crosses rule)
   qids.slice(0, 5).forEach(qid => {
     patternStats.evaluations[qid] = 'cross';
   });
@@ -379,14 +343,11 @@ runTest('TEST 10: Pattern is flagged Weak when >= 5 crosses or > 3 AI/help solve
   assert.strictEqual(res.isWeak, true, 'Pattern with 5 crosses must be weak');
   assert.strictEqual(res.mastery, 'Weak', 'Mastery status must be Weak when 5 crosses');
 
-  // Case 2: Reduce to 4 crosses -> not weak by crosses alone
   delete patternStats.evaluations[qids[4]];
   res = evaluatePattern(pat);
   assert.strictEqual(res.crossCount, 4, 'Must have 4 crosses');
   assert.strictEqual(res.isWeak, false, 'Pattern with 4 crosses and 0 help must NOT be weak');
 
-  // Case 3: 4 AI help solves -> MUST BE WEAK (> 3 AI help rule)
-  // Add 4 AI help solves (qids[4], qids[5], qids[6], qids[7])
   qids.slice(4, 8).forEach(qid => {
     patternStats.evaluations[qid] = 'help';
     dsaProgress[qid] = true;
@@ -396,15 +357,14 @@ runTest('TEST 10: Pattern is flagged Weak when >= 5 crosses or > 3 AI/help solve
   assert.strictEqual(res.isWeak, true, 'Pattern with >3 AI help solves must be weak');
   assert.strictEqual(res.mastery, 'Weak', 'Mastery status must be Weak when >3 AI help');
 
-  // Case 4: Exactly 3 AI help solves and 7 self solves (all 10 solved) -> MUST BE MASTERED (not weak since help <= 3 and crosses < 5)
   patternStats.evaluations = {};
   dsaProgress = {};
-  // 3 AI help
+
   qids.slice(0, 3).forEach(qid => {
     patternStats.evaluations[qid] = 'help';
     dsaProgress[qid] = true;
   });
-  // 7 100% self
+
   qids.slice(3, 10).forEach(qid => {
     patternStats.evaluations[qid] = 'self';
     dsaProgress[qid] = true;
@@ -416,18 +376,15 @@ runTest('TEST 10: Pattern is flagged Weak when >= 5 crosses or > 3 AI/help solve
   assert.strictEqual(res.mastery, 'Mastered', 'Pattern with all 10 solved and <=3 help must be Mastered');
 });
 
-// TEST 11: 4-Tier Honesty Evaluation Modal & Dedicated Blur Popups in HTML
 runTest('TEST 11: pages/dsa.html includes 4 honesty tiers, pl-locked-modal, and pl-excessive-help-modal', () => {
   const dsaHtmlPath = path.join(rootDir, 'pages/dsa.html');
   const html = fs.readFileSync(dsaHtmlPath, 'utf8');
 
-  // Check 4 honesty evaluation option data attributes
   assert.ok(html.includes('data-solve-type="self"'), 'Missing data-solve-type="self"');
   assert.ok(html.includes('data-solve-type="help30"'), 'Missing data-solve-type="help30"');
   assert.ok(html.includes('data-solve-type="help50"'), 'Missing data-solve-type="help50"');
   assert.ok(html.includes('data-solve-type="cross"'), 'Missing data-solve-type="cross"');
 
-  // Check new blur modal dialogs
   assert.ok(html.includes('id="pl-locked-modal"'), 'Missing pl-locked-modal');
   assert.ok(html.includes('id="pl-btn-locked-goto"'), 'Missing pl-btn-locked-goto');
   assert.ok(html.includes('id="pl-excessive-help-modal"'), 'Missing pl-excessive-help-modal');
@@ -435,7 +392,6 @@ runTest('TEST 11: pages/dsa.html includes 4 honesty tiers, pl-locked-modal, and 
   assert.ok(html.includes('id="pl-btn-excessive-review"'), 'Missing pl-btn-excessive-review');
 });
 
-// TEST 12: Sequential 1 to 10 Progression & Lock Logic
 runTest('TEST 12: Sequential progression logic enforces Question 1 unlocked and Questions 2..10 locked until previous are evaluated', () => {
   const questions = [
     { id: 'q-1', title: 'Two Sum' },
@@ -457,30 +413,25 @@ runTest('TEST 12: Sequential progression logic enforces Question 1 unlocked and 
     });
   }
 
-  // 1. Initially: Q1 is unlocked, Q2..Q5 are locked
   assert.strictEqual(isQuestionLocked(0), false, 'Q1 (index 0) must be unlocked initially');
   assert.strictEqual(isQuestionLocked(1), true, 'Q2 (index 1) must be locked initially');
   assert.strictEqual(isQuestionLocked(2), true, 'Q3 (index 2) must be locked initially');
   assert.strictEqual(isQuestionLocked(3), true, 'Q4 (index 3) must be locked initially');
 
-  // 2. Evaluate Q1 with 'self' -> Q2 unlocks, Q3..Q5 remain locked
   evaluations['q-1'] = 'self';
   dsaProgress['q-1'] = true;
   assert.strictEqual(isQuestionLocked(0), false, 'Q1 remains unlocked');
   assert.strictEqual(isQuestionLocked(1), false, 'Q2 must unlock after Q1 is evaluated');
   assert.strictEqual(isQuestionLocked(2), true, 'Q3 remains locked');
 
-  // 3. Evaluate Q2 with 'help30' -> Q3 unlocks
   evaluations['q-2'] = 'help30';
   dsaProgress['q-2'] = true;
   assert.strictEqual(isQuestionLocked(2), false, 'Q3 must unlock after Q2 is evaluated');
   assert.strictEqual(isQuestionLocked(3), true, 'Q4 remains locked');
 
-  // 4. Evaluate Q3 with 'cross' -> Q4 unlocks
   evaluations['q-3'] = 'cross';
   assert.strictEqual(isQuestionLocked(3), false, 'Q4 must unlock after Q3 is attempted (cross)');
 
-  // 5. Reset Q2 to unattempted -> Q3, Q4, Q5 lock again!
   delete evaluations['q-2'];
   delete dsaProgress['q-2'];
   assert.strictEqual(isQuestionLocked(1), false, 'Q2 is unlocked since Q1 is done');
@@ -488,7 +439,6 @@ runTest('TEST 12: Sequential progression logic enforces Question 1 unlocked and 
   assert.strictEqual(isQuestionLocked(3), true, 'Q4 locks again because sequence broke at Q2');
 });
 
-// TEST 13: Non-100% Options (>= 2 Selections Threshold) Flags Pattern as Weak
 runTest('TEST 13: Selecting non-100% options (30%, 50%, cross) on >= 2 questions flags pattern as Weak', () => {
   const pat = dsaPatternsRoadmap[1];
   const qids = pat.practiceQuestionIds;
@@ -518,7 +468,6 @@ runTest('TEST 13: Selecting non-100% options (30%, 50%, cross) on >= 2 questions
     };
   }
 
-  // 1. 8 self, 1 help30, 1 cross -> nonSelfCount = 2 (>= 2) -> flags as Weak!
   patternStats.evaluations[qids[0]] = 'self';
   patternStats.evaluations[qids[1]] = 'self';
   patternStats.evaluations[qids[2]] = 'self';
@@ -534,14 +483,12 @@ runTest('TEST 13: Selecting non-100% options (30%, 50%, cross) on >= 2 questions
   assert.strictEqual(status.nonSelfCount, 2, 'Must have 2 non-100% solves');
   assert.strictEqual(status.isWeak, true, 'Must be flagged as Weak because nonSelfCount (2) >= 2');
 
-  // 2. Reduce non-self count to 1 (change qids[9] to 'self') -> not weak
   patternStats.evaluations[qids[9]] = 'self';
   status = checkWeak();
   assert.strictEqual(status.nonSelfCount, 1, 'Must have 1 non-100% solve');
   assert.strictEqual(status.isWeak, false, 'Should NOT be weak when nonSelfCount < 2');
 });
 
-// TEST 14: CSS Rules for Locked Rows, Pills, and Honesty Badges
 runTest('TEST 14: css/pages/dsa.css contains styling rules for locked questions, 30%/50% pills, and sequence badges', () => {
   const cssPath = path.join(rootDir, 'css/pages/dsa.css');
   const css = fs.readFileSync(cssPath, 'utf8');
@@ -555,7 +502,6 @@ runTest('TEST 14: css/pages/dsa.css contains styling rules for locked questions,
   assert.ok(css.includes('.pl-eval-pill-help50'), 'Missing .pl-eval-pill-help50 CSS');
 });
 
-// TEST 15: Evaluation Checkbox Box Styling & Exact Modal Icon Synchronization
 runTest('TEST 15: Question evaluation boxes match modal selection icons (verified, psychology, smart_toy, content_paste_off) without duplicate CSS checkmarks', () => {
   const cssPath = path.join(rootDir, 'css/pages/dsa.css');
   const css = fs.readFileSync(cssPath, 'utf8');

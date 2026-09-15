@@ -1,7 +1,4 @@
-/**
- * Node.js & Express Prompts Collection (11 Prompts)
- * Covers REST API, Middleware, JWT Auth, RBAC, Security, Validation, Rate Limiting, and Reliability.
- */
+
 module.exports = [
   {
     id: 'node-controller-service-separation',

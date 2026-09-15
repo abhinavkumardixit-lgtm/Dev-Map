@@ -1,6 +1,3 @@
-/**
- * MAD DEV - Workspace Settings Module
- */
 
 const defaultSettings = {
   profile: {
@@ -93,7 +90,6 @@ function initSettingsTabs() {
 function populateSettingsForm() {
   const authSettings = window.AuthService ? window.AuthService.getUserSettings() : {};
 
-  // Profile
   setVal('set-fullname', authSettings.fullName || settings.profile.fullName);
   setVal('set-title', settings.profile.title);
   setVal('set-email', authSettings.email || settings.profile.email);
@@ -101,24 +97,20 @@ function populateSettingsForm() {
   setVal('set-leetcode-handle', authSettings.leetcodeHandle || 'tourist');
   setVal('set-bio', settings.profile.bio);
 
-  // Private AI API Setup
   setVal('set-private-ai-endpoint', authSettings.privateAiEndpoint || 'https://api.openai.com/v1');
   setVal('set-private-ai-key', authSettings.privateAiKey || '');
   setVal('set-private-ai-model', authSettings.privateAiModel || 'gpt-4o');
 
-  // API Keys
   setVal('set-github-token', settings.apiKeys.githubToken || authSettings.githubToken);
   setVal('set-openai-key', settings.apiKeys.openAiKey || authSettings.privateAiKey);
   setVal('set-gemini-key', settings.apiKeys.geminiKey);
   setVal('set-claude-key', settings.apiKeys.claudeKey);
 
-  // UI
   const compactCheck = document.getElementById('set-compact-mode');
   if (compactCheck) compactCheck.checked = !!settings.ui.compactMode;
 
   setVal('set-autosave-interval', settings.ui.autoSaveInterval);
 
-  // Notifications
   const focusAlertCheck = document.getElementById('set-focus-alerts');
   if (focusAlertCheck) focusAlertCheck.checked = !!settings.notifications.focusTimerAlerts;
 
@@ -153,7 +145,7 @@ function initSettingsSave() {
   const saveButtons = document.querySelectorAll('.btn-save-settings');
   saveButtons.forEach(btn => {
     btn.addEventListener('click', () => {
-      // Collect Profile
+
       settings.profile.fullName = getVal('set-fullname');
       settings.profile.title = getVal('set-title');
       settings.profile.email = getVal('set-email');
@@ -162,35 +154,29 @@ function initSettingsSave() {
       settings.profile.githubUsername = ghUsername;
       settings.profile.bio = getVal('set-bio');
 
-      // Private AI Gateway
       const privateAiEndpoint = getVal('set-private-ai-endpoint') || 'https://api.openai.com/v1';
       const privateAiKey = getVal('set-private-ai-key');
       const privateAiModel = getVal('set-private-ai-model') || 'gpt-4o';
 
-      // Sync github_settings for Dashboard and Analyzer
       Storage.set('github_settings', {
         username: ghUsername,
         updatedAt: new Date().toISOString()
       });
 
-      // Sync leetcode_settings
       Storage.set('leetcode_settings', {
         handle: lcHandle,
         updatedAt: new Date().toISOString()
       });
 
-      // Collect API Keys
       settings.apiKeys.githubToken = getVal('set-github-token');
       settings.apiKeys.openAiKey = getVal('set-openai-key') || privateAiKey;
       settings.apiKeys.geminiKey = getVal('set-gemini-key');
       settings.apiKeys.claudeKey = getVal('set-claude-key');
 
-      // UI
       const compactCheck = document.getElementById('set-compact-mode');
       if (compactCheck) settings.ui.compactMode = compactCheck.checked;
       settings.ui.autoSaveInterval = getVal('set-autosave-interval') || '30';
 
-      // Notifications
       const focusAlertCheck = document.getElementById('set-focus-alerts');
       if (focusAlertCheck) settings.notifications.focusTimerAlerts = focusAlertCheck.checked;
 

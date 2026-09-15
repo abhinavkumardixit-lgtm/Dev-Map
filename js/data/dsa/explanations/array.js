@@ -1,8 +1,3 @@
-/**
- * MAD DEV — Category 01: Array Problem Explanations
- * Comprehensive 15-Section Pedagogical Explanations
- * 100% LeetCode Submission Pasteable
- */
 
 (function () {
   'use strict';

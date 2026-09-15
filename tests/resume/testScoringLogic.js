@@ -1,8 +1,5 @@
 const assert = require('assert');
 
-// We will load the updated analyzer functions and run test on both resumes
-// Let's create an updated version of the scoring functions in testScript to verify exact numbers.
-
 const ACTION_VERBS = [
   'built', 'developed', 'designed', 'implemented', 'created', 'led', 'optimized',
   'automated', 'improved', 'reduced', 'increased', 'integrated', 'deployed',
@@ -34,7 +31,6 @@ const VAGUE_PHRASES = [
   'enthusiastic learner', 'dynamic professional', 'hands-on experience'
 ];
 
-// Let's test the weak and strong resumes
 const analyzer = require('../../js/pages/resumeAnalyzer.js');
 
 const weakResume = `

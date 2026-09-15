@@ -1,8 +1,3 @@
-/**
- * MAD DEV — Curated DSA Pattern Roadmap Dataset
- * Complete hierarchy covering 16 major DSA patterns with authentic LeetCode problems,
- * direct canonical URLs, official problem numbers, and tiered difficulty ratings.
- */
 
 const dsaRoadmap = [
   {
@@ -3012,7 +3007,6 @@ const dsaRoadmap = [
   }
 ];
 
-// Expose on window / exports for browser & node test runners
 if (typeof window !== 'undefined') {
   window.dsaRoadmap = dsaRoadmap;
 }

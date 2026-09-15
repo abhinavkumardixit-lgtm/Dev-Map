@@ -1,9 +1,3 @@
-/**
- * Builder for Core CS Part 1:
- * - Programming & Coding Fundamentals (140 questions across 14 topics)
- * - Object-Oriented Programming (120 questions across 12 topics)
- * - DBMS (140 questions across 14 topics)
- */
 
 const fs = require('fs');
 const path = require('path');
@@ -43,9 +37,6 @@ function createModuleFile(filename, varName, category, title, description, icon,
   console.log(`Successfully generated ${filename} (${questions.length} questions across ${topics.length} topics)`);
 }
 
-// =========================================================================
-// 1. PROGRAMMING & CODING FUNDAMENTALS (14 topics × 10 = 140 MCQs)
-// =========================================================================
 const progTopics = [
   "Programming Basics",
   "Variables & Data Types",
@@ -64,7 +55,7 @@ const progTopics = [
 ];
 
 const progGroups = [
-  // 1. Programming Basics
+
   {
     topic: "Programming Basics",
     prefix: "prog-bsc",
@@ -82,7 +73,6 @@ const progGroups = [
     ]
   },
 
-  // 2. Variables & Data Types
   {
     topic: "Variables & Data Types",
     prefix: "prog-vdt",
@@ -100,7 +90,6 @@ const progGroups = [
     ]
   },
 
-  // 3. Operators
   {
     topic: "Operators",
     prefix: "prog-opr",
@@ -118,7 +107,6 @@ const progGroups = [
     ]
   },
 
-  // 4. Conditions
   {
     topic: "Conditions",
     prefix: "prog-cnd",
@@ -136,7 +124,6 @@ const progGroups = [
     ]
   },
 
-  // 5. Loops
   {
     topic: "Loops",
     prefix: "prog-lop",
@@ -154,7 +141,6 @@ const progGroups = [
     ]
   },
 
-  // 6. Functions
   {
     topic: "Functions",
     prefix: "prog-fnc",
@@ -172,7 +158,6 @@ const progGroups = [
     ]
   },
 
-  // 7. Recursion
   {
     topic: "Recursion",
     prefix: "prog-rec",
@@ -190,7 +175,6 @@ const progGroups = [
     ]
   },
 
-  // 8. Arrays
   {
     topic: "Arrays",
     prefix: "prog-arr",
@@ -208,7 +192,6 @@ const progGroups = [
     ]
   },
 
-  // 9. Strings
   {
     topic: "Strings",
     prefix: "prog-str",
@@ -226,7 +209,6 @@ const progGroups = [
     ]
   },
 
-  // 10. Pointers & References
   {
     topic: "Pointers & References",
     prefix: "prog-ptr",
@@ -244,7 +226,6 @@ const progGroups = [
     ]
   },
 
-  // 11. Complexity Analysis
   {
     topic: "Complexity Analysis",
     prefix: "prog-cpx",
@@ -262,7 +243,6 @@ const progGroups = [
     ]
   },
 
-  // 12. Basic Data Structures
   {
     topic: "Basic Data Structures",
     prefix: "prog-bds",
@@ -280,7 +260,6 @@ const progGroups = [
     ]
   },
 
-  // 13. Debugging
   {
     topic: "Debugging",
     prefix: "prog-dbg",
@@ -298,7 +277,6 @@ const progGroups = [
     ]
   },
 
-  // 14. Problem-Solving Approach
   {
     topic: "Problem-Solving Approach",
     prefix: "prog-psa",
@@ -345,10 +323,6 @@ createModuleFile(
   progQuestions
 );
 
-
-// =========================================================================
-// 2. OBJECT-ORIENTED PROGRAMMING (12 topics × 10 = 120 MCQs)
-// =========================================================================
 const oopTopics = [
   "Classes & Objects",
   "Encapsulation",
@@ -365,7 +339,7 @@ const oopTopics = [
 ];
 
 const oopGroups = [
-  // 1. Classes & Objects
+
   {
     topic: "Classes & Objects",
     prefix: "oop-cls",
@@ -383,7 +357,6 @@ const oopGroups = [
     ]
   },
 
-  // 2. Encapsulation
   {
     topic: "Encapsulation",
     prefix: "oop-enc",
@@ -401,7 +374,6 @@ const oopGroups = [
     ]
   },
 
-  // 3. Abstraction
   {
     topic: "Abstraction",
     prefix: "oop-abs",
@@ -419,7 +391,6 @@ const oopGroups = [
     ]
   },
 
-  // 4. Inheritance
   {
     topic: "Inheritance",
     prefix: "oop-inh",
@@ -437,7 +408,6 @@ const oopGroups = [
     ]
   },
 
-  // 5. Polymorphism
   {
     topic: "Polymorphism",
     prefix: "oop-ply",
@@ -456,9 +426,8 @@ const oopGroups = [
   }
 ];
 
-// Add Remaining OOP topics (6-12)
 const extraOOP = [
-  // 6. Constructors & Destructors
+
   {
     topic: "Constructors & Destructors",
     prefix: "oop-cd",
@@ -476,7 +445,6 @@ const extraOOP = [
     ]
   },
 
-  // 7. Overloading vs Overriding
   {
     topic: "Overloading vs Overriding",
     prefix: "oop-ovo",
@@ -494,7 +462,6 @@ const extraOOP = [
     ]
   },
 
-  // 8. Virtual Functions
   {
     topic: "Virtual Functions",
     prefix: "oop-vf",
@@ -512,7 +479,6 @@ const extraOOP = [
     ]
   },
 
-  // 9. Interfaces / Abstract Classes
   {
     topic: "Interfaces / Abstract Classes",
     prefix: "oop-iac",
@@ -530,7 +496,6 @@ const extraOOP = [
     ]
   },
 
-  // 10. SOLID Fundamentals
   {
     topic: "SOLID Fundamentals",
     prefix: "oop-sld",
@@ -548,7 +513,6 @@ const extraOOP = [
     ]
   },
 
-  // 11. Composition vs Inheritance
   {
     topic: "Composition vs Inheritance",
     prefix: "oop-cvi",
@@ -566,7 +530,6 @@ const extraOOP = [
     ]
   },
 
-  // 12. Common OOP Interview Scenarios
   {
     topic: "Common OOP Interview Scenarios",
     prefix: "oop-scn",
@@ -613,10 +576,6 @@ createModuleFile(
   oopQuestions
 );
 
-
-// =========================================================================
-// 3. DBMS (14 topics × 10 = 140 MCQs)
-// =========================================================================
 const dbmsTopics = [
   "DBMS Fundamentals",
   "ER Model",
@@ -635,7 +594,7 @@ const dbmsTopics = [
 ];
 
 const dbmsGroups = [
-  // 1. DBMS Fundamentals
+
   {
     topic: "DBMS Fundamentals",
     prefix: "dbms-fnd",
@@ -653,7 +612,6 @@ const dbmsGroups = [
     ]
   },
 
-  // 2. ER Model
   {
     topic: "ER Model",
     prefix: "dbms-erm",
@@ -671,7 +629,6 @@ const dbmsGroups = [
     ]
   },
 
-  // 3. Keys
   {
     topic: "Keys",
     prefix: "dbms-key",
@@ -689,7 +646,6 @@ const dbmsGroups = [
     ]
   },
 
-  // 4. Functional Dependencies
   {
     topic: "Functional Dependencies",
     prefix: "dbms-fd",
@@ -707,7 +663,6 @@ const dbmsGroups = [
     ]
   },
 
-  // 5. Normalization
   {
     topic: "Normalization",
     prefix: "dbms-nrm",
@@ -726,9 +681,8 @@ const dbmsGroups = [
   }
 ];
 
-// Add Remaining DBMS topics (6-14)
 const extraDBMS = [
-  // 6. Transactions
+
   {
     topic: "Transactions",
     prefix: "dbms-txn",
@@ -746,7 +700,6 @@ const extraDBMS = [
     ]
   },
 
-  // 7. ACID Properties
   {
     topic: "ACID Properties",
     prefix: "dbms-acd",
@@ -764,7 +717,6 @@ const extraDBMS = [
     ]
   },
 
-  // 8. Concurrency Control
   {
     topic: "Concurrency Control",
     prefix: "dbms-cnc",
@@ -782,7 +734,6 @@ const extraDBMS = [
     ]
   },
 
-  // 9. Indexing
   {
     topic: "Indexing",
     prefix: "dbms-idx",
@@ -800,7 +751,6 @@ const extraDBMS = [
     ]
   },
 
-  // 10. B-Trees / B+ Trees
   {
     topic: "B-Trees / B+ Trees",
     prefix: "dbms-bt",
@@ -818,7 +768,6 @@ const extraDBMS = [
     ]
   },
 
-  // 11. Deadlocks
   {
     topic: "Deadlocks",
     prefix: "dbms-dlk",
@@ -836,7 +785,6 @@ const extraDBMS = [
     ]
   },
 
-  // 12. Database Security
   {
     topic: "Database Security",
     prefix: "dbms-sec",
@@ -854,7 +802,6 @@ const extraDBMS = [
     ]
   },
 
-  // 13. SQL vs NoSQL
   {
     topic: "SQL vs NoSQL",
     prefix: "dbms-nosql",
@@ -872,7 +819,6 @@ const extraDBMS = [
     ]
   },
 
-  // 14. Relational Databases
   {
     topic: "Relational Databases",
     prefix: "dbms-rdb",

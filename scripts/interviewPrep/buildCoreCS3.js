@@ -1,5 +1,3 @@
-// scripts/interviewPrep/buildCoreCS3.js
-// Generates computerOrganization.js, softwareEngineering.js, and systemDesign.js
 
 const fs = require('fs');
 const path = require('path');
@@ -22,13 +20,9 @@ function q(id, topic, difficulty, question, options, correctAnswer, explanation)
   return { id, topic, difficulty, question, options, correctAnswer, explanation };
 }
 
-// ==========================================
-// 11. COMPUTER ORGANIZATION & ARCHITECTURE
-// 12 topics * 10 = 120 MCQs
-// ==========================================
 console.log('Generating Computer Organization & Architecture data...');
 const coQuestions = [
-  // 1. Number Systems & Binary Arithmetic
+
   q('co_ns_1', 'Number Systems & Binary Arithmetic', 'Easy',
     'What is the 2\'s complement representation of -9 in an 8-bit register?',
     ['11110110', '11110111', '10001001', '11111001'], 1,
@@ -70,7 +64,6 @@ const coQuestions = [
     ['n bits', '2n - 1 bits', '2n bits', 'n^2 bits'], 2,
     'Multiplying two n-bit integers can produce a result up to (-2^(n-1)) * (-2^(n-1)) = 2^(2n-2), which requires exactly 2n bits in the product register (e.g., multiplying two 32-bit registers requires 64 bits).'),
 
-  // 2. Logic Gates & Boolean Algebra
   q('co_lg_1', 'Logic Gates & Boolean Algebra', 'Easy',
     'Which of the following gates are known as "Universal Gates"?',
     ['AND and OR', 'NAND and NOR', 'XOR and XNOR', 'NOT and AND'], 1,
@@ -112,7 +105,6 @@ const coQuestions = [
     ['2^n', '2^(2^n)', 'n^2', '2^(n-1)'], 1,
     'For n Boolean variables, there are 2^n possible input combinations in the truth table. Each combination can produce either 0 or 1. Hence, total possible functions = 2^(2^n). For n=2, there are 2^(2^2) = 16 functions.'),
 
-  // 3. Combinational Circuits
   q('co_cc_1', 'Combinational Circuits', 'Easy',
     'What are the Sum (S) and Carry (C) expressions for a Half Adder with inputs A and B?',
     ['S = A . B, C = A + B', 'S = A XOR B, C = A . B', 'S = A + B, C = A XOR B', 'S = A XNOR B, C = A . B'], 1,
@@ -154,7 +146,6 @@ const coQuestions = [
     ['CLA delay grows linearly with bit width O(n), same as RCA', 'CLA calculates carry terms in parallel stages, reducing delay from O(n) to O(log n)', 'CLA has higher latency than RCA for large word lengths', 'CLA eliminates all propagation delay completely'], 1,
     'By computing generate and propagate terms across hierarchical 4-bit lookahead generator blocks (block carry lookahead), carry computation is performed in logarithmic time O(log n) rather than linear time O(n).'),
 
-  // 4. Sequential Circuits
   q('co_sc_1', 'Sequential Circuits', 'Easy',
     'What is the fundamental difference between combinational and sequential logic circuits?',
     ['Combinational circuits use clock signals, sequential do not', 'Sequential circuits contain memory elements and their outputs depend on past as well as current inputs', 'Combinational circuits contain feedback loops', 'Sequential circuits do not use logic gates'], 1,
@@ -196,7 +187,6 @@ const coQuestions = [
     ['Mealy outputs depend only on the current state', 'Mealy outputs depend on both the current state and the current inputs, potentially requiring fewer states', 'Moore outputs respond faster to input changes than Mealy', 'Mealy machines cannot be implemented with D flip-flops'], 1,
     'In a Mealy machine, outputs are a function of (current state, current inputs), meaning output changes immediately with input changes, often requiring fewer states than a Moore machine whose outputs depend solely on the current state.'),
 
-  // 5. Computer Architecture Types (Von Neumann vs Harvard, RISC vs CISC)
   q('co_arch_1', 'Computer Architecture Types', 'Easy',
     'What is the primary characteristic of the Von Neumann architecture?',
     ['Separate physical memory buses for instructions and data', 'Shared single memory and common bus for both instructions and data', 'No program counter register', 'Hardware-based floating point unit only'], 1,
@@ -238,7 +228,6 @@ const coQuestions = [
     ['CISC uses lossless compression on the binary', 'Single CISC instructions can encode complex multi-step operations and variable-length encodings, requiring fewer instructions per task', 'RISC compilers omit debug symbols', 'CISC registers are twice as large'], 1,
     'Because CISC instructions can perform memory access and arithmetic in a single instruction (e.g. `ADD [EAX], EBX`) and use variable instruction byte lengths, programs require fewer instructions and less memory storage than equivalent RISC code.'),
 
-  // 6. Instruction Formats & Addressing Modes
   q('co_if_1', 'Instruction Formats & Addressing Modes', 'Easy',
     'In which addressing mode is the operand specified directly within the instruction itself?',
     ['Direct Addressing', 'Immediate Addressing', 'Register Indirect Addressing', 'Indexed Addressing'], 1,
@@ -265,7 +254,7 @@ const coQuestions = [
     'Indexed addressing computes Effective Address = (Base Address + Index Register). Incrementing the index register in a loop sequentially steps through adjacent array elements cleanly.'),
   q('co_if_7', 'Instruction Formats & Addressing Modes', 'Medium',
     'How many memory accesses are required to fetch the operand in "Memory Indirect Addressing" mode?',
-    ['0', '1', '2', '3'], 1, // Effective address fetch + data fetch = 2 memory accesses
+    ['0', '1', '2', '3'], 1,
     'Memory Indirect Addressing requires 2 memory accesses: first access reads the pointer (effective address) stored in memory, and second access reads the actual operand data from that effective address.'),
   q('co_if_8', 'Instruction Formats & Addressing Modes', 'Medium',
     'What is "Auto-increment" and "Auto-decrement" addressing primarily used for in instruction sets?',
@@ -280,7 +269,6 @@ const coQuestions = [
     ['To double register file size', 'To allow instructions of different formats (varying number of operands) to coexist within a fixed instruction word length', 'To increase clock frequency', 'To enable out-of-order execution'], 1,
     'Expanding opcode technique uses unused bit combinations of shorter opcode fields to escape into longer opcodes, allowing 3-address, 2-address, 1-address, and 0-address instructions to share a fixed-length instruction word.'),
 
-  // 7. CPU Datapath, Control Unit & ALU
   q('co_dp_1', 'CPU Datapath, Control Unit & ALU', 'Easy',
     'What is the function of the Instruction Register (IR)?',
     ['It points to the next instruction address', 'It holds the instruction currently being decoded and executed', 'It stores the result of ALU operations', 'It handles DMA requests'], 1,
@@ -322,7 +310,6 @@ const coQuestions = [
     ['Programming on microscopic quantum processors', 'A two-level control store architecture where micro-instructions point to nano-instructions to eliminate redundant control words and minimize total ROM size', 'Direct assembly in machine cycles', 'Microcode executed on GPU shaders'], 1,
     'Nanoprogramming employs two levels of control store: micro-instructions contain addresses into a smaller "nano-store" containing unique control signal patterns. This eliminates duplicate control words in CISC control memory.'),
 
-  // 8. Pipelining & Pipeline Hazards
   q('co_pl_1', 'Pipelining & Pipeline Hazards', 'Easy',
     'What is the primary objective of Instruction Pipelining in modern CPUs?',
     ['To reduce the execution time (latency) of an individual instruction', 'To increase instruction execution throughput by overlapping the execution of multiple instructions', 'To reduce the physical silicon area of the CPU die', 'To eliminate the need for registers'], 1,
@@ -364,7 +351,6 @@ const coQuestions = [
     ['1.0', '1.14', '1.28', '1.40'], 2,
     'Stall penalty occurs on taken branches: Fraction of taken branches = 20% * 70% = 0.14. Penalty per taken branch = 2 cycles. Average CPI = 1.0 + (0.14 * 2) = 1.28.'),
 
-  // 9. Memory Hierarchy & Cache Memory
   q('co_cm_1', 'Memory Hierarchy & Cache Memory', 'Easy',
     'What is the primary reason for having a memory hierarchy in computer systems?',
     ['To make the computer physically lighter', 'To bridge the speed, cost, and capacity gap between fast but expensive CPU registers and slow but cheap secondary storage', 'To prevent viruses from spreading', 'To allow multiple operating systems to run concurrently'], 1,
@@ -406,7 +392,6 @@ const coQuestions = [
     ['2.0 ns', '3.4 ns', '5.2 ns', '7.0 ns'], 1,
     'AMAT = HitTime_L1 + MissRate_L1 * MissPenalty_L1. MissPenalty_L1 = HitTime_L2 + MissRate_L2 * MemoryAccessTime = 5 ns + (0.20 * 100 ns) = 5 + 20 = 25 ns. AMAT = 1 ns + (0.10 * 25 ns) = 1 + 2.5 = 3.5 ns (approx 3.4-3.5 ns).'),
 
-  // 10. Virtual Memory, TLB & Page Tables
   q('co_vm_1', 'Virtual Memory, TLB & Page Tables', 'Easy',
     'What is the primary function of Virtual Memory in modern computer systems?',
     ['To double the CPU clock speed', 'To provide each process an illusion of a large, contiguous, isolated address space and protect processes from each other', 'To eliminate the need for hard disk storage', 'To run 32-bit applications on 16-bit hardware'], 1,
@@ -448,7 +433,6 @@ const coQuestions = [
     ['115 ns', '120 ns', '125 ns', '135 ns'], 1,
     'TLB Hit: TLB access + Memory data access = 10 + 100 = 110 ns. TLB Miss: TLB access + 2 page table memory accesses + 1 data memory access = 10 + 100 + 100 + 100 = 310 ns. EMAT = 0.95 * 110 + 0.05 * 310 = 104.5 + 15.5 = 120 ns.'),
 
-  // 11. I/O Organization, Interrupts & DMA
   q('co_io_1', 'I/O Organization, Interrupts & DMA', 'Easy',
     'What is the primary difference between Programmed I/O and Interrupt-Driven I/O?',
     ['Programmed I/O uses DMA; Interrupt-driven does not', 'In Programmed I/O, the CPU repeatedly polls device status in a busy-wait loop; In Interrupt-Driven I/O, the device alerts the CPU via an interrupt signal when ready', 'Interrupt-driven I/O cannot transfer data', 'Programmed I/O is faster for all peripherals'], 1,
@@ -490,7 +474,6 @@ const coQuestions = [
     ['Transfers single bytes with random delays', 'The DMA controller gains bus mastership and holds it continuously to transfer an entire block of data uninterrupted until complete', 'Transfers data without using clock signals', 'Transfers data exclusively through CPU registers'], 1,
     'In burst mode, once the DMA controller acquires the bus, it transfers the entire contiguous data block in a continuous high-speed stream while the CPU remains paused off the system bus until the transfer completes.'),
 
-  // 12. Secondary Storage & RAID Levels
   q('co_ss_1', 'Secondary Storage & RAID Levels', 'Easy',
     'What does the acronym RAID stand for in computer storage systems?',
     ['Random Access Integrated Drive', 'Redundant Array of Independent (or Inexpensive) Disks', 'Rapid Access Interface Device', 'Relational Array for Internal Data'], 1,
@@ -562,14 +545,9 @@ window.interviewPrepCO = {
 fs.writeFileSync(path.join(outDir, 'computerOrganization.js'), coContent);
 console.log(`Successfully generated computerOrganization.js (${coQuestions.length} questions across 12 topics)`);
 
-
-// ==========================================
-// 12. SOFTWARE ENGINEERING
-// 14 topics * 10 = 140 MCQs
-// ==========================================
 console.log('Generating Software Engineering data...');
 const seQuestions = [
-  // 1. SDLC Models
+
   q('se_sdlc_1', 'SDLC Models', 'Easy',
     'Which SDLC model is characterized by sequential, non-overlapping phases where each phase must be completed before the next begins?',
     ['Spiral Model', 'Waterfall Model', 'Agile Model', 'RAD Model'], 1,
@@ -611,7 +589,6 @@ const seQuestions = [
     ['They are identical terms with no distinction', 'Incremental delivers the system in fully finished functional chunks (slice by slice); Iterative delivers the entire system in a rough draft initially and progressively refines all parts with each pass', 'Iterative delivers no working code until release', 'Incremental requires waterfall for every module'], 1,
     'Incremental development builds and delivers the software product piece by piece (adding new complete features each release). Iterative development refines the entire system iteratively, enhancing quality and depth of all components across iterations.'),
 
-  // 2. Agile Methodology & Scrum Framework
   q('se_ag_1', 'Agile Methodology & Scrum Framework', 'Easy',
     'How many core values and principles are defined in the Agile Manifesto (2001)?',
     ['2 values, 5 principles', '4 values, 12 principles', '5 values, 10 principles', '3 values, 9 principles'], 1,
@@ -653,7 +630,6 @@ const seQuestions = [
     ['The sprint duration is extended by one week', 'The developers negotiate with the Product Owner to remove or resize lower-priority items from the Sprint Backlog without compromising the overarching Sprint Goal', 'The Scrum Master cancels the sprint immediately', 'Developers skip unit testing to deliver all items on time'], 1,
     'Sprint duration is an inviolable timebox. If work exceeds capacity, the developers consult the Product Owner to remove or simplify scope while protecting quality standards and maintaining the primary Sprint Goal.'),
 
-  // 3. Requirements Engineering & SRS
   q('se_re_1', 'Requirements Engineering & SRS', 'Easy',
     'What does SRS stand for in software engineering?',
     ['Software Regression Suite', 'Software Requirements Specification', 'System Recovery Service', 'Standard Routing System'], 1,
@@ -695,7 +671,6 @@ const seQuestions = [
     ['User requirements are written in Python; system requirements in C++', 'User requirements are high-level statements in natural language with diagrams for clients; System requirements set out detailed functional specifications and operational constraints for developers', 'System requirements are written by end users', 'There is no difference'], 1,
     'User requirements express client goals and business expectations in clear non-technical language. System requirements translate those goals into formal, detailed technical specifications used by engineers.'),
 
-  // 4. Software Architecture Patterns
   q('se_arch_1', 'Software Architecture Patterns', 'Easy',
     'What is a "Monolithic Architecture"?',
     ['An architecture running on custom quantum computers', 'A software system where all components (UI, business logic, data access) are bundled, compiled, and executed as a single unified deployable unit', 'A system composed of hundreds of Docker containers', 'An event-driven architecture using Kafka'], 1,
@@ -737,7 +712,6 @@ const seQuestions = [
     ['A pattern that kills microservices when memory is exceeded', 'An incremental migration strategy where a legacy monolithic system is gradually replaced by intercepting calls and replacing functionality with microservices piece by piece until the monolith disappears', 'A security exploit that bypasses firewalls', 'A code obfuscation technique'], 1,
     'Martin Fowler\'s Strangler Fig pattern places a facade/API gateway in front of a legacy monolith, incrementally carving out bounded contexts into microservices until the legacy system is completely superseded and retired safely.'),
 
-  // 5. UML Diagrams
   q('se_uml_1', 'UML Diagrams', 'Easy',
     'What does UML stand for in software engineering?',
     ['Unified Modeling Language', 'Universal Machine Language', 'Unified Markup Logic', 'Universal Module Linker'], 0,
@@ -779,7 +753,6 @@ const seQuestions = [
     ['To track Git commit deployments', 'To model the physical or virtual execution architecture, mapping software artifacts (JARs, containers) onto hardware nodes (servers, cloud VMs, devices)', 'To design user interface buttons', 'To write database queries'], 1,
     'Deployment diagrams illustrate the physical infrastructure topology of a system, specifying how software artifacts (executables, binaries, microservice containers) map to hardware processing nodes, execution environments, and communication networks.'),
 
-  // 6. Design Principles (SOLID, DRY, KISS, YAGNI)
   q('se_dp_1', 'Design Principles', 'Easy',
     'What does the "S" in SOLID design principles stand for?',
     ['Scalable Architecture Principle', 'Single Responsibility Principle (SRP)', 'System Reliability Principle', 'Software Reusability Principle'], 1,
@@ -821,7 +794,6 @@ const seQuestions = [
     ['By preventing classes from having more than 5 methods', 'By dictating that a method should only call methods on its own object, its parameters, objects it creates, or its immediate component instances (avoiding chains like `a.getB().getC().doD()`)', 'By hiding database passwords in config files', 'By making all variables static'], 1,
     'The Law of Demeter advises: "Talk only to your immediate friends". Calling `order.getCustomer().getAddress().getCity()` couples `order` to deep internal structures of `Customer` and `Address`, making refactoring fragile.'),
 
-  // 7. Software Testing Fundamentals
   q('se_tf_1', 'Software Testing Fundamentals', 'Easy',
     'What is the fundamental difference between White-Box Testing and Black-Box Testing?',
     ['White-box is done during daytime; black-box at night', 'White-Box tests internal logic, control flow, and code structure; Black-Box tests functionality against specifications without knowledge of internal code', 'White-box is for hardware; black-box is for software', 'Black-box testing has no inputs'], 1,
@@ -863,7 +835,6 @@ const seQuestions = [
     ['Because computers lack sufficient RAM', 'Due to combinatorial explosion of inputs, complex state permutations, execution timing, and path combinations that require astronomical numbers of test cases', 'Because modern programming languages prohibit more than 1000 unit tests', 'Because compilers eliminate edge cases'], 1,
     'Exhaustive testing (testing every possible input combination and execution path) is impossible because the input domain and state space of even simple programs are virtually infinite, necessitating risk-based sampling and partitioning.'),
 
-  // 8. Testing Levels
   q('se_tl_1', 'Testing Levels', 'Easy',
     'What are the four recognized levels of software testing in ascending order?',
     ['System, Unit, Integration, Acceptance', 'Unit Testing, Integration Testing, System Testing, Acceptance Testing', 'Manual, Automated, Performance, Security', 'Alpha, Beta, Gamma, Delta'], 1,
@@ -905,7 +876,6 @@ const seQuestions = [
     ['Developers writing code without rules', 'The discipline of deliberately injecting failures (e.g. killing servers, severing network links, adding latency) into production systems to test and prove resilience (e.g. Chaos Monkey)', 'Running tests with corrupted RAM', 'Randomly deleting production databases without backup'], 1,
     'Pioneered by Netflix, Chaos Engineering proactively introduces turbulent conditions (terminating instances, injecting latency) in production to identify weaknesses before they trigger real outages.'),
 
-  // 9. Test Automation & TDD vs BDD
   q('se_tdd_1', 'Test Automation & TDD vs BDD', 'Easy',
     'What is the core cycle of Test-Driven Development (TDD)?',
     ['Code -> Test -> Deploy', 'Red (Write failing test) -> Green (Write minimal code to pass) -> Refactor (Clean up code)', 'Design -> Code -> Document', 'Plan -> Estimate -> Code'], 1,
@@ -947,7 +917,6 @@ const seQuestions = [
     ['Testing CSS properties of HTML elements', 'A testing paradigm where developers specify universal invariants (properties) that must hold true, and the framework generates hundreds of randomized edge-case inputs to find counterexamples', 'Testing database schema properties only', 'Testing code ownership properties'], 1,
     'Unlike example-based tests with hand-picked inputs, property-based testing tests universal truths (e.g., `reverse(reverse(list)) == list`). The engine automatically throws hundreds of randomized edge cases (empty strings, huge numbers) to expose flaws.'),
 
-  // 10. Software Maintenance, Refactoring & Technical Debt
   q('se_maint_1', 'Software Maintenance, Refactoring & Technical Debt', 'Easy',
     'What are the four classical categories of software maintenance?',
     ['Alpha, Beta, Release, Patch', 'Corrective, Adaptive, Perfective, and Preventive maintenance', 'Frontend, Backend, Database, Cloud', 'Static, Dynamic, Continuous, Discrete'], 1,
@@ -989,7 +958,6 @@ const seQuestions = [
     ['Always wear a uniform during code reviews', 'Always leave the code cleaner than you found it (refactor small blemishes whenever touching a file)', 'Never change code written by senior developers', 'Always write tests in C++'], 1,
     'Popularized by Uncle Bob (Robert C. Martin), the Boy Scout Rule states: "Always check code in cleaner than when you checked it out." Gradual, steady micro-refactorings keep codebases healthy and prevent technical debt buildup.'),
 
-  // 11. Software Metrics & Quality Assurance
   q('se_met_1', 'Software Metrics & Quality Assurance', 'Easy',
     'What does Cyclomatic Complexity measure in a software module?',
     ['The number of lines of code in a file', 'The number of linearly independent execution paths through a program\'s source code', 'The total memory consumed by variables', 'The compilation time in seconds'], 1,
@@ -1031,7 +999,6 @@ const seQuestions = [
     ['The probability of server crashes', 'The ratio of efferent coupling (outgoing dependencies) to total coupling: I = Ce / (Ca + Ce), where I=0 is maximally stable and I=1 is maximally instable', 'The number of memory leaks', 'The frequency of code deployments'], 1,
     'Instability I = Ce / (Ca + Ce), where Ca is afferent coupling (incoming dependencies) and Ce is efferent coupling (outgoing dependencies). A package with Ce=0 (I=0) is maximally stable because many depend on it and it depends on none.'),
 
-  // 12. Software Project Estimation & Models
   q('se_est_1', 'Software Project Estimation & Models', 'Easy',
     'What does COCOMO stand for in software project estimation?',
     ['Continuous Code Monitoring Model', 'Constructive Cost Model', 'Coordinated Computing Module', 'Common Object Component Model'], 1,
@@ -1073,7 +1040,6 @@ const seQuestions = [
     ['E = (Optimistic + Pessimistic) / 2', 'E = (Optimistic + 4 * Most_Likely + Pessimistic) / 6', 'E = (Optimistic + Most_Likely + Pessimistic) / 3', 'E = Most_Likely * 1.5'], 1,
     'PERT weighted average formula: E = (O + 4M + P) / 6, where O is optimistic estimate, M is most likely estimate, and P is pessimistic estimate, providing a realistic probability distribution.'),
 
-  // 13. DevOps Culture, CI/CD & Release Management
   q('se_devops_1', 'DevOps Culture, CI/CD & Release Management', 'Easy',
     'What does the term "DevOps" primarily represent?',
     ['A specific brand of cloud server', 'A cultural and technical philosophy unifying Development (Dev) and IT Operations (Ops) to shorten the development lifecycle and deliver high-quality software continuously', 'A programming language replacing Python', 'A tool that automatically writes code'], 1,
@@ -1115,7 +1081,6 @@ const seQuestions = [
     ['To assign random numbers to builds', 'To convey breaking change intent: MAJOR increments for breaking API changes, MINOR for backwards-compatible new features, and PATCH for backwards-compatible bug fixes', 'To track developer employee IDs', 'To calculate software price tags'], 1,
     'SemVer (X.Y.Z) provides standard semantic meaning: MAJOR version increments break backwards compatibility; MINOR increments add backwards-compatible features; PATCH increments provide backwards-compatible bug fixes.'),
 
-  // 14. Code Review Best Practices & Static Analysis
   q('se_cr_1', 'Code Review Best Practices & Static Analysis', 'Easy',
     'What is the primary objective of a peer Code Review?',
     ['To catch typos and format spaces manually', 'To identify defects, improve code quality, ensure adherence to architectural standards, and share knowledge across team members', 'To evaluate developer speed and assign grades', 'To replace automated unit testing'], 1,
@@ -1189,11 +1154,6 @@ window.interviewPrepSE = {
 fs.writeFileSync(path.join(outDir, 'softwareEngineering.js'), seContent);
 console.log(`Successfully generated softwareEngineering.js (${seQuestions.length} questions across 14 topics)`);
 
-
-// ==========================================
-// 13. SYSTEM DESIGN
-// 20 High-Yield MCQs + 10 Complete System Design Case Studies
-// ==========================================
 console.log('Generating System Design data...');
 const sdQuestions = [
   q('sd_mcq_1', 'System Design Fundamentals', 'Easy',
@@ -1278,7 +1238,6 @@ const sdQuestions = [
     'Write-Behind caches acknowledge writes before committing to disk. If the cache machine loses power, dirty uncommitted updates are lost. Systems mitigate this using redundant replicated cache clusters (Redis Sentinel/Cluster) and persistent fast append logs on NVMe.')
 ];
 
-// 10 Detailed Case Studies
 const sdCaseStudies = [
   {
     id: 'sd_case_1',

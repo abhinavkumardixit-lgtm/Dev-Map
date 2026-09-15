@@ -1,7 +1,3 @@
-/**
- * MAD DEV - AI Prompt Library Vault Dataset
- * Static structured dataset containing 130+ engineered developer prompts across 8 core domains.
- */
 
 const PROMPT_CATEGORIES = [
   {
@@ -3995,7 +3991,6 @@ const PROMPTS_DATA = [
   }
 ];
 
-// Helper functions
 function getPromptById(id) {
   return PROMPTS_DATA.find(p => p.id === id) || null;
 }
@@ -4020,7 +4015,6 @@ function getRelatedPrompts(currentPrompt, limit = 4) {
     .map(item => item.prompt);
 }
 
-// Export for browser and Node.js environments
 if (typeof window !== 'undefined') {
   window.PROMPT_CATEGORIES = PROMPT_CATEGORIES;
   window.PROMPT_COLLECTIONS = PROMPT_COLLECTIONS;

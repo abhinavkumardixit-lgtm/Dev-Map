@@ -1,7 +1,3 @@
-/**
- * MAD DEV — Object-Oriented Programming Question Bank
- * 120 authentic placement/interview MCQs across 12 topics.
- */
 
 (function () {
   'use strict';

@@ -1,6 +1,3 @@
-/* ==========================================================================
-   DevPilot-AI - AI Chat Assistant CSS
-   ========================================================================== */
 
 .chat-container {
   display: flex;
@@ -91,7 +88,6 @@
   box-shadow: var(--shadow-subtle);
 }
 
-/* Chat Input Bar */
 .chat-input-container {
   padding: 1rem 1.5rem;
   background: var(--color-surface);
@@ -129,7 +125,6 @@
   font-family: inherit;
 }
 
-/* Quick prompt suggestions */
 .chat-suggestions {
   display: flex;
   gap: 0.5rem;

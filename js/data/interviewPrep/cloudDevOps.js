@@ -1,5 +1,3 @@
-// js/data/interviewPrep/cloudDevOps.js
-// Complete Question Bank for Cloud & DevOps Fundamentals (11 topics * 10 = 110 MCQs)
 
 window.interviewPrepCloudDevOps = {
   id: 'cloud_devops',
@@ -1563,7 +1561,6 @@ window.interviewPrepCloudDevOps = {
   }
 ]
 };
-
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = window.interviewPrepCloudDevOps;

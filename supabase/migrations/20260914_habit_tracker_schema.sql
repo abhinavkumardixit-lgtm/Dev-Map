@@ -167,28 +167,28 @@ CREATE POLICY "Users can delete their own weekly goals"
 DO $$
 BEGIN
     IF NOT EXISTS (
-        SELECT 1 FROM pg_publication_tables 
+        SELECT 1 FROM pg_publication_tables
         WHERE pubname = 'supabase_realtime' AND tablename = 'habits'
     ) THEN
         ALTER PUBLICATION supabase_realtime ADD TABLE public.habits;
     END IF;
 
     IF NOT EXISTS (
-        SELECT 1 FROM pg_publication_tables 
+        SELECT 1 FROM pg_publication_tables
         WHERE pubname = 'supabase_realtime' AND tablename = 'habit_completions'
     ) THEN
         ALTER PUBLICATION supabase_realtime ADD TABLE public.habit_completions;
     END IF;
 
     IF NOT EXISTS (
-        SELECT 1 FROM pg_publication_tables 
+        SELECT 1 FROM pg_publication_tables
         WHERE pubname = 'supabase_realtime' AND tablename = 'daily_goals'
     ) THEN
         ALTER PUBLICATION supabase_realtime ADD TABLE public.daily_goals;
     END IF;
 
     IF NOT EXISTS (
-        SELECT 1 FROM pg_publication_tables 
+        SELECT 1 FROM pg_publication_tables
         WHERE pubname = 'supabase_realtime' AND tablename = 'weekly_goals'
     ) THEN
         ALTER PUBLICATION supabase_realtime ADD TABLE public.weekly_goals;

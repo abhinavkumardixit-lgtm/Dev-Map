@@ -36,11 +36,9 @@ function runTests() {
     { id: 'g1', title: 'Complete 2 PR reviews', target: 2, completed: true, date: '2026-09-14' }
   ];
 
-  // TEST 1: Heatmap generates exactly 26 weeks
   const weeks = HabitsData.calculateHeatmapMatrix(habits, completions, 26, today, dailyGoals);
   assert(weeks && weeks.length === 26, `Heatmap matrix generates exactly 26 weeks (received: ${weeks.length})`);
 
-  // TEST 2: Month header alignment logic sums to exactly 26 columns without gap
   const monthSpans = [];
   let currentMonth = -1;
 
@@ -75,7 +73,6 @@ function runTests() {
   const lastMonth = monthSpans[monthSpans.length - 1];
   assert(lastMonth.colIndex + lastMonth.span === 26, `Last month ends exactly at column 26 (${lastMonth.name} span: ${lastMonth.span})`);
 
-  // TEST 3: Day History breakdown calculates accurately for today
   const { byDate } = HabitsData.buildCompletionMaps(habits, completions);
   const completedToday = byDate['2026-09-14'] || new Set();
   assert(completedToday.has('h1') && completedToday.has('h3'), 'Today has h1 and h3 completed');
@@ -84,7 +81,6 @@ function runTests() {
   const missedToday = habits.filter(h => h.active && !completedToday.has(h.id) && HabitsData.isHabitScheduledOn(h, '2026-09-14'));
   assert(missedToday.length === 1 && missedToday[0].id === 'h2', 'Missed list correctly identifies h2 for today');
 
-  // TEST 4: Daily goals included in day history
   const goalsToday = dailyGoals.filter(g => g.date === '2026-09-14');
   assert(goalsToday.length === 1 && goalsToday[0].completed === true, 'Daily goal correctly linked to today');
 

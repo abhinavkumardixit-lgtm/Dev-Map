@@ -1,8 +1,3 @@
-/**
- * MAD DEV — Automated Resume Analyzer Test Suite
- * Tests 10 realistic document scenarios to verify classification,
- * confidence gating, consistency checking, and evidence extraction.
- */
 
 const assert = require('assert');
 const analyzer = require('../../js/pages/resumeAnalyzer.js');
@@ -34,9 +29,6 @@ console.log(`====================================================${colors.reset}
 let passedCount = 0;
 let totalCount = 10;
 
-// ----------------------------------------------------
-// TEST 1: Valid Student Resume -> PASS
-// ----------------------------------------------------
 if (runTest('TEST 1: Valid student resume with projects and education', () => {
   const resumeText = `
 Aditya Sharma
@@ -101,9 +93,6 @@ CERTIFICATIONS
   assert.ok(skills.all.includes('C++'), 'C++ skill should be found');
 })) passedCount++;
 
-// ----------------------------------------------------
-// TEST 2: Experienced Software Engineer Resume -> PASS
-// ----------------------------------------------------
 if (runTest('TEST 2: Experienced software engineer resume', () => {
   const resumeText = `
 Sarah Connor
@@ -147,9 +136,6 @@ CERTIFICATIONS
   assert.ok(exp.score >= 15, `Experience score should be >= 15, got ${exp.score}`);
 })) passedCount++;
 
-// ----------------------------------------------------
-// TEST 3: Certificate PDF -> REJECT
-// ----------------------------------------------------
 if (runTest('TEST 3: Certificate PDF -> REJECT (<60 confidence)', () => {
   const certText = `
 CERTIFICATE OF COMPLETION
@@ -170,9 +156,6 @@ Online Learning Academy International
   assert.ok(classification.confidence < 60, `Confidence must be < 60, got ${classification.confidence}`);
 })) passedCount++;
 
-// ----------------------------------------------------
-// TEST 4: College Marksheet -> REJECT
-// ----------------------------------------------------
 if (runTest('TEST 4: College marksheet / transcript -> REJECT (<60 confidence)', () => {
   const marksheetText = `
 STATE TECHNICAL UNIVERSITY
@@ -200,9 +183,6 @@ Date of Issue: 18-07-2024 | Controller of Examinations
   assert.ok(classification.confidence < 60, `Confidence must be < 60, got ${classification.confidence}`);
 })) passedCount++;
 
-// ----------------------------------------------------
-// TEST 5: Research Paper -> REJECT
-// ----------------------------------------------------
 if (runTest('TEST 5: Research paper / publication -> REJECT (<60 confidence)', () => {
   const paperText = `
 An Efficient Graph Neural Network for Large-Scale Traffic Flow Prediction
@@ -237,9 +217,6 @@ REFERENCES
   assert.ok(classification.confidence < 60, `Confidence must be < 60, got ${classification.confidence}`);
 })) passedCount++;
 
-// ----------------------------------------------------
-// TEST 6: Invoice -> REJECT
-// ----------------------------------------------------
 if (runTest('TEST 6: Invoice / Commercial bill -> REJECT (<60 confidence)', () => {
   const invoiceText = `
 TAX INVOICE
@@ -277,9 +254,6 @@ Remit Payment To: Silicon Valley Bank, Routing #121000358, Account #987654321
   assert.ok(classification.confidence < 60, `Confidence must be < 60, got ${classification.confidence}`);
 })) passedCount++;
 
-// ----------------------------------------------------
-// TEST 7: Random PDF (Name/Phone/Email only) -> REJECT
-// ----------------------------------------------------
 if (runTest('TEST 7: Random text with only name, phone and email -> REJECT', () => {
   const randomText = `
 Aditya Sharma
@@ -296,9 +270,6 @@ Kanpur, India
   assert.ok(classification.missingSignals.includes('Projects Section'));
 })) passedCount++;
 
-// ----------------------------------------------------
-// TEST 8: Scanned Image Resume (Readable OCR Text) -> PASS
-// ----------------------------------------------------
 if (runTest('TEST 8: Scanned image resume with OCR extracted text -> PASS', () => {
   const ocrText = `
 ALEX JOHNSON
@@ -332,11 +303,8 @@ B.S. in Computer Science | 2019 – 2023
   assert.ok(classification.confidence >= 75);
 })) passedCount++;
 
-// ----------------------------------------------------
-// TEST 9: Resume with Missing Sections -> PASS WITH WARNINGS
-// ----------------------------------------------------
 if (runTest('TEST 9: Resume with missing sections -> PASS WITH WARNINGS (60-75 confidence)', () => {
-  // Missing summary, certifications, achievements, experience, but has valid education, skills, and projects
+
   const partialResume = `
 Vikram Malhotra
 vikram.m@example.com | +91 98765 43210 | Bangalore, India | github.com/vikram-code
@@ -363,9 +331,6 @@ Bachelor of Engineering in Information Science | 2020 – 2024
   assert.ok(classification.missingSignals.includes('Professional Summary'));
 })) passedCount++;
 
-// ----------------------------------------------------
-// TEST 10: Resume with Contradictory Information -> PASS + CONSISTENCY WARNING
-// ----------------------------------------------------
 if (runTest('TEST 10: Resume with contradictory info -> PASS + CONSISTENCY WARNING', () => {
   const contradictoryResume = `
 Rahul Gupta
@@ -413,9 +378,6 @@ ACHIEVEMENTS
   assert.strictEqual(consistency.hasDuplicates, true, 'Must detect duplicate project bullets or skills');
 })) passedCount++;
 
-// ----------------------------------------------------
-// TEST 11: Controlled Weak Test Resume -> Score 25–50
-// ----------------------------------------------------
 if (runTest('TEST 11: Controlled weak test resume -> Score in 25–50 range', () => {
   const weakResume = `
 John Doe
@@ -458,9 +420,6 @@ Bachelor of Arts | 2023
   assert.ok(scores.breakdown.contact.score <= 3, 'Contact score must not exceed 3');
 })) passedCount++;
 
-// ----------------------------------------------------
-// TEST 12: Controlled Strong Test Resume -> Score 90–99
-// ----------------------------------------------------
 if (runTest('TEST 12: Controlled strong test resume -> Score in 90–99 range', () => {
   const strongResume = `
 Aditya Sharma
@@ -538,9 +497,6 @@ CERTIFICATIONS
   assert.strictEqual(scores.breakdown.contact.score, 3, 'Contact should score 3/3');
 })) passedCount++;
 
-// ----------------------------------------------------
-// TEST 13: Estimated Role Fit vs Real Job Match distinction
-// ----------------------------------------------------
 if (runTest('TEST 13: Estimated Role Fit vs Real Job Match distinction', () => {
   const resumeText = `
 Aditya Sharma
@@ -567,13 +523,11 @@ Software Development Intern | Jan 2024 - June 2024
     achievementsAnalysis: analyzer.analyzeAchievements(resumeText, parsed)
   };
 
-  // 1. Role Fit without JD
   const roleMatches = analyzer.calculateJobRoleMatches(resumeData);
   assert.ok(roleMatches.bestFit, 'Should have best fit role');
   assert.ok(roleMatches.bestFit.roleFitScore != null, 'Must define roleFitScore');
   assert.ok(roleMatches.topRecommendations.every(r => r.roleFitScore != null), 'Every recommendation must have roleFitScore');
 
-  // 2. Real Job Match with actual JD
   const sampleJD = `
 Job Title: C++ Software Engineer
 Requirements: C++, Data Structures, Algorithms, 2+ years of experience
@@ -609,19 +563,15 @@ Preferred:
   const parsedJD = analyzer.parseJobDescription(frontendJD);
   assert.ok(parsedJD, 'JD must parse successfully');
 
-  // 1. React must be in Required, not Preferred
   assert.ok(parsedJD.requiredSkills.includes('React'), 'React must be in Required skills');
   assert.ok(!parsedJD.preferredSkills.includes('React'), 'React must NOT be in Preferred skills because it is Required');
 
-  // 2. Canonical forms
   assert.ok(parsedJD.preferredSkills.includes('Next.js'), 'Next.js must be in Preferred');
   assert.ok(parsedJD.preferredSkills.includes('Tailwind CSS'), 'Tailwind CSS must be in Preferred');
 
-  // 3. No duplicate Tailwind or Tailwind CSS entries
   const tailwindCount = parsedJD.preferredSkills.filter(s => s.toLowerCase().includes('tailwind')).length;
   assert.strictEqual(tailwindCount, 1, 'Tailwind CSS must appear only once');
 
-  // 4. Test with candidate resume LACKING React and Tailwind
   const resumeWithoutReact = {
     skills: { all: ['HTML5', 'CSS3', 'JavaScript', 'Git', 'GitHub', 'REST APIs', 'Responsive Design'] },
     resumeText: 'HTML5, CSS3, JavaScript, Git, GitHub, REST APIs, responsive design',
@@ -632,16 +582,13 @@ Preferred:
   const matchRes = analyzer.matchJobProfileWithResume(resumeWithoutReact, parsedJD);
   assert.ok(matchRes, 'Match result must be generated');
 
-  // 5. Missing Required must contain React
   assert.ok(matchRes.missingRequired.includes('React'), 'React must be classified as MISSING REQUIRED');
   assert.ok(!matchRes.missingPreferred.includes('React'), 'React must NOT appear in missing Preferred');
 
-  // 6. Missing Preferred must contain Tailwind CSS without duplicates
   assert.ok(matchRes.missingPreferred.includes('Tailwind CSS'), 'Tailwind CSS must be in missing Preferred');
   const missingTailwindCount = matchRes.missingPreferred.filter(s => s.toLowerCase().includes('tailwind')).length;
   assert.strictEqual(missingTailwindCount, 1, 'Missing Tailwind CSS must not be duplicated');
 
-  // 7. Internal Debug object presence and structure
   assert.ok(matchRes.debug, 'Debug object must be present');
   assert.ok(Array.isArray(matchRes.debug.requiredSkills), 'debug.requiredSkills must be an array');
   assert.ok(Array.isArray(matchRes.debug.preferredSkills), 'debug.preferredSkills must be an array');
@@ -652,7 +599,6 @@ Preferred:
   assert.ok(Array.isArray(matchRes.debug.duplicateSkillsRemoved), 'debug.duplicateSkillsRemoved must be an array');
   assert.ok(matchRes.debug.canonicalizationMap, 'debug.canonicalizationMap must be present');
 
-  // Verify dynamic scores
   assert.ok(typeof matchRes.reqScore === 'number' && matchRes.reqScore <= 30, 'reqScore must be valid');
   assert.ok(typeof matchRes.prefScore === 'number' && matchRes.prefScore <= 10, 'prefScore must be valid');
   assert.ok(matchRes.matchScore > 0 && matchRes.matchScore <= 100, 'matchScore must be between 0 and 100');

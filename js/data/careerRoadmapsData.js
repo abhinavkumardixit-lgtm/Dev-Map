@@ -1,8 +1,3 @@
-/**
- * MAD DEV — Career Roadmaps Central Registry
- * Aggregates all 20 role-specific career roadmaps into a unified dataset.
- * Supports both Browser (via window.careerRoadmapsRegistry or script tags) and Node.js (via require).
- */
 
 (function () {
   'use strict';
@@ -30,17 +25,15 @@
     'qaSdet'
   ];
 
-  // Internal dictionary of roadmaps
   const roadmaps = {};
   const uniqueRoadmaps = [];
 
-  // Helper to normalize skill object for backward & forward compatibility
   function normalizeSkill(skill, levelNum) {
     if (!skill) return;
     if (typeof skill.levelNum === 'undefined') {
       skill.levelNum = levelNum;
     }
-    // Normalize difficulty / level
+
     if (!skill.difficulty) {
       if (typeof skill.level === 'string' && ['beginner', 'intermediate', 'advanced'].includes(skill.level.toLowerCase())) {
         skill.difficulty = skill.level.charAt(0).toUpperCase() + skill.level.slice(1).toLowerCase();
@@ -48,12 +41,12 @@
         skill.difficulty = levelNum <= 1 ? 'Beginner' : levelNum <= 3 ? 'Intermediate' : 'Advanced';
       }
     }
-    // Backward compatibility for tests/views expecting lowercase skill.level
+
     if (!skill.level || skill.level.startsWith('Level')) {
       skill.rawLevelName = skill.level;
       skill.level = skill.difficulty.toLowerCase();
     }
-    // Normalize importance to lowercase 'essential', 'recommended', or 'optional'
+
     const imp = (skill.importance || 'essential').toLowerCase();
     if (imp === 'core' || imp === 'essential') {
       skill.importance = 'essential';
@@ -63,7 +56,6 @@
       skill.importance = 'optional';
     }
 
-    // Ensure arrays
     if (!Array.isArray(skill.prerequisites)) skill.prerequisites = [];
     if (!Array.isArray(skill.whatToLearn)) skill.whatToLearn = [];
     if (!Array.isArray(skill.resources)) skill.resources = [];
@@ -75,7 +67,6 @@
   function registerRoadmap(rawRoadmap) {
     if (!rawRoadmap || !rawRoadmap.title) return;
 
-    // Normalize levels & skills
     if (Array.isArray(rawRoadmap.levels)) {
       rawRoadmap.levels.forEach((lvl, idx) => {
         if (!lvl.levelNum) lvl.levelNum = idx + 1;
@@ -85,7 +76,6 @@
       });
     }
 
-    // Normalize projects
     if (Array.isArray(rawRoadmap.projects)) {
       rawRoadmap.projects.forEach((proj, idx) => {
         if (!proj.description && proj.objective) proj.description = proj.objective;
@@ -96,7 +86,6 @@
       rawRoadmap.projects = [];
     }
 
-    // Normalize checklist
     if (!rawRoadmap.checklist && rawRoadmap.jobReadyChecklist) {
       rawRoadmap.checklist = rawRoadmap.jobReadyChecklist;
     }
@@ -104,7 +93,6 @@
       rawRoadmap.jobReadyChecklist = rawRoadmap.checklist;
     }
 
-    // Ensure technical array alias in checklist for tests
     if (rawRoadmap.jobReadyChecklist && rawRoadmap.jobReadyChecklist.technicalSkills && !rawRoadmap.jobReadyChecklist.technical) {
       rawRoadmap.jobReadyChecklist.technical = rawRoadmap.jobReadyChecklist.technicalSkills.map((item, idx) => ({
         id: `${rawRoadmap.roadmapId || 'role'}-tech-${idx + 1}`,
@@ -113,12 +101,10 @@
       }));
     }
 
-    // Track unique roadmap
     if (!uniqueRoadmaps.some(r => r.roleId === rawRoadmap.roleId || r.title === rawRoadmap.title)) {
       uniqueRoadmaps.push(rawRoadmap);
     }
 
-    // Register under multiple indexing keys for resilient lookup
     const keysToRegister = new Set();
     if (rawRoadmap.roadmapId) {
       keysToRegister.add(rawRoadmap.roadmapId);
@@ -129,7 +115,6 @@
       keysToRegister.add(rawRoadmap.roleId.toLowerCase());
     }
 
-    // Aliases for specific known role identifiers
     const aliases = {
       'frontend': ['frontend-developer', 'frontend'],
       'backend': ['backend-developer', 'backend'],
@@ -164,9 +149,8 @@
     });
   }
 
-  // Load modules depending on runtime environment
   if (typeof module !== 'undefined' && module.exports && typeof require === 'function') {
-    // Node.js runtime: require each role file
+
     ROLE_MODULE_KEYS.forEach(key => {
       try {
         const mod = require(`./careerRoadmaps/${key}.js`);
@@ -176,46 +160,35 @@
       }
     });
   } else if (typeof window !== 'undefined') {
-    // Browser runtime: check window.careerRoadmapsRegistry
+
     const registry = window.careerRoadmapsRegistry || {};
     Object.keys(registry).forEach(key => {
       registerRoadmap(registry[key]);
     });
   }
 
-  /**
-   * Safe getter for roadmap by role ID, roadmap ID, or slug
-   */
   function getRoadmap(identifier) {
     if (!identifier) return null;
     const cleanId = String(identifier).trim();
     if (roadmaps[cleanId]) return roadmaps[cleanId];
     if (roadmaps[cleanId.toLowerCase()]) return roadmaps[cleanId.toLowerCase()];
 
-    // Search by title or partial match
-    return uniqueRoadmaps.find(r => 
+    return uniqueRoadmaps.find(r =>
       (r.roleId && r.roleId.toLowerCase() === cleanId.toLowerCase()) ||
       (r.roadmapId && r.roadmapId.toLowerCase() === cleanId.toLowerCase()) ||
       (r.title && r.title.toLowerCase() === cleanId.toLowerCase())
     ) || null;
   }
 
-  /**
-   * Get all unique roadmaps
-   */
   function getAllRoadmaps() {
     return uniqueRoadmaps;
   }
 
-  /**
-   * Get roadmaps filtered by category
-   */
   function getRoadmapsByCategory(category) {
     if (!category || category === 'all') return uniqueRoadmaps;
     return uniqueRoadmaps.filter(r => r.category === category);
   }
 
-  // Expose to Browser
   if (typeof window !== 'undefined') {
     window.careerRoadmaps = roadmaps;
     window.getRoadmap = getRoadmap;
@@ -223,7 +196,6 @@
     window.getRoadmapsByCategory = getRoadmapsByCategory;
   }
 
-  // Expose to CommonJS / Node.js
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
       careerRoadmaps: roadmaps,

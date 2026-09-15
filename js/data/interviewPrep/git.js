@@ -1,5 +1,3 @@
-// js/data/interviewPrep/git.js
-// Complete Question Bank for Git & Version Control (10 topics * 10 = 100 MCQs)
 
 window.interviewPrepGit = {
   id: 'git_version_control',
@@ -1422,7 +1420,6 @@ window.interviewPrepGit = {
   }
 ]
 };
-
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = window.interviewPrepGit;

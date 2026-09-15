@@ -1,29 +1,13 @@
-/**
- * MAD DEV - Pomodoro Focus Timer Controller
- * 
- * Production-grade timer controller featuring:
- * - Timestamp-based countdown calculations (immune to background tab throttling)
- * - Reload persistence (restores exact remaining time and active task)
- * - 4-step Pomodoro cycle progression (Focus -> Break -> Focus -> Long Break)
- * - Web Audio API harmonic chime (zero external audio file dependency)
- * - Desktop notifications
- * - Task labeling & Today's sessions history logging
- * - Today's Focus real statistical tracking
- * - Distraction-free Fullscreen / Focus Mode
- * - Keyboard shortcuts (Space, R, S, 1, 2, 3, F)
- */
 
 (function () {
   'use strict';
 
-  // State
   let settings = {};
   let activeState = {};
   let sessions = [];
   let timerInterval = null;
   let nextPendingTransition = null;
 
-  // Cached DOM elements
   let dom = {};
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -38,7 +22,7 @@
 
   function cacheDomElements() {
     dom = {
-      // Header & Actions
+
       completedRoundsCount: document.getElementById('completed-rounds-count'),
       btnExitFocusMode: document.getElementById('btn-exit-focus-mode'),
       btnExitFocusTop: document.getElementById('btn-exit-focus-top'),
@@ -49,13 +33,11 @@
       focusModeTaskText: document.getElementById('focus-mode-task-text'),
       focusModeTaskPill: document.getElementById('focus-mode-task-pill'),
 
-      // Task
       taskInput: document.getElementById('task-input'),
       taskSuggestionsRow: document.getElementById('task-suggestions-row'),
       activeTaskDisplay: document.getElementById('active-task-display'),
       activeTaskText: document.getElementById('active-task-text'),
 
-      // Modes
       modeBtns: document.querySelectorAll('.timer-mode-btn'),
       modeBtnWork: document.getElementById('mode-btn-work'),
       modeBtnShort: document.getElementById('mode-btn-short'),
@@ -64,13 +46,11 @@
       modeShortMin: document.getElementById('mode-short-min'),
       modeLongMin: document.getElementById('mode-long-min'),
 
-      // Clock Display
       timerCircleContainer: document.getElementById('timer-circle-container'),
       timerCircleProgress: document.getElementById('timer-circle-progress'),
       timerTimeDisplay: document.getElementById('timer-time-display'),
       timerModeBadge: document.getElementById('timer-mode-badge'),
 
-      // Controls
       btnTimerStart: document.getElementById('btn-timer-start'),
       btnTimerComplete: document.getElementById('btn-timer-complete'),
       timerStartIcon: document.getElementById('timer-start-icon'),
@@ -78,21 +58,17 @@
       btnTimerReset: document.getElementById('btn-timer-reset'),
       btnTimerSkip: document.getElementById('btn-timer-skip'),
 
-      // Cycle Indicators
       cycleFractionText: document.getElementById('cycle-fraction-text'),
       roundsIndicators: document.getElementById('rounds-indicators'),
 
-      // Stats
       statTodaySessions: document.getElementById('stat-today-sessions'),
       statTodayMinutes: document.getElementById('stat-today-minutes'),
       statCyclePosition: document.getElementById('stat-cycle-position'),
       statWeekSessions: document.getElementById('stat-week-sessions'),
 
-      // Sessions History
       sessionsHistoryList: document.getElementById('sessions-history-list'),
       btnClearHistory: document.getElementById('btn-clear-history'),
 
-      // Modals
       modalTimerSettings: document.getElementById('modal-timer-settings'),
       formTimerSettings: document.getElementById('form-timer-settings'),
       settingFocusDur: document.getElementById('setting-focus-dur'),
@@ -117,10 +93,6 @@
     };
   }
 
-  // ==========================================
-  // 1. STATE PERSISTENCE & INITIALIZATION
-  // ==========================================
-
   function loadSettings() {
     const stored = Storage.get('timer_settings');
     settings = Object.assign({}, TimerData.getDefaultSettings(), stored || {});
@@ -141,7 +113,7 @@
   function loadSessions() {
     const stored = Storage.get('timer_sessions');
     if (Array.isArray(stored)) {
-      // Clean out legacy starter fake sessions and premature sub-minute test clicks (< 60s)
+
       sessions = stored.filter(s => s && s.id !== 'ts_1' && s.id !== 'ts_2' && s.id !== 'ts_3' && (s.mode !== 'work' || !s.durationSeconds || s.durationSeconds >= 60));
     } else {
       sessions = [];
@@ -171,24 +143,23 @@
       currentTask: ''
     }, stored || {});
 
-    // Resume running timer if page reloaded during an active countdown
     if (activeState.isRunning && activeState.endTimestamp) {
       const remaining = TimerData.calculateRemaining(activeState.endTimestamp);
       if (remaining > 0) {
         activeState.remainingSeconds = remaining;
         startTicking();
       } else {
-        // Finished while browser was closed / refreshed
+
         activeState.remainingSeconds = 0;
         activeState.isRunning = false;
         activeState.isPaused = false;
         setTimeout(() => handleTimerCompletion(), 300);
       }
     } else if (activeState.isPaused) {
-      // Kept paused with remaining time
+
       activeState.isRunning = false;
     } else {
-      // Clean idle state
+
       activeState.isRunning = false;
       activeState.isPaused = false;
       activeState.endTimestamp = null;
@@ -198,7 +169,6 @@
       dom.taskInput.value = activeState.currentTask;
     }
 
-    // Subscribe to external state changes from GlobalTimer or other tabs
     if (typeof window.GlobalTimer !== 'undefined') {
       window.GlobalTimer.subscribe((updatedState) => {
         activeState = Object.assign({}, activeState, updatedState);
@@ -214,10 +184,6 @@
       window.GlobalTimer.render();
     }
   }
-
-  // ==========================================
-  // 2. RENDERING PIPELINE
-  // ==========================================
 
   function renderAll() {
     renderModeButtons();
@@ -242,7 +208,6 @@
     if (dom.timerTimeDisplay) dom.timerTimeDisplay.textContent = timeStr;
     document.title = `${timeStr} - DevPilot Focus Timer`;
 
-    // Mode badge
     if (dom.timerModeBadge) {
       let label = 'Deep Work Focus';
       if (activeState.mode === 'shortBreak') label = 'Short Break Rest';
@@ -250,7 +215,6 @@
       dom.timerModeBadge.textContent = label;
     }
 
-    // SVG Progress Ring
     if (dom.timerCircleProgress) {
       const fraction = TimerData.calculateProgressFraction(
         activeState.remainingSeconds,
@@ -261,9 +225,9 @@
       dom.timerCircleProgress.style.strokeDasharray = `${strokeData.circumference} ${strokeData.circumference}`;
       dom.timerCircleProgress.style.strokeDashoffset = strokeData.offset;
 
-      let color = '#4f46e5'; // Indigo
-      if (activeState.mode === 'shortBreak') color = '#10b981'; // Emerald
-      if (activeState.mode === 'longBreak') color = '#f59e0b'; // Amber
+      let color = '#4f46e5';
+      if (activeState.mode === 'shortBreak') color = '#10b981';
+      if (activeState.mode === 'longBreak') color = '#f59e0b';
       dom.timerCircleProgress.style.stroke = color;
     }
   }
@@ -324,7 +288,6 @@
         `;
       }
 
-      // Long break step
       const isLongBreak = activeState.mode === 'longBreak';
       html += `
         <button type="button" class="cycle-step-pill ${isLongBreak ? 'current' : ''}" data-cycle-mode="longBreak" title="Long Break Recovery">
@@ -353,7 +316,7 @@
     if (!dom.sessionsHistoryList) return;
 
     const stats = TimerData.calculateTodayStats(sessions);
-    // STRICTLY FILTER: Only work sessions, never break or long break!
+
     const todaySessions = stats.todaySessionsList.filter(s => s && s.mode === 'work');
 
     if (todaySessions.length === 0) {
@@ -421,14 +384,9 @@
     }
   }
 
-  // ==========================================
-  // 3. TIMER ACTIONS (START, PAUSE, RESET, SKIP)
-  // ==========================================
-
   function startTimer() {
-    if (activeState.isRunning) return; // double-click protection
+    if (activeState.isRunning) return;
 
-    // Capture task if user typed one
     if (dom.taskInput && dom.taskInput.value.trim()) {
       activeState.currentTask = dom.taskInput.value.trim();
     }
@@ -438,7 +396,7 @@
     } else {
       activeState.isRunning = true;
       activeState.isPaused = false;
-      activeState.isFloatingHidden = false; // Reveal floating widget globally
+      activeState.isFloatingHidden = false;
       activeState.startTimestamp = Date.now();
       activeState.endTimestamp = Date.now() + (activeState.remainingSeconds * 1000);
       saveActiveState();
@@ -535,10 +493,6 @@
     renderAll();
   }
 
-  // ==========================================
-  // 4. TICKING LOOP & ACCURATE TIME SYNCHRONIZATION
-  // ==========================================
-
   function startTicking() {
     if (timerInterval) clearInterval(timerInterval);
 
@@ -557,11 +511,11 @@
         saveActiveState();
         handleTimerCompletion();
       }
-    }, 250); // Frequent tick ensures smooth responsive display
+    }, 250);
   }
 
   function setupVisibilityListeners() {
-    // Sync accurately whenever user returns to tab
+
     document.addEventListener('visibilitychange', () => {
       if (!document.hidden && activeState.isRunning && activeState.endTimestamp) {
         const remaining = TimerData.calculateRemaining(activeState.endTimestamp);
@@ -589,20 +543,15 @@
     });
   }
 
-  // ==========================================
-  // 5. SESSION COMPLETION & CYCLE ADVANCEMENT
-  // ==========================================
-
   function handleTimerCompletion(customTaskName = null) {
     playChime();
 
     const wasWorkSession = activeState.mode === 'work';
-    const taskName = customTaskName || 
-                     (dom.taskInput && dom.taskInput.value.trim()) || 
-                     activeState.currentTask || 
+    const taskName = customTaskName ||
+                     (dom.taskInput && dom.taskInput.value.trim()) ||
+                     activeState.currentTask ||
                      'Deep Work Focus';
 
-    // 1. If focus mode finished, log real completed session
     if (wasWorkSession) {
       const completedSession = {
         id: `ts_${Date.now()}`,
@@ -616,7 +565,6 @@
       saveSessions();
     }
 
-    // 2. Compute next transition
     const transition = TimerData.getNextSessionTransition(
       activeState.mode,
       activeState.cyclePosition,
@@ -626,7 +574,6 @@
     activeState.cyclePosition = transition.nextCycle;
     nextPendingTransition = transition;
 
-    // Trigger notification
     triggerBrowserNotification(
       wasWorkSession ? 'Focus Session Complete! 🎉' : 'Break Finished! ☕',
       transition.message
@@ -634,7 +581,6 @@
 
     renderAll();
 
-    // 3. Auto-start or show completion modal
     if (settings.autoStart) {
       showToast(transition.message, 'success');
       setTimeout(() => {
@@ -647,7 +593,7 @@
   }
 
   function completeSessionManually() {
-    // 1. Guard against break logging: Breaks must NEVER be logged to Today's Sessions!
+
     if (activeState.mode !== 'work') {
       showToast('Break finished! Switched to Deep Work focus mode.', 'info');
       setTimerMode('work', false);
@@ -658,14 +604,11 @@
     const targetMinutes = settings.focusDuration || 25;
     const targetSeconds = targetMinutes * 60;
 
-    // 2. Real-time Remaining Check:
     let currentRemaining = activeState.remainingSeconds;
     if (activeState.isRunning && activeState.endTimestamp) {
       currentRemaining = TimerData.calculateRemaining(activeState.endTimestamp);
     }
 
-    // 3. PREVENT PREMATURE COMPLETION:
-    // If the 25 minutes (or configured focus duration) have not finished, do not allow completion!
     if (currentRemaining > 0) {
       if (!activeState.isRunning && currentRemaining >= targetSeconds) {
         showToast(`Focus session has not started yet. Complete the full ${targetMinutes}-minute session before completing!`, 'warning');
@@ -676,9 +619,8 @@
       return;
     }
 
-    // 4. Timer has completed (remaining is 0):
-    const typedTask = (dom.taskInput && dom.taskInput.value.trim()) || 
-                      activeState.currentTask || 
+    const typedTask = (dom.taskInput && dom.taskInput.value.trim()) ||
+                      activeState.currentTask ||
                       'Deep Work Focus';
 
     activeState.currentTask = typedTask;
@@ -694,7 +636,6 @@
     activeState.remainingSeconds = 0;
     saveActiveState();
 
-    // Call standard completion handler to log completed session, advance cycle, chime & notify
     handleTimerCompletion(typedTask);
   }
 
@@ -722,14 +663,6 @@
     }
   }
 
-  // ==========================================
-  // 6. SYNTHETIC WEB AUDIO CHIME & NOTIFICATIONS
-  // ==========================================
-
-  /**
-   * Generates a rich, pleasant 3-tone harmonic chime using Web Audio API.
-   * Zero external MP3 files, zero 404s, works completely offline.
-   */
   function playChime() {
     if (!settings.soundEnabled) return;
     try {
@@ -737,7 +670,7 @@
       if (!AudioContextClass) return;
 
       const ctx = new AudioContextClass();
-      const notes = [523.25, 659.25, 783.99]; // C5, E5, G5 major triad
+      const notes = [523.25, 659.25, 783.99];
 
       notes.forEach((freq, idx) => {
         const osc = ctx.createOscillator();
@@ -774,10 +707,6 @@
       } catch (e) {}
     }
   }
-
-  // ==========================================
-  // 7. FULLSCREEN / FOCUS MODE & KEYBOARD SHORTCUTS
-  // ==========================================
 
   function toggleFocusMode() {
     const isActive = document.body.classList.toggle('focus-mode-active');
@@ -818,7 +747,7 @@
   }
 
   function handleKeyboardShortcuts(e) {
-    // Ignore when typing inside input or textarea
+
     const tag = e.target.tagName.toLowerCase();
     if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
 
@@ -857,12 +786,8 @@
     }
   }
 
-  // ==========================================
-  // 8. EVENT BINDINGS
-  // ==========================================
-
   function bindEvents() {
-    // Mode Buttons
+
     if (dom.modeBtns) {
       dom.modeBtns.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -872,7 +797,6 @@
       });
     }
 
-    // Main Timer Buttons
     if (dom.btnTimerStart) {
       dom.btnTimerStart.addEventListener('click', () => {
         if (activeState.isRunning) {
@@ -886,13 +810,11 @@
     if (dom.btnTimerReset) dom.btnTimerReset.addEventListener('click', resetTimer);
     if (dom.btnTimerSkip) dom.btnTimerSkip.addEventListener('click', skipTimer);
 
-    // Focus Mode
     if (dom.btnFocusMode) dom.btnFocusMode.addEventListener('click', toggleFocusMode);
     if (dom.btnExitFocusMode) dom.btnExitFocusMode.addEventListener('click', exitFocusMode);
     if (dom.btnExitFocusTop) dom.btnExitFocusTop.addEventListener('click', exitFocusMode);
     if (dom.btnExitFocusCenter) dom.btnExitFocusCenter.addEventListener('click', exitFocusMode);
 
-    // Fullscreen exit sync (e.g. user pressed browser ESC)
     document.addEventListener('fullscreenchange', () => {
       if (!document.fullscreenElement && document.body.classList.contains('focus-mode-active')) {
         document.body.classList.remove('focus-mode-active');
@@ -902,12 +824,10 @@
       }
     });
 
-    // Complete & Log Session Button
     if (dom.btnTimerComplete) {
       dom.btnTimerComplete.addEventListener('click', completeSessionManually);
     }
 
-    // Cycle Step Pills Interactive Switching
     if (dom.roundsIndicators) {
       dom.roundsIndicators.addEventListener('click', (e) => {
         const pill = e.target.closest('.cycle-step-pill');
@@ -925,7 +845,6 @@
       });
     }
 
-    // Task Input & Suggestions
     if (dom.taskInput) {
       dom.taskInput.addEventListener('input', (e) => {
         const val = e.target.value;
@@ -948,7 +867,6 @@
       });
     }
 
-    // Clear History
     if (dom.btnClearHistory) {
       dom.btnClearHistory.addEventListener('click', () => {
         if (confirm('Clear today\'s completed focus sessions history?')) {
@@ -962,7 +880,6 @@
       });
     }
 
-    // Single Session Deletion
     if (dom.sessionsHistoryList) {
       dom.sessionsHistoryList.addEventListener('click', (e) => {
         const delBtn = e.target.closest('.btn-delete-single-session');
@@ -977,7 +894,6 @@
       });
     }
 
-    // Settings Modal
     if (dom.btnTimerSettings) dom.btnTimerSettings.addEventListener('click', openSettingsModal);
     if (dom.btnCloseSettings) dom.btnCloseSettings.addEventListener('click', closeSettingsModal);
     if (dom.btnCancelSettings) dom.btnCancelSettings.addEventListener('click', closeSettingsModal);
@@ -989,7 +905,6 @@
       });
     }
 
-    // Completion Modal
     if (dom.btnModalStartNext) {
       dom.btnModalStartNext.addEventListener('click', () => {
         closeCompletionModal();
@@ -1011,17 +926,11 @@
       });
     }
 
-    // Shortcuts Modal
     if (dom.btnShortcuts) dom.btnShortcuts.addEventListener('click', openShortcutsModal);
     if (dom.btnCloseShortcuts) dom.btnCloseShortcuts.addEventListener('click', closeShortcutsModal);
 
-    // Keyboard Shortcuts
     document.addEventListener('keydown', handleKeyboardShortcuts);
   }
-
-  // ==========================================
-  // 9. MODAL HANDLERS
-  // ==========================================
 
   function openSettingsModal() {
     if (dom.settingFocusDur) dom.settingFocusDur.value = settings.focusDuration;
@@ -1049,7 +958,6 @@
     const autoStart = dom.settingAutostart ? dom.settingAutostart.checked : false;
     let notifications = dom.settingNotifications ? dom.settingNotifications.checked : false;
 
-    // Request notification permission if user enabled it
     if (notifications && 'Notification' in window && Notification.permission === 'default') {
       Notification.requestPermission().then(perm => {
         if (perm !== 'granted') {
@@ -1069,7 +977,6 @@
     saveSettings();
     closeSettingsModal();
 
-    // If timer is not currently running, update duration immediately
     if (!activeState.isRunning) {
       let currentMinutes = settings.focusDuration;
       if (activeState.mode === 'shortBreak') currentMinutes = settings.shortBreakDuration;

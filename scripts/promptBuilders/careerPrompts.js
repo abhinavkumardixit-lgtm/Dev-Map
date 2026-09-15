@@ -1,7 +1,4 @@
-/**
- * Career & Interview Prompts Collection (12 Prompts)
- * Covers Resume ATS, STAR Bullets, LinkedIn, Behavioral Interviews, Salary Negotiation, and Technical Defense.
- */
+
 module.exports = [
   {
     id: 'career-resume-ats-keyword-optimizer',

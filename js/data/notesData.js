@@ -1,7 +1,3 @@
-/**
- * MAD DEV - Developer Notes Data Vault & Category System
- * Static structured dataset providing full computer science & software engineering roadmap coverage.
- */
 
 const NOTE_CATEGORIES = [
   {
@@ -314,9 +310,7 @@ const NOTE_CATEGORIES = [
 ];
 
 const DEFAULT_NOTES = [
-  // -------------------------------------------------------------
-  // PRESERVED ORIGINAL NOTES (Enriched with exact schema & categories)
-  // -------------------------------------------------------------
+
   {
     id: 'n1',
     title: 'Sliding Window & Two Pointer Patterns',
@@ -407,7 +401,7 @@ function SearchResults() {
   const handleChange = (e) => {
     // Urgent: immediately update input value
     setQuery(e.target.value);
-    
+
     // Non-urgent: deferred heavy list filter
     startTransition(() => {
       setListQuery(e.target.value);
@@ -629,9 +623,6 @@ B-Trees and Log-Structured Merge-trees (LSM Trees) are the two fundamental stora
 - Bloom filters guard LSM reads against unnecessary disk I/O.`
   },
 
-  // -------------------------------------------------------------
-  // DSA & PROBLEM SOLVING STARTER NOTES
-  // -------------------------------------------------------------
   {
     id: 'seed_dsa_binary_search',
     title: 'Binary Search: Boundaries & Monotonic Predicates',
@@ -705,7 +696,7 @@ int subarraySum(vector<int>& nums, int k) {
     unordered_map<int, int> prefixFreq;
     prefixFreq[0] = 1; // base case: sum of 0 appears before array starts
     int currSum = 0, count = 0;
-    
+
     for (int num : nums) {
         currSum += num;
         if (prefixFreq.count(currSum - k)) {
@@ -763,9 +754,6 @@ vector<int> nextGreaterElements(vector<int>& nums) {
 - Each element is pushed and popped at most once -> O(N) time.`
   },
 
-  // -------------------------------------------------------------
-  // C++ STARTER NOTES
-  // -------------------------------------------------------------
   {
     id: 'seed_cpp_stl_map',
     title: 'std::map vs std::unordered_map: Internal Mechanics & Tradeoffs',
@@ -840,9 +828,6 @@ Because reallocations occur exponentially rarely, copying N elements costs 2N to
 - Always use \`reserve()\` if size is known in advance.`
   },
 
-  // -------------------------------------------------------------
-  // JAVASCRIPT STARTER NOTES
-  // -------------------------------------------------------------
   {
     id: 'seed_js_closures',
     title: 'JavaScript Closures & Lexical Scope Environment',
@@ -921,9 +906,6 @@ Arrow functions do NOT have their own \`this\`. They lexically inherit \`this\` 
 - Precedence: new > bind/call/apply > obj.method() > default (undefined).`
   },
 
-  // -------------------------------------------------------------
-  // SQL STARTER NOTES
-  // -------------------------------------------------------------
   {
     id: 'seed_sql_joins',
     title: 'SQL JOINs: Inner, Left, Right, Full & Self Joins',
@@ -946,25 +928,25 @@ SQL JOIN clauses combine rows from two or more tables based on a related column 
 ### Syntax & Example (Self Join)
 \`\`\`sql
 -- Find employee name alongside their manager's name
-SELECT 
+SELECT
     e.employee_id,
     e.name AS employee_name,
     m.name AS manager_name
 FROM employees e
-LEFT JOIN employees m 
+LEFT JOIN employees m
     ON e.manager_id = m.employee_id;
 \`\`\`
 
 ### Common Interview Trap: WHERE vs ON in LEFT JOIN
 \`\`\`sql
 -- Trap: Putting right table filter in WHERE turns LEFT JOIN into INNER JOIN!
-SELECT e.name, d.dept_name 
+SELECT e.name, d.dept_name
 FROM employees e
 LEFT JOIN departments d ON e.dept_id = d.dept_id
 WHERE d.location = 'NYC'; -- Filters out NULLs!
 
 -- Correct: Place condition inside ON clause:
-SELECT e.name, d.dept_name 
+SELECT e.name, d.dept_name
 FROM employees e
 LEFT JOIN departments d ON e.dept_id = d.dept_id AND d.location = 'NYC';
 \`\`\`
@@ -994,9 +976,9 @@ Window functions perform calculations across a set of table rows related to the 
 ### Classic Interview Problem: Nth Highest Salary
 \`\`\`sql
 WITH RankedSalaries AS (
-    SELECT 
-        employee_id, 
-        salary, 
+    SELECT
+        employee_id,
+        salary,
         department_id,
         DENSE_RANK() OVER (PARTITION BY department_id ORDER BY salary DESC) as rank_num
     FROM employees
@@ -1012,9 +994,6 @@ WHERE rank_num = 2; -- Finds 2nd highest salary per department
 - Use DENSE_RANK() for Nth highest queries to handle salary ties cleanly.`
   },
 
-  // -------------------------------------------------------------
-  // DBMS STARTER NOTES
-  // -------------------------------------------------------------
   {
     id: 'seed_dbms_normalization',
     title: 'Database Normalization: 1NF, 2NF, 3NF, BCNF & Anomalies',
@@ -1083,9 +1062,6 @@ ACID is a set of four guarantees that ensure database transactions are processed
 - Durability: Survives server failure (Redo log / WAL).`
   },
 
-  // -------------------------------------------------------------
-  // OPERATING SYSTEMS STARTER NOTES
-  // -------------------------------------------------------------
   {
     id: 'seed_os_process_thread',
     title: 'Process vs Thread: Memory Architecture & Context Switching',
@@ -1140,9 +1116,6 @@ Break any one of the four conditions:
 - Banker's algorithm ensures resource allocation stays in a safe state.`
   },
 
-  // -------------------------------------------------------------
-  // COMPUTER NETWORKS STARTER NOTES
-  // -------------------------------------------------------------
   {
     id: 'seed_cn_tcp_udp',
     title: 'TCP vs UDP: Header Structure, Handshake & Reliability',
@@ -1207,9 +1180,6 @@ The Open Systems Interconnection (OSI) model standardizes network communication 
 - Layer 4 (Transport) uses Ports and operates with Segments/Datagrams.`
   },
 
-  // -------------------------------------------------------------
-  // OOP STARTER NOTES
-  // -------------------------------------------------------------
   {
     id: 'seed_oop_solid',
     title: 'SOLID Principles of Object-Oriented Software Design',
@@ -1266,9 +1236,6 @@ Polymorphism ("many forms") allows one interface to control access to a general 
 - Virtual destructors are mandatory in base classes with virtual methods to prevent memory leaks.`
   },
 
-  // -------------------------------------------------------------
-  // SYSTEM DESIGN STARTER NOTES
-  // -------------------------------------------------------------
   {
     id: 'seed_sys_load_balancer',
     title: 'Load Balancing: Layer 4 vs Layer 7 & Algorithms',
@@ -1330,9 +1297,6 @@ Caching stores copies of frequently accessed data in ultra-fast in-memory storag
 - Use TTLs and LRU eviction to prevent stale data and out-of-memory errors.`
   },
 
-  // -------------------------------------------------------------
-  // APTITUDE STARTER NOTES
-  // -------------------------------------------------------------
   {
     id: 'seed_apt_profit_loss',
     title: 'Profit, Loss & Discount: Core Formulas and Shortcuts',
@@ -1403,9 +1367,6 @@ Never calculate with fractions (1/A + 1/B). Instead:
 - Work done = Efficiency * Time.`
   },
 
-  // -------------------------------------------------------------
-  // INTERVIEW PREPARATION STARTER NOTES
-  // -------------------------------------------------------------
   {
     id: 'seed_interview_tell_me_about_yourself',
     title: 'Behavioral: "Tell Me About Yourself" (The Present-Past-Future Framework)',
@@ -1469,9 +1430,6 @@ Interviewers ask "Walk me through your most complex project" to evaluate archite
 - Be prepared to draw your database schema and architecture on a whiteboard.`
   },
 
-  // -------------------------------------------------------------
-  // SUPPORTING ROADMAP NOTES: LINUX, DOCKER, CLOUD, PYTHON, GIT
-  // -------------------------------------------------------------
   {
     id: 'seed_linux_permissions',
     title: 'Linux File Permissions: chmod, chown & Octal Notation',
@@ -1582,9 +1540,6 @@ NEVER rebase commits that exist outside your local repository on public/shared b
 - Rebase: Linear history, rewrites commit hashes. Never rebase shared public branches.`
   },
 
-  // -------------------------------------------------------------
-  // ADDITIONAL DSA ROADMAP NOTES
-  // -------------------------------------------------------------
   {
     id: 'seed_dsa_linked_list_cycle',
     title: 'Linked List: Floyd\'s Cycle Detection (Tortoise and Hare)',
@@ -1646,7 +1601,7 @@ Finding Top K elements using a Min-Heap maintains only K elements at any time, r
 vector<int> topKFrequent(vector<int>& nums, int k) {
     unordered_map<int, int> freq;
     for (int n : nums) freq[n]++;
-    
+
     // min-heap storing {count, val}
     priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;
     for (auto& [val, count] : freq) {
@@ -1723,9 +1678,6 @@ int knapSack(int W, vector<int>& wt, vector<int>& val, int n) {
 - Time Complexity: O(N * W); Space Complexity: O(W).`
   },
 
-  // -------------------------------------------------------------
-  // ADDITIONAL C++ ROADMAP NOTES
-  // -------------------------------------------------------------
   {
     id: 'seed_cpp_set_multiset',
     title: 'std::set vs std::multiset: Red-Black Trees & Duplicates',
@@ -1788,9 +1740,6 @@ priority_queue<pair<int,int>, vector<pair<int,int>>, ComparePairs> customPQ;
 - pq.top() inspects root; pq.pop() removes root.`
   },
 
-  // -------------------------------------------------------------
-  // ADDITIONAL JAVASCRIPT ROADMAP NOTES
-  // -------------------------------------------------------------
   {
     id: 'seed_js_hoisting_tdz',
     title: 'Hoisting, Temporal Dead Zone (TDZ) & Execution Context',
@@ -1846,9 +1795,6 @@ document.getElementById('parent-list').addEventListener('click', (e) => {
 - e.target is the element clicked; e.currentTarget is the element with the event listener.`
   },
 
-  // -------------------------------------------------------------
-  // ADDITIONAL SQL & DBMS ROADMAP NOTES
-  // -------------------------------------------------------------
   {
     id: 'seed_sql_groupby_having',
     title: 'GROUP BY vs HAVING vs WHERE: Execution Order in SQL',
@@ -1906,9 +1852,6 @@ Keys are attributes or sets of attributes used to uniquely identify records with
 - Foreign Key: Enforces referential integrity between tables.`
   },
 
-  // -------------------------------------------------------------
-  // ADDITIONAL OS & CN ROADMAP NOTES
-  // -------------------------------------------------------------
   {
     id: 'seed_os_mutex_semaphore',
     title: 'Process Synchronization: Mutex vs Binary Semaphore vs Counting Semaphore',
@@ -1954,9 +1897,6 @@ HTTPS (HTTP Secure) encrypts HTTP traffic over port 443 using TLS (Transport Lay
 - Bulk data is encrypted with fast symmetric keys (AES-GCM).`
   },
 
-  // -------------------------------------------------------------
-  // ADDITIONAL OOP & SYSTEM DESIGN ROADMAP NOTES
-  // -------------------------------------------------------------
   {
     id: 'seed_oop_four_pillars',
     title: 'The Four Pillars of OOP: Encapsulation, Abstraction, Inheritance, Polymorphism',
@@ -2030,9 +1970,6 @@ Rate limiters protect APIs from DDoS attacks, brute-force requests, and resource
 - Sliding Window Counter offers best balance of accuracy and memory efficiency.`
   },
 
-  // -------------------------------------------------------------
-  // ADDITIONAL APTITUDE & INTERVIEW ROADMAP NOTES
-  // -------------------------------------------------------------
   {
     id: 'seed_apt_percentages',
     title: 'Percentages: Net Successive Percentage Change & Base Shifting',
@@ -2114,7 +2051,6 @@ Never answer "Because it's popular" or "Because it was easy". Senior engineers j
   }
 ];
 
-// Helper utilities for category lookups
 function getCategoryById(id) {
   return NOTE_CATEGORIES.find(c => c.id === id || c.name.toLowerCase() === id.toLowerCase()) || null;
 }
@@ -2140,7 +2076,6 @@ function getCategoryShortName(catName) {
   return cat ? cat.shortName : (catName || 'General');
 }
 
-// Export for browser and Node.js environment
 if (typeof window !== 'undefined') {
   window.NOTE_CATEGORIES = NOTE_CATEGORIES;
   window.DEFAULT_NOTES = DEFAULT_NOTES;

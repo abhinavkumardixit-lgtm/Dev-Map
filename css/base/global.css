@@ -1,29 +1,26 @@
-/* ==========================================================================
-   DevPilot-AI - Global Styles & Design System Tokens
-   ========================================================================== */
 
 :root {
-  /* Color Tokens - Light Mode (Dashboard Image 2 Aesthetic) */
+
   --color-primary: #4F46E5;
   --color-primary-hover: #4338CA;
   --color-primary-light: #EEF2FF;
   --color-primary-container: #6063ee;
   --color-primary-dim: #c0c1ff;
-  
+
   --color-background: #fcf8ff;
   --color-surface: #ffffff;
   --color-surface-container: #efecf8;
   --color-surface-container-low: #f5f2fe;
   --color-surface-container-high: #e9e6f3;
   --color-surface-container-highest: #cbd5e1;
-  
+
   --color-on-surface: #0f172a;
   --color-on-surface-variant: #64748b;
   --color-outline: #94a3b8;
   --color-outline-variant: #e2e8f0;
   --color-secondary-container: #e3e1ed;
   --color-on-secondary-container: #64636d;
-  
+
   --color-success: #10b981;
   --color-success-bg: #ecfdf5;
   --color-warning: #f59e0b;
@@ -32,8 +29,7 @@
   --color-error-bg: #fef2f2;
   --color-info: #06b6d4;
   --color-info-bg: #ecfeff;
-  
-  /* Spacing */
+
   --sidebar-width: 260px;
   --sidebar-collapsed-width: 72px;
   --navbar-height: 72px;
@@ -42,34 +38,28 @@
   --radius-lg: 16px;
   --radius-xl: 24px;
   --radius-full: 9999px;
-  
-  /* Shadows */
+
   --shadow-subtle: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
   --shadow-card: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
   --shadow-hover: 0 10px 25px -3px rgba(79, 70, 229, 0.1), 0 4px 6px -2px rgba(15, 23, 42, 0.04);
   --shadow-dropdown: 0 20px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
-  
-  /* Transitions */
+
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Shared Subpage Divider */
 .rws-divider {
   height: 1px;
   background: var(--color-outline-variant);
 }
 
-
-/* Reset & Base Setup */
 *, *::before, *::after {
   box-sizing: border-box;
   cursor: default;
   caret-color: transparent !important;
 }
 
-/* Clickable elements */
 a,
 button,
 [role="button"],
@@ -95,7 +85,6 @@ input[type="radio"],
   caret-color: transparent !important;
 }
 
-/* Text editing cursors and carets strictly for editable inputs */
 input:not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="checkbox"]):not([type="radio"]):not([type="file"]),
 textarea,
 [contenteditable="true"] {
@@ -104,14 +93,12 @@ textarea,
   user-select: text !important;
 }
 
-/* Prevent carets on headings, paragraphs, spans, and static containers */
 h1, h2, h3, h4, h5, h6,
 p, span, div, section, article, header, nav, aside, main, footer,
 .badge, .card, .dev-card, .stat, .label, .tag {
   caret-color: transparent !important;
 }
 
-/* Disabled elements */
 button:disabled,
 input:disabled,
 textarea:disabled,
@@ -121,7 +108,6 @@ select:disabled,
   caret-color: transparent !important;
 }
 
-/* Prevent accidental focus rings on non-interactive items */
 :focus:not(:focus-visible) {
   outline: none !important;
 }
@@ -148,7 +134,6 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0;
 }
 
-/* Scrollbars */
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -164,7 +149,6 @@ h1, h2, h3, h4, h5, h6 {
   background-color: var(--color-outline);
 }
 
-/* Brand Gradients */
 .bg-brand-gradient {
   background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
 }
@@ -177,12 +161,10 @@ h1, h2, h3, h4, h5, h6 {
   -webkit-text-fill-color: transparent;
 }
 
-/* Ambient shadow */
 .shadow-ambient {
   box-shadow: var(--shadow-card);
 }
 
-/* Tooltips */
 .tooltip .tooltip-text {
   visibility: hidden;
   width: max-content;
@@ -209,7 +191,6 @@ h1, h2, h3, h4, h5, h6 {
   opacity: 1;
 }
 
-/* Sidebar Specific Transitions */
 #sidebar {
   transition: transform var(--transition-normal), width var(--transition-normal);
 }
@@ -229,7 +210,6 @@ h1, h2, h3, h4, h5, h6 {
   display: none !important;
 }
 
-/* Universal Nav Link Hover & Active Polish */
 #sidebar nav a {
   transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
 }
@@ -264,7 +244,6 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* Mobile Overlay */
 #mobile-overlay {
   transition: opacity var(--transition-normal), visibility var(--transition-normal);
 }
@@ -274,7 +253,6 @@ h1, h2, h3, h4, h5, h6 {
   pointer-events: none;
 }
 
-/* Sub-page top layout helper */
 .subpage-container {
   min-height: 100vh;
   padding: 2rem;
@@ -285,7 +263,6 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* Reveal Gate */
 html.preload {
   visibility: hidden;
   opacity: 0;
@@ -296,7 +273,6 @@ html.app-ready {
   transition: opacity 0.25s ease-in;
 }
 
-/* Toast Container */
 #toast-container {
   position: fixed;
   bottom: 24px;
@@ -354,13 +330,9 @@ html.app-ready {
   color: var(--color-primary);
 }
 
-/* ==========================================================================
-   Universal Smooth Theme Transitions
-   ========================================================================== */
 html, body, #sidebar, #top-nav, header, main,
 .dev-card, .ip-metric-card, .ip-cat-card, .ip-quiz-card,
 .quick-action-btn, .ip-option-btn, .filter-tab, .toast {
   transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
 }
-
 

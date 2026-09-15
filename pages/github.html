@@ -31,20 +31,21 @@
       window.addEventListener('load', () => setTimeout(reveal, 100));
       setTimeout(reveal, 1200);
     })();
-  </script>
+
+</script>
 </head>
 <body class="bg-slate-50 text-slate-900 antialiased min-h-screen">
 
-  <!-- Mobile Overlay -->
+  
   <div class="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm hidden md:hidden" id="mobile-overlay"></div>
 
-  <!-- SideNavBar -->
+  
   <aside class="fixed left-0 top-0 h-full w-[260px] bg-white border-r border-slate-200 flex flex-col py-6 z-50 transform md:translate-x-0" id="sidebar">
     <button aria-label="Toggle Sidebar" class="absolute -right-3.5 top-6 w-7 h-7 bg-white border border-slate-200 rounded-full flex items-center justify-center text-slate-600 hover:text-indigo-600 hover:border-indigo-600 transition-colors z-50 hidden md:flex shadow-sm" id="sidebar-toggle">
       <span class="material-symbols-outlined text-[18px]" id="sidebar-toggle-icon">chevron_left</span>
     </button>
     <div class="flex-1 flex flex-col overflow-hidden">
-      <!-- Brand Logo -->
+      
       <div class="px-6 mb-8 flex items-center gap-3 overflow-hidden">
         <div class="min-w-[32px] w-8 h-8 rounded bg-brand-gradient flex items-center justify-center text-white shrink-0 shadow-sm">
           <span class="material-symbols-outlined text-xl" style='font-variation-settings: "FILL" 1;'>terminal</span>
@@ -54,7 +55,7 @@
           <p class="text-xs font-semibold text-slate-400 uppercase mt-0.5">Workspace</p>
         </div>
       </div>
-      <!-- Navigation Links -->
+      
       <nav class="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar px-3 space-y-1">
         <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors duration-200 border-l-[3px] border-transparent tooltip relative group" href="../index.html">
           <span class="material-symbols-outlined shrink-0">dashboard</span>
@@ -146,7 +147,7 @@
     </div>
   </aside>
 
-  <!-- SVG Gradient Definition for Developer Score Ring -->
+  
   <svg class="hidden" width="0" height="0">
     <defs>
       <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -156,11 +157,11 @@
     </defs>
   </svg>
 
-  <!-- Main Content Area -->
+  
   <main class="md:ml-[260px] min-h-screen p-4 sm:p-6 lg:p-8 flex flex-col" id="main-content">
     <div class="analyzer-container">
       
-      <!-- 1. HEADER BAR -->
+      
       <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-200">
         <div class="flex items-center gap-3 min-w-0">
           <button class="mobile-nav-toggle md:hidden" id="mobile-menu-trigger" aria-label="Open Sidebar">
@@ -172,9 +173,9 @@
           </div>
         </div>
 
-        <!-- Top-Right Search & Action Controls -->
+        
         <div class="flex flex-col sm:flex-row sm:items-center gap-3 shrink-0">
-          <!-- Username Input Group -->
+          
           <div class="flex items-center gap-2">
             <div class="relative flex-1 sm:w-60 md:w-64">
               <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">person_search</span>
@@ -186,7 +187,7 @@
             </button>
           </div>
 
-          <!-- Export Action Buttons Group -->
+          
           <div class="flex items-center gap-2">
             <button class="btn-primary text-sm py-2 px-3.5 shrink-0" id="btn-export-pdf" title="Download PDF Developer Report (.pdf)">
               <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
@@ -208,7 +209,7 @@
         </div>
       </div>
 
-      <!-- Quick Sample Profiles Bar -->
+      
       <div class="flex items-center gap-2 overflow-x-auto pb-3 mb-6 text-xs text-slate-500 max-w-full custom-scrollbar">
         <span class="font-semibold text-slate-400 uppercase tracking-wider shrink-0 mr-1">Try Popular Profiles:</span>
         <button class="sample-user-chip" data-username="torvalds">
@@ -228,9 +229,9 @@
         </button>
       </div>
 
-      <!-- ========================================================================= -->
-      <!-- STATE 1: INITIAL STATE -->
-      <!-- ========================================================================= -->
+      
+      
+      
       <div class="analyzer-state active" id="state-initial">
         <div class="dev-card text-center py-16 px-6 max-w-2xl mx-auto my-6">
           <div class="w-16 h-16 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto mb-4 shadow-sm">
@@ -253,12 +254,12 @@
         </div>
       </div>
 
-      <!-- ========================================================================= -->
-      <!-- STATE 2: LOADING SKELETONS -->
-      <!-- ========================================================================= -->
+      
+      
+      
       <div class="analyzer-state" id="state-loading">
         <div class="space-y-6 animate-pulse">
-          <!-- Top Profile & Score Skeleton -->
+          
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-start">
             <div class="lg:col-span-8 dev-card p-6 sm:p-7">
               <div class="flex items-center gap-4 mb-5">
@@ -282,7 +283,7 @@
             </div>
           </div>
 
-          <!-- Stats Cards Skeleton -->
+          
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
             <div class="dev-card h-24 skeleton"></div>
             <div class="dev-card h-24 skeleton"></div>
@@ -290,14 +291,14 @@
             <div class="dev-card h-24 skeleton"></div>
           </div>
 
-          <!-- Repos Skeleton -->
+          
           <div class="dev-card h-64 skeleton"></div>
         </div>
       </div>
 
-      <!-- ========================================================================= -->
-      <!-- STATE 3: ERROR STATE -->
-      <!-- ========================================================================= -->
+      
+      
+      
       <div class="analyzer-state" id="state-error">
         <div class="dev-card text-center py-14 px-6 max-w-xl mx-auto my-6 border-red-200 bg-red-50/20">
           <div class="w-14 h-14 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center mx-auto mb-4">
@@ -314,9 +315,9 @@
         </div>
       </div>
 
-      <!-- ========================================================================= -->
-      <!-- STATE 4: RATE LIMIT STATE -->
-      <!-- ========================================================================= -->
+      
+      
+      
       <div class="analyzer-state" id="state-ratelimit">
         <div class="dev-card text-center py-14 px-6 max-w-xl mx-auto my-6 border-amber-200 bg-amber-50/20">
           <div class="w-14 h-14 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto mb-4">
@@ -338,12 +339,12 @@
         </div>
       </div>
 
-      <!-- ========================================================================= -->
-      <!-- STATE 5: CONTENT DASHBOARD (RENDERED ON SUCCESS) -->
-      <!-- ========================================================================= -->
+      
+      
+      
       <div class="analyzer-state" id="state-content">
         
-        <!-- 1. GITHUB KEY STATS CARDS (4-Column Grid at the VERY TOP) -->
+        
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 mb-6">
           <div class="dev-card flex items-center gap-4 p-5 min-h-[96px] min-w-0">
             <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
@@ -386,13 +387,13 @@
           </div>
         </div>
 
-        <!-- 2. MAIN 2-COLUMN BALANCED SECTION (Equal Height Stretched Cards) -->
+        
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 mb-6 items-stretch">
           
-          <!-- LEFT CARD (8 cols) - Profile Info + Mini Stats + Languages + Top Highlighted Repositories -->
+          
           <div class="lg:col-span-8 dev-card p-6 sm:p-7 min-w-0 flex flex-col justify-between h-full space-y-5">
             <div>
-              <!-- Top Profile Row: Avatar, Info, and Action Button -->
+              
               <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                 <div class="flex items-start gap-4 min-w-0 flex-1">
                   <img id="user-avatar" src="" alt="Avatar" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-slate-200 shrink-0 shadow-sm"/>
@@ -405,7 +406,7 @@
                       Software engineer building open source tools.
                     </p>
                     
-                    <!-- Metadata row: Location • Organization • Website • Joined Date -->
+                    
                     <div class="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-2.5 text-xs text-slate-500">
                       <span class="flex items-center gap-1 shrink-0">
                         <span class="material-symbols-outlined text-[15px] text-slate-400">location_on</span>
@@ -433,7 +434,7 @@
                 </a>
               </div>
 
-              <!-- Mini-Metrics Stats Bar -->
+              
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mt-5 pt-4 border-t border-slate-100 text-center">
                 <div class="p-2.5 sm:p-3 bg-slate-50 border border-slate-100 rounded-xl flex flex-col justify-center">
                   <p class="text-[10px] sm:text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Repositories</p>
@@ -453,7 +454,7 @@
                 </div>
               </div>
 
-              <!-- Top Languages Progress Bar -->
+              
               <div class="mt-5 pt-4 border-t border-slate-100">
                 <div class="flex items-center justify-between mb-2">
                   <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
@@ -463,23 +464,23 @@
                   <span class="text-[11px] text-slate-400" id="profile-lang-summary">Primary: JavaScript</span>
                 </div>
                 <div class="lang-progress-bar h-2.5 rounded-full overflow-hidden flex bg-slate-100 mb-2" id="profile-lang-bar">
-                  <!-- Segmented progress bar populated by js/github.js -->
+                  
                 </div>
                 <div class="flex flex-wrap items-center gap-2.5 text-xs text-slate-600" id="profile-lang-pills">
-                  <!-- Language pills populated by js/github.js -->
+                  
                 </div>
               </div>
             </div>
 
-            <!-- Top Highlighted Repositories Section (Nested inside left card to fill space perfectly) -->
+            
             <div class="pt-4 border-t border-slate-100">
               <div id="top-repo-highlight-container" class="min-w-0">
-                <!-- Rendered dynamically by renderTopRepositories() in js/github.js -->
+                
               </div>
             </div>
           </div>
 
-          <!-- RIGHT CARD (4 cols) - Developer Score & Full Metric List -->
+          
           <div class="lg:col-span-4 dev-card p-6 min-w-0 flex flex-col justify-between h-full">
             <div>
               <div class="flex items-center justify-between mb-2">
@@ -490,7 +491,7 @@
                 <span class="badge badge-primary text-xs" id="score-rank-tier">Developing</span>
               </div>
 
-              <!-- Circular Score SVG -->
+              
               <div class="score-circle-container my-1">
                 <svg class="score-svg" viewBox="0 0 170 170">
                   <defs>
@@ -508,19 +509,19 @@
                 </div>
               </div>
 
-              <!-- 8-Category Score Breakdown Container -->
+              
               <div class="space-y-2 pt-3 border-t border-slate-100 text-xs" id="score-breakdown-container">
-                <!-- Rendered by renderScoreBreakdown() in js/github.js -->
+                
               </div>
             </div>
           </div>
 
         </div>
 
-        <!-- 3. SECONDARY GRID: Repository Analytics, Timeline & Languages Breakdown -->
+        
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 mb-6 items-stretch">
           
-          <!-- TOP LANGUAGES DIRECTORY (4 cols) -->
+          
           <div class="lg:col-span-4 dev-card flex flex-col justify-between p-5 min-w-0">
             <div>
               <div class="flex items-center justify-between mb-4">
@@ -531,21 +532,21 @@
                 <span class="text-xs text-slate-400 font-medium">By Repository Count</span>
               </div>
 
-              <!-- Segmented horizontal bar -->
+              
               <div class="lang-progress-container mb-4" id="languages-bar-container">
-                <!-- Rendered by js/github.js -->
+                
               </div>
 
-              <!-- Language List -->
+              
               <div class="space-y-1" id="languages-list-container">
-                <!-- Rendered by js/github.js -->
+                
               </div>
             </div>
           </div>
 
-          <!-- REPO METRICS & TIMELINE (8 cols) -->
+          
           <div class="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-4 min-w-0">
-            <!-- Repo Breakdown Card -->
+            
             <div class="dev-card p-4 min-w-0 flex flex-col justify-between">
               <div>
                 <h4 class="font-bold text-sm text-slate-900 mb-3 flex items-center gap-1.5">
@@ -579,15 +580,15 @@
               </div>
             </div>
 
-            <!-- Oldest vs Latest Repository Timeline -->
+            
             <div id="repo-timeline-container" class="min-w-0">
-              <!-- Rendered by js/github.js -->
+              
             </div>
           </div>
 
         </div>
 
-        <!-- 7. REPOSITORY LIST & FILTERS -->
+        
         <div class="dev-card p-5 sm:p-6 mb-6 min-w-0">
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
             <div class="min-w-0">
@@ -598,7 +599,7 @@
               <p class="text-xs text-slate-500 mt-0.5" id="repos-filtered-count">Showing public repositories</p>
             </div>
 
-            <!-- Filters: Search, Language & Sort -->
+            
             <div class="flex flex-wrap items-center gap-2.5">
               <div class="relative">
                 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[16px]">search</span>
@@ -618,16 +619,16 @@
             </div>
           </div>
 
-          <!-- Repos Grid -->
+          
           <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="repos-list-grid">
-            <!-- Rendered by js/github.js -->
+            
           </div>
         </div>
 
-        <!-- Bottom Grid: Section 10 (Activity) & Section 12/13 (AI Insights & Suggestions) -->
+        
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 mb-8 items-start">
           
-          <!-- 10. RECENT PUBLIC ACTIVITY SECTION (5 cols) -->
+          
           <div class="lg:col-span-5 min-w-0">
             <div class="flex items-center justify-between mb-4">
               <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
@@ -638,14 +639,14 @@
             </div>
 
             <div class="timeline-container" id="recent-activity-container">
-              <!-- Rendered by js/github.js -->
+              
             </div>
           </div>
 
-          <!-- 12 & 13. AI INSIGHTS & IMPROVEMENT SUGGESTIONS (7 cols) -->
+          
           <div class="lg:col-span-7 space-y-6 min-w-0">
             
-            <!-- Section 12: Developer Insights (Data-Driven) -->
+            
             <div class="min-w-0">
               <div class="flex items-center justify-between mb-4">
                 <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
@@ -656,11 +657,11 @@
               </div>
 
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5" id="ai-insights-container">
-                <!-- Rendered by js/github.js -->
+                
               </div>
             </div>
 
-            <!-- Section 13: Actionable Improvement Suggestions -->
+            
             <div class="min-w-0">
               <div class="flex items-center justify-between mb-4">
                 <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
@@ -671,11 +672,11 @@
               </div>
 
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5" id="suggestions-container">
-                <!-- Rendered by js/github.js -->
+                
               </div>
             </div>
 
-            <!-- 14. Export Actions Banner -->
+            
             <div class="dev-card bg-brand-subtle border-indigo-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 min-w-0">
               <div class="min-w-0">
                 <h4 class="font-bold text-sm text-indigo-950">Export Developer Report</h4>

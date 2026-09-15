@@ -1,11 +1,7 @@
-/**
- * MAD DEV - Automated Test: User Isolation, Idempotent Completions & Data Access
- */
 
 const assert = require('assert');
 const path = require('path');
 
-// Mock localStorage for Node.js environment
 const storageStore = {};
 global.localStorage = {
   getItem: (key) => storageStore[key] || null,
@@ -14,7 +10,6 @@ global.localStorage = {
   clear: () => { Object.keys(storageStore).forEach(k => delete storageStore[k]); }
 };
 
-// Mock BroadcastChannel for Node.js environment
 global.BroadcastChannel = class {
   constructor(name) { this.name = name; }
   postMessage() {}
@@ -44,9 +39,8 @@ async function runAll() {
   console.log(' MAD DEV: Testing User Isolation & Service Layer');
   console.log('====================================================\n');
 
-  // Test 1: User A Session Init
   await runTest('User A initializes session and creates habit', async () => {
-    await AuthService.switchAccount('00000000-0000-4000-a000-000000000001'); // Aditya
+    await AuthService.switchAccount('00000000-0000-4000-a000-000000000001');
     const userA = AuthService.getCurrentUser();
     assert.strictEqual(userA.email, 'guest@maddev.io');
 
@@ -57,7 +51,6 @@ async function runAll() {
     assert.strictEqual(habitA.title, 'Solve 2 LeetCode Problems');
     assert.strictEqual(habitA.user_id, userA.id);
 
-    // Complete habit for today
     const toggleRes = await HabitService.toggleCompletion(habitA.id, '2026-09-14');
     assert.strictEqual(toggleRes.completed, true);
 
@@ -69,20 +62,17 @@ async function runAll() {
     assert.strictEqual(compsA.length, 1);
   });
 
-  // Test 2: User B Switch & Strict Isolation
   await runTest('User B logs in and sees ZERO records from User A', async () => {
-    await AuthService.switchAccount('00000000-0000-4000-a000-000000000002'); // Alex Chen
+    await AuthService.switchAccount('00000000-0000-4000-a000-000000000002');
     const userB = AuthService.getCurrentUser();
     assert.strictEqual(userB.email, 'alex.developer@example.com');
 
-    // User B must have 0 habits and 0 completions
     const habitsB = await HabitService.getHabits();
     assert.strictEqual(habitsB.length, 0, 'User B must NOT see User A habits');
 
     const compsB = await HabitService.getCompletions();
     assert.strictEqual(compsB.length, 0, 'User B must NOT see User A completions');
 
-    // User B creates their own habit
     const habitB = await HabitService.createHabit({
       title: 'Study Go Concurrency',
       category: 'Backend'
@@ -94,9 +84,8 @@ async function runAll() {
     assert.strictEqual(habitsBAfter[0].title, 'Study Go Concurrency');
   });
 
-  // Test 3: Switch back to User A
   await runTest('Switching back to User A restores User A data completely', async () => {
-    await AuthService.switchAccount('00000000-0000-4000-a000-000000000001'); // Aditya
+    await AuthService.switchAccount('00000000-0000-4000-a000-000000000001');
     const userA = AuthService.getCurrentUser();
     assert.strictEqual(userA.email, 'guest@maddev.io');
 
@@ -108,19 +97,16 @@ async function runAll() {
     assert.strictEqual(compsA.length, 1);
   });
 
-  // Test 4: Idempotency of completions
   await runTest('Toggling habit completion is idempotent and prevents duplicates', async () => {
     const habitsA = await HabitService.getHabits();
     const habitId = habitsA[0].id;
     const dateStr = '2026-09-14';
 
-    // Currently completed -> toggle should uncheck
     const toggle1 = await HabitService.toggleCompletion(habitId, dateStr);
     assert.strictEqual(toggle1.completed, false);
     let comps = await HabitService.getCompletions();
     assert.strictEqual(comps.length, 0);
 
-    // Toggle again -> should complete
     const toggle2 = await HabitService.toggleCompletion(habitId, dateStr);
     assert.strictEqual(toggle2.completed, true);
     comps = await HabitService.getCompletions();
@@ -128,7 +114,6 @@ async function runAll() {
     assert.strictEqual(comps[0].completion_date, dateStr);
   });
 
-  // Test 5: Daily Goals CRUD & Numeric Progress
   await runTest('Daily goals support numeric targets, increments, and completion toggle', async () => {
     const dg = await HabitService.createDailyGoal({
       title: '3 LeetCode Mediums',
@@ -140,21 +125,17 @@ async function runAll() {
     assert.strictEqual(dg.progress, 0);
     assert.strictEqual(dg.completed, false);
 
-    // Increment progress by 1 -> 1 / 3
     const inc1 = await HabitService.adjustDailyGoalProgress(dg.id, 1);
     assert.strictEqual(inc1.progress, 1);
     assert.strictEqual(inc1.completed, false);
 
-    // Increment progress by 2 -> 3 / 3 (auto completes)
     const inc2 = await HabitService.adjustDailyGoalProgress(dg.id, 2);
     assert.strictEqual(inc2.progress, 3);
     assert.strictEqual(inc2.completed, true);
 
-    // Toggle complete
     const toggled = await HabitService.toggleDailyGoalComplete(dg.id);
     assert.strictEqual(toggled.completed, false);
 
-    // Delete
     const deleted = await HabitService.deleteDailyGoal(dg.id);
     assert.strictEqual(deleted, true);
     const remaining = await HabitService.getDailyGoals('2026-09-14');

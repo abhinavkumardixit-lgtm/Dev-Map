@@ -1,16 +1,3 @@
-/**
- * testMasterResumeAnalyzerPipeline.js
- * Comprehensive end-to-end verification of the Master Resume Analyzer AI pipeline.
- * Tests:
- * 1. Resume text injection inside [RESUME_INPUT] delimiters
- * 2. Optional JD handling ([JOB_DESCRIPTION] with null score when not provided)
- * 3. Master AI evaluation engine execution and Section 30 JSON schema validation
- * 4. Overall score and 10 category scores dynamically generated out of 100
- * 5. Dynamic role fit generation without static role templates
- * 6. Career stage awareness (Student/Fresher reweighting)
- * 7. Verification that old 80/100 and hardcoded 8/8, 15/15, 12/20, etc., are gone
- * 8. Requirement 13 logs verification
- */
 
 const assert = require('assert');
 const {
@@ -68,7 +55,6 @@ async function runTests() {
 
   let passed = 0;
 
-  // TEST 1: Delimiter & Raw Text Injection
   console.log('--- TEST 1: Raw Resume Text Inside [RESUME_INPUT] ---');
   const promptNoJD = constructMasterAiPrompt(SAMPLE_RESUME_TEXT, null);
   assert(promptNoJD.includes('[RESUME_INPUT]'), 'Prompt must contain [RESUME_INPUT] opening delimiter');
@@ -79,7 +65,6 @@ async function runTests() {
   console.log('✓ [PASS] TEST 1: Prompt correctly wraps real resume text and marks absent JD as NOT_PROVIDED\n');
   passed++;
 
-  // TEST 2: Optional Job Description Injection
   console.log('--- TEST 2: Job Description Injection ---');
   const sampleJD = 'Looking for a Senior Full Stack Engineer with 5+ years of React and Node experience.';
   const promptWithJD = constructMasterAiPrompt(SAMPLE_RESUME_TEXT, sampleJD);
@@ -87,27 +72,23 @@ async function runTests() {
   console.log('✓ [PASS] TEST 2: Prompt correctly embeds provided Job Description\n');
   passed++;
 
-  // TEST 3: Master AI Evaluation Engine Execution (No JD)
   console.log('--- TEST 3: AI Analysis Response & Schema Validation (No JD) ---');
   const { aiJson, apiConfirmation } = await requestAiResumeAnalysis(SAMPLE_RESUME_TEXT, null);
-  
+
   assert(aiJson, 'aiJson must exist');
   console.log('Detected career stage in test:', aiJson.candidate.careerStage);
   assert(['Student', 'Fresher', 'Intern', 'Junior', 'Entry-Level'].includes(aiJson.candidate.careerStage), 'careerStage must accurately reflect student/fresher/junior/entry-level');
-  
-  // Job Match Score must be null when no JD is provided
+
   assert.strictEqual(aiJson.jobMatch.jobDescriptionProvided, false, 'jobDescriptionProvided must be false');
   assert.strictEqual(aiJson.jobMatch.jobMatchScore, null, 'jobMatchScore must be null when no JD provided');
   assert.strictEqual(aiJson.scores.jobMatchScore, null, 'scores.jobMatchScore must be null');
 
-  // Verify overall score is NOT the old fixed 80/100
   assert(aiJson.scores.overallResumeScore > 80, `Expected strong resume score > 80, got ${aiJson.scores.overallResumeScore}`);
   assert.notStrictEqual(aiJson.scores.overallResumeScore, 80, 'Score must not be fixed 80/100');
 
   console.log(`✓ [PASS] TEST 3: Master AI returned valid JSON: Candidate: ${aiJson.candidate.name}, Career Stage: ${aiJson.candidate.careerStage}, Score: ${aiJson.scores.overallResumeScore}/100, JobMatch: ${aiJson.scores.jobMatchScore}\n`);
   passed++;
 
-  // TEST 4: Category Breakdown 100-Point Scale Validation
   console.log('--- TEST 4: Category Breakdown All Out of 100 ---');
   const scores = aiJson.scores;
   assert(scores.atsScore >= 70 && scores.atsScore <= 100, `atsScore out of range: ${scores.atsScore}`);
@@ -118,11 +99,9 @@ async function runTests() {
   assert(scores.achievementsScore >= 70 && scores.achievementsScore <= 100, `achievementsScore out of range: ${scores.achievementsScore}`);
   assert(scores.certificationsScore >= 70 && scores.certificationsScore <= 100, `certificationsScore out of range: ${scores.certificationsScore}`);
 
-  // Confirm NO old category maximums: 8, 15, 20, 15, 10, 10, 5, 7, 3, 7
   console.log(`✓ [PASS] TEST 4: Breakdown scores verified: ATS=${scores.atsScore}, Skills=${scores.technicalSkillsScore}, Projects=${scores.projectsScore}, Exp=${scores.experienceScore}, Edu=${scores.educationScore}, Ach=${scores.achievementsScore}, Cert=${scores.certificationsScore}\n`);
   passed++;
 
-  // TEST 5: Dynamic Role Fit vs Predefined Role Cards
   console.log('--- TEST 5: Dynamic Role Fit Generation ---');
   const dynamicRoles = detectDynamicRoles(
     { all: aiJson.skills.verifiedSkills.concat(aiJson.skills.listedOnlySkills) },
@@ -134,21 +113,18 @@ async function runTests() {
   assert(dynamicRoles.topRecommendations.length > 0, 'Must have dynamic role recommendations');
   const roleTitles = dynamicRoles.topRecommendations.map(r => r.title);
   console.log('Dynamically generated roles:', roleTitles);
-  
-  // Verify that the top role fits candidate's actual projects (Full Stack / AI / SDE)
+
   assert(
     roleTitles.some(t => t.includes('Full Stack') || t.includes('AI') || t.includes('Software Development')),
     'Dynamic roles must reflect candidate skills (Full Stack / AI / SDE)'
   );
-  
-  // Verify roles are NOT the old static list with static percentages
+
   const topRole = dynamicRoles.topRecommendations[0];
   console.log(`Top dynamic role: ${topRole.title} (${topRole.roleFitScore}%) - ${topRole.eligibility}`);
   assert(topRole.roleFitScore >= 75, 'Strong candidate should have top role fit >= 75%');
   console.log('✓ [PASS] TEST 5: Dynamic role recommendations generated from verified evidence\n');
   passed++;
 
-  // TEST 6: Job Match When JD IS Provided
   console.log('--- TEST 6: Job Match Execution When JD Provided ---');
   const jdForTesting = `
     Job Title: Full Stack Developer (Junior/Entry-Level)
@@ -165,9 +141,8 @@ async function runTests() {
   console.log(`✓ [PASS] TEST 6: Job Match Score successfully computed with JD: ${aiWithJD.jobMatch.jobMatchScore}%\n`);
   passed++;
 
-  // TEST 7: Zero Hallucination Guard
   console.log('--- TEST 7: Zero Hallucination Verification ---');
-  // Confirm unmentioned skills/certs/employers are NOT hallucinated
+
   const verifiedSkills = aiJson.skills.verifiedSkills.map(s => s.toLowerCase());
   assert(!verifiedSkills.includes('ruby on rails'), 'Must not invent unmentioned skills (Ruby on Rails)');
   assert(!verifiedSkills.includes('solidity'), 'Must not invent unmentioned skills (Solidity)');

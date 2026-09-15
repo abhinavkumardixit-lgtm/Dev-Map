@@ -1,18 +1,3 @@
-/**
- * MAD DEV - Global Floating Mini Timer & Header Status Indicator Controller
- * 
- * Provides:
- * - Persistent, application-wide Floating Mini Timer on every DevPilot page
- * - Global Header Timer Status Indicator (e.g. "🔥 24:37" / "⏸ 24:37")
- * - Single source of truth (devpilot_timer_active_state in localStorage)
- * - Pure timestamp-based timing (endTimestamp - Date.now()), immune to tab throttling & page transitions
- * - Independent Pause, Resume, Reset controls
- * - "Close/Hide" (X) hides the floating widget without stopping or resetting the timer
- * - Clicking the floating widget body smoothly navigates to the main Timer page
- * - Dragging with viewport boundary clamping and saved position in localStorage
- * - Web Audio API harmonic chime & single-completion event guarantee
- * - Multi-tab synchronization via storage event listener
- */
 
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
@@ -23,13 +8,11 @@
 })(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
-  // Constants
   const STORAGE_KEY_STATE = 'timer_active_state';
   const STORAGE_KEY_SETTINGS = 'timer_settings';
   const STORAGE_KEY_SESSIONS = 'timer_sessions';
   const STORAGE_KEY_FLOAT_POS = 'timer_floating_pos';
 
-  // Module variables
   let tickInterval = null;
   let isDragging = false;
   let dragOffset = { x: 0, y: 0 };
@@ -41,15 +24,11 @@
   let listeners = [];
   let isInitialized = false;
 
-  // ==========================================
-  // 1. DETERMINISTIC CALCULATION HELPERS
-  // ==========================================
-
   function getTimerData() {
     if (typeof window !== 'undefined' && window.TimerData) {
       return window.TimerData;
     }
-    // Fallback self-contained calculations if TimerData script is loading or in test runner
+
     return {
       calculateRemaining: function (endTimestamp, now = Date.now()) {
         if (!endTimestamp || typeof endTimestamp !== 'number') return 0;
@@ -92,15 +71,11 @@
     };
   }
 
-  // ==========================================
-  // 2. STATE ACCESS & PERSISTENCE
-  // ==========================================
-
   function getStorage() {
     if (typeof window !== 'undefined' && window.Storage && typeof window.Storage.get === 'function') {
       return window.Storage;
     }
-    // Storage fallback using raw localStorage
+
     return {
       get: function (key, def = null) {
         try {
@@ -145,7 +120,6 @@
       isFloatingHidden: false
     }, stored || {});
 
-    // Always calculate remaining seconds deterministically if running
     if (state.isRunning && state.endTimestamp) {
       state.remainingSeconds = getTimerData().calculateRemaining(state.endTimestamp);
     }
@@ -174,10 +148,6 @@
     };
   }
 
-  // ==========================================
-  // 3. CORE TIMER ACTIONS
-  // ==========================================
-
   function start(taskName = null) {
     const state = getState();
     if (state.isRunning) return state;
@@ -194,7 +164,7 @@
     state.startTimestamp = now;
     state.endTimestamp = now + (duration * 1000);
     state.remainingSeconds = duration;
-    state.isFloatingHidden = false; // automatically reveal floating widget when started
+    state.isFloatingHidden = false;
 
     saveState(state);
     ensureTicking();
@@ -313,10 +283,6 @@
     return state;
   }
 
-  // ==========================================
-  // 4. TICKING LOOP & COMPLETION GUARANTEE
-  // ==========================================
-
   function ensureTicking() {
     if (tickInterval) return;
     tickInterval = setInterval(() => {
@@ -341,15 +307,11 @@
         render();
         notifyStateChange(state);
       }
-    }, 300); // 300ms interval guarantees sub-second responsiveness without CPU waste
+    }, 300);
   }
 
-  /**
-   * Atomic completion handling: guarantees exactly ONE completion event
-   * even across multiple tabs or simultaneous UI components.
-   */
   function completeSession(state, elapsedSeconds = null) {
-    // Atomic check
+
     if (!state.isRunning && !state.endTimestamp && !elapsedSeconds) return;
 
     state.isRunning = false;
@@ -357,7 +319,6 @@
     state.remainingSeconds = 0;
     state.endTimestamp = null;
 
-    // 1. Log session if work mode (strictly NEVER log breaks)
     const wasWork = state.mode === 'work';
     if (wasWork) {
       try {
@@ -384,7 +345,6 @@
       }
     }
 
-    // 2. Advance cycle & transition
     const settings = getSettings();
     const transition = getTimerData().getNextSessionTransition(
       state.mode,
@@ -394,7 +354,6 @@
 
     state.cyclePosition = transition.nextCycle;
 
-    // Configure next mode duration
     let nextMinutes = settings.focusDuration;
     if (transition.nextMode === 'shortBreak') nextMinutes = settings.shortBreakDuration;
     if (transition.nextMode === 'longBreak') nextMinutes = settings.longBreakDuration;
@@ -403,18 +362,15 @@
     state.durationSeconds = nextMinutes * 60;
     state.remainingSeconds = state.durationSeconds;
 
-    // Save final state
     saveState(state);
     render();
 
-    // 3. Audio & Notification feedback
     playChime();
     triggerNotification(
       wasWork ? '🎉 Focus Session Complete!' : '☕ Break Complete!',
       transition.message
     );
 
-    // 4. Auto-start next if enabled
     if (settings.autoStart) {
       setTimeout(() => {
         start();
@@ -453,7 +409,6 @@
     state.endTimestamp = Date.now();
     completeSession(state, elapsed);
 
-    // Keep on work mode and advance cycle for the next focus round
     state.cyclePosition = nextStep;
     const nextMinutes = settings.focusDuration || 25;
     state.mode = 'work';
@@ -472,7 +427,7 @@
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
       if (!AudioCtx) return;
       const ctx = new AudioCtx();
-      const notes = [523.25, 659.25, 783.99]; // C5, E5, G5 harmonic triad
+      const notes = [523.25, 659.25, 783.99];
       notes.forEach((freq, idx) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
@@ -508,15 +463,11 @@
     }
   }
 
-  // ==========================================
-  // 5. PATH RESOLUTION HELPER
-  // ==========================================
-
   function getRelativePath(target) {
     if (typeof window === 'undefined') return target;
-    const isPagesDir = window.location.pathname.includes('/pages/') || 
+    const isPagesDir = window.location.pathname.includes('/pages/') ||
                        window.location.pathname.includes('\\pages\\');
-    
+
     if (target === 'timer.html') {
       return isPagesDir ? 'timer.html' : 'pages/timer.html';
     }
@@ -526,15 +477,10 @@
     return target;
   }
 
-  // ==========================================
-  // 6. DOM INJECTION & RENDERING
-  // ==========================================
-
   function init() {
     if (typeof document === 'undefined' || isInitialized) return;
     isInitialized = true;
 
-    // Ensure DOM is ready
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => setupUI());
     } else {
@@ -627,17 +573,15 @@
     document.body.appendChild(widget);
     dom.widget = widget;
 
-    // Restore saved position
     restoreSavedPosition();
     setupDraggable(widget);
   }
 
   function injectHeaderIndicators() {
-    // 1. Check for top header / navbar
+
     const topNav = document.getElementById('top-nav');
     const pageHeader = document.querySelector('.page-header-bar, main > div:first-child');
 
-    // Create header timer indicator
     let headerPill = document.getElementById('global-header-timer-pill');
     if (!headerPill) {
       headerPill = document.createElement('button');
@@ -652,16 +596,15 @@
         <span class="ght-time" id="ght-time">25:00</span>
       `;
 
-      // Insert into topNav actions container if on index.html
       if (topNav) {
         const actionsContainer = topNav.querySelector('.flex.items-center.gap-2') || topNav;
         actionsContainer.prepend(headerPill);
       } else if (pageHeader) {
-        // Insert into page header on pages/*.html
+
         const headerActions = pageHeader.querySelector('.flex.items-center.gap-3, .flex.items-center.gap-2.5') || pageHeader;
         headerActions.prepend(headerPill);
       } else {
-        // Floating fallback in top-right
+
         headerPill.classList.add('fixed-top-right');
         document.body.appendChild(headerPill);
       }
@@ -669,7 +612,6 @@
       dom.headerPill = headerPill;
     }
 
-    // 2. Also inject a mini status badge directly on the Sidebar Timer Link
     const sidebarTimerLink = document.querySelector('#sidebar a[href*="timer.html"]');
     if (sidebarTimerLink && !document.getElementById('sidebar-timer-badge')) {
       const sidebarBadge = document.createElement('span');
@@ -681,15 +623,11 @@
     }
   }
 
-  // ==========================================
-  // 7. DRAGGABLE HANDLER WITH VIEWPORT CLAMPING
-  // ==========================================
-
   function setupDraggable(widget) {
     const handle = widget.querySelector('#gft-drag-bar') || widget;
 
     function onPointerDown(e) {
-      // Don't drag if user clicked a button
+
       if (e.target.closest('button')) return;
 
       isDragging = true;
@@ -722,7 +660,6 @@
       let left = clientX - dragOffset.x;
       let top = clientY - dragOffset.y;
 
-      // Viewport boundary clamping with 12px margin
       left = Math.max(12, Math.min(winWidth - widgetWidth - 12, left));
       top = Math.max(12, Math.min(winHeight - widgetHeight - 12, top));
 
@@ -742,7 +679,6 @@
       document.removeEventListener('touchmove', onPointerMove);
       document.removeEventListener('touchend', onPointerUp);
 
-      // Save position to localStorage
       const rect = widget.getBoundingClientRect();
       getStorage().set(STORAGE_KEY_FLOAT_POS, {
         left: rect.left,
@@ -753,7 +689,6 @@
     handle.addEventListener('mousedown', onPointerDown);
     handle.addEventListener('touchstart', onPointerDown, { passive: true });
 
-    // Double-click handle to reset to default bottom-right
     handle.addEventListener('dblclick', () => {
       widget.style.left = '';
       widget.style.top = '';
@@ -764,7 +699,6 @@
       }
     });
 
-    // Window resize safeguard: clamp if window shrinks
     window.addEventListener('resize', () => {
       if (!widget) return;
       const rect = widget.getBoundingClientRect();
@@ -789,7 +723,6 @@
       const widgetWidth = 310;
       const widgetHeight = 310;
 
-      // Ensure saved position is still within visible viewport
       if (saved.left < winWidth - 50 && saved.top < winHeight - 50 && saved.left >= 0 && saved.top >= 0) {
         const clampedX = Math.max(12, Math.min(winWidth - widgetWidth - 12, saved.left));
         const clampedY = Math.max(12, Math.min(winHeight - widgetHeight - 12, saved.top));
@@ -801,14 +734,9 @@
     }
   }
 
-  // ==========================================
-  // 8. EVENT BINDINGS
-  // ==========================================
-
   function bindGlobalEvents() {
     if (!dom.widget) return;
 
-    // Toggle Pause/Resume button
     const btnToggle = dom.widget.querySelector('#gft-btn-toggle');
     if (btnToggle) {
       btnToggle.addEventListener('click', (e) => {
@@ -822,7 +750,6 @@
       });
     }
 
-    // Reset button
     const btnReset = dom.widget.querySelector('#gft-btn-reset');
     if (btnReset) {
       btnReset.addEventListener('click', (e) => {
@@ -831,7 +758,6 @@
       });
     }
 
-    // Skip button
     const btnSkip = dom.widget.querySelector('#gft-btn-skip');
     if (btnSkip) {
       btnSkip.addEventListener('click', (e) => {
@@ -840,7 +766,6 @@
       });
     }
 
-    // Close/Hide button (X) -> Only hides widget, does NOT stop timer!
     const btnClose = dom.widget.querySelector('#gft-btn-close');
     if (btnClose) {
       btnClose.addEventListener('click', (e) => {
@@ -852,7 +777,6 @@
       });
     }
 
-    // Click anywhere on body of floating timer -> Navigate to Timer page
     const clickableBody = dom.widget.querySelector('#gft-body-clickable');
     if (clickableBody) {
       clickableBody.addEventListener('click', () => {
@@ -860,7 +784,6 @@
       });
     }
 
-    // Header timer pill click -> Restore floating widget & navigate to Timer page
     if (dom.headerPill) {
       dom.headerPill.addEventListener('click', () => {
         showFloating();
@@ -868,7 +791,6 @@
       });
     }
 
-    // Multi-tab sync via storage event
     window.addEventListener('storage', (e) => {
       if (e.key === `devpilot_${STORAGE_KEY_STATE}`) {
         const state = getState();
@@ -880,7 +802,6 @@
       }
     });
 
-    // Window focus / visibility change sync
     document.addEventListener('visibilitychange', () => {
       if (!document.hidden) {
         const state = getState();
@@ -895,7 +816,7 @@
   function navigateToTimer() {
     const isAlreadyOnTimerPage = window.location.pathname.toLowerCase().endsWith('timer.html');
     if (isAlreadyOnTimerPage) {
-      // Scroll smoothly to top of timer card
+
       const timerCard = document.getElementById('timer-circle-container');
       if (timerCard) {
         timerCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -905,16 +826,11 @@
     window.location.href = getRelativePath('timer.html');
   }
 
-  // ==========================================
-  // 9. RENDER PIPELINE
-  // ==========================================
-
   function render() {
     const state = getState();
     const isTimerActive = state.isRunning || state.isPaused;
     const isFocusModeActive = typeof document !== 'undefined' && document.body.classList.contains('focus-mode-active');
 
-    // Page Detection: Check if current page is timer.html
     const isAlreadyOnTimerPage = typeof window !== 'undefined' && (
       window.location.pathname.toLowerCase().endsWith('timer.html') ||
       window.location.pathname.toLowerCase().includes('/timer.html') ||
@@ -922,10 +838,8 @@
       (typeof document !== 'undefined' && document.body && (document.body.classList.contains('timer-page') || document.body.getAttribute('data-page') === 'timer'))
     );
 
-    // Time string formatting
     const timeStr = getTimerData().formatTime(state.remainingSeconds);
 
-    // Mode icons & labels
     let modeIcon = '🔥';
     let modeLabel = 'Deep Work';
     let modeBadge = 'DEEP WORK FOCUS';
@@ -942,12 +856,8 @@
     const taskName = state.currentTask || (state.mode === 'work' ? 'Deep Work Focus' : modeLabel);
     const modeMinutes = Math.round(state.durationSeconds / 60);
 
-    // 1. Render Floating Widget
     if (dom.widget) {
-      // Visibility rule (User requirement):
-      // - If user is on timer.html: ALWAYS hide floating mini widget (main timer card is right there)
-      // - If user navigates away from timer.html and timer was started (running or paused): SHOW floating mini widget
-      // - If user closed widget (X) or focus mode is active: keep hidden
+
       const shouldShow = isTimerActive && !isAlreadyOnTimerPage && !state.isFloatingHidden && !isFocusModeActive;
 
       if (shouldShow) {
@@ -984,18 +894,16 @@
           toggleText.textContent = state.isRunning ? 'Pause' : 'Resume';
         }
 
-        // Circular progress SVG animation
         if (circleProgress) {
-          const circumference = 314.16; // 2 * Math.PI * 50
+          const circumference = 314.16;
           circleProgress.style.strokeDasharray = `${circumference}`;
-          const fraction = state.durationSeconds > 0 
+          const fraction = state.durationSeconds > 0
             ? Math.max(0, Math.min(1, state.remainingSeconds / state.durationSeconds))
             : 0;
           const offset = circumference * (1 - fraction);
           circleProgress.style.strokeDashoffset = `${offset}`;
         }
 
-        // Mini cycle dots matching the timer card
         if (cycleDots) {
           const settings = getSettings();
           const totalSessions = settings.sessionsBeforeLongBreak || 4;
@@ -1020,9 +928,8 @@
       }
     }
 
-    // 2. Render Header Status Indicator
     if (dom.headerPill) {
-      // Header pill is visible whenever timer is active (even if floating widget is hidden!)
+
       if (isTimerActive && !isFocusModeActive) {
         dom.headerPill.classList.remove('hidden');
         dom.headerPill.classList.toggle('is-paused', state.isPaused);
@@ -1038,7 +945,6 @@
       }
     }
 
-    // 3. Render Sidebar Timer Badge
     if (dom.sidebarPill) {
       if (isTimerActive && !isFocusModeActive) {
         dom.sidebarPill.classList.remove('hidden');

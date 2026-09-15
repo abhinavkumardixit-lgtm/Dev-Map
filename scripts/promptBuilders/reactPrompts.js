@@ -1,7 +1,4 @@
-/**
- * React Prompts Collection (11 Prompts)
- * Covers useEffect, Stale Closures, Custom Hooks, Re-renders, Context, Error Boundaries, RSC, and Security.
- */
+
 module.exports = [
   {
     id: 'react-use-effect-dependency-audit',

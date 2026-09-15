@@ -1,7 +1,4 @@
-/**
- * DevOps / Cloud Prompts Collection (11 Prompts)
- * Covers Git, Docker, Linux, Nginx, CI/CD, AWS, Kubernetes, and Blue-Green Deployments.
- */
+
 module.exports = [
   {
     id: 'devops-git-rebase-conflict-rescuer',

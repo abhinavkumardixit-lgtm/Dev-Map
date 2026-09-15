@@ -1,24 +1,7 @@
-/**
- * MAD DEV - Automated Test Suite: Central Dashboard Data Service
- * 
- * Verifies:
- * 1. Momentum streak computation (via HabitService / HabitsData)
- * 2. Daily goals & Main Goal calculation for today and arbitrary dates
- * 3. Daily goal toggling and percentage calculation
- * 4. DSA next unsolved item discovery and row target linking
- * 5. Real LeetCode solved counts from dsaRoadmap
- * 6. Career roadmap progress and next milestone tracking
- * 7. Developer notes count aggregation
- * 8. GitHub settings management & commit calculation from events
- * 9. Calendar data generation, leap year handling, and activity marking
- * 10. AI recommendation generation
- * 11. Focus time aggregation and formatting
- */
 
 const assert = require('assert');
 const path = require('path');
 
-// Setup Node localStorage mock
 const mockStorage = {};
 global.localStorage = {
   getItem: (key) => (key in mockStorage ? mockStorage[key] : null),
@@ -41,7 +24,6 @@ global.Storage = {
   }
 };
 
-// Mock window
 global.window = {
   Storage: global.Storage,
   localStorage: global.localStorage,
@@ -49,7 +31,6 @@ global.window = {
   removeEventListener: () => {}
 };
 
-// Load dependencies
 const HabitsData = require(path.join(__dirname, '../../js/data/habitsData.js'));
 global.HabitsData = HabitsData;
 global.window.HabitsData = HabitsData;
@@ -90,9 +71,6 @@ console.log('====================================================');
 console.log(' MAD DEV: Validating DashboardDataService');
 console.log('====================================================\n');
 
-// ----------------------------------------------------
-// TEST 1: Default GitHub Settings & Custom Username
-// ----------------------------------------------------
 runTest('TEST 1: GitHub Settings persistence', () => {
   DashboardDataService.setGithubSettings('mad-developer');
   const updated = DashboardDataService.getGithubSettings();
@@ -103,9 +81,6 @@ runTest('TEST 1: GitHub Settings persistence', () => {
   assert.strictEqual(updated2.username, 'custom-dev');
 });
 
-// ----------------------------------------------------
-// TEST 2: Momentum Streak Calculation
-// ----------------------------------------------------
 runTest('TEST 2: Momentum Streak Calculation', () => {
   const streak = DashboardDataService.getStreak();
   assert.strictEqual(typeof streak.currentStreak, 'number');
@@ -113,9 +88,6 @@ runTest('TEST 2: Momentum Streak Calculation', () => {
   assert.ok(streak.currentStreak >= 0);
 });
 
-// ----------------------------------------------------
-// TEST 3: Daily Goals & Main Goal
-// ----------------------------------------------------
 runTest('TEST 3: Daily Goals & Main Goal retrieval', () => {
   const todayStr = DashboardDataService.getTodayDateStr();
   const goals = DashboardDataService.getDailyGoals(todayStr);
@@ -128,9 +100,6 @@ runTest('TEST 3: Daily Goals & Main Goal retrieval', () => {
   assert.strictEqual(typeof mainGoal.percentage, 'number');
 });
 
-// ----------------------------------------------------
-// TEST 4: Toggling Daily Goal
-// ----------------------------------------------------
 runTest('TEST 4: Toggling Daily Goal updates progress', () => {
   const todayStr = DashboardDataService.getTodayDateStr();
   const goalsBefore = DashboardDataService.getDailyGoals(todayStr);
@@ -143,13 +112,9 @@ runTest('TEST 4: Toggling Daily Goal updates progress', () => {
   const updatedGoal = goalsAfter.find(g => g.id === targetGoal.id);
   assert.strictEqual(updatedGoal.completed, !initialStatus, 'Goal completed status should toggle');
 
-  // Toggle back to clean up
   DashboardDataService.toggleDailyGoal(targetGoal.id);
 });
 
-// ----------------------------------------------------
-// TEST 5: DSA Next Unsolved Item
-// ----------------------------------------------------
 runTest('TEST 5: Next DSA Item Discovery', () => {
   const nextItem = DashboardDataService.getNextDSAItem();
   const dsaProgress = DashboardDataService.getDSAProgress();
@@ -162,18 +127,12 @@ runTest('TEST 5: Next DSA Item Discovery', () => {
   assert.strictEqual(typeof nextItem.totalQuestions, 'number');
 });
 
-// ----------------------------------------------------
-// TEST 6: LeetCode Count
-// ----------------------------------------------------
 runTest('TEST 6: Real LeetCode solved count', () => {
   const count = DashboardDataService.getLeetCodeCount();
   assert.strictEqual(typeof count, 'number');
   assert.ok(count >= 0);
 });
 
-// ----------------------------------------------------
-// TEST 7: Career Roadmap Progress
-// ----------------------------------------------------
 runTest('TEST 7: Career Roadmap milestones & Next Milestone', () => {
   const roadmapProgress = DashboardDataService.getCareerRoadmapProgress();
   assert.ok(roadmapProgress, 'Should return roadmap progress');
@@ -181,12 +140,10 @@ runTest('TEST 7: Career Roadmap milestones & Next Milestone', () => {
   assert.strictEqual(roadmapProgress.milestones.length, 3, 'Should have 3 core milestones (DSA, Career Course, Interview Prep)');
   assert.ok(roadmapProgress.nextMilestone, 'Next milestone must exist');
 
-  // Verify DSA milestone
   const dsaMilestone = roadmapProgress.milestones.find(m => m.type === 'dsa');
   assert.ok(dsaMilestone, 'DSA milestone must exist');
   assert.strictEqual(typeof dsaMilestone.percentage, 'number');
 
-  // Verify Career Course milestone
   const careerMilestone = roadmapProgress.milestones.find(m => m.type === 'career');
   assert.ok(careerMilestone, 'Career milestone must exist');
   assert.ok(careerMilestone.title.includes('Career:'), 'Career title should include role name');
@@ -194,7 +151,6 @@ runTest('TEST 7: Career Roadmap milestones & Next Milestone', () => {
   assert.ok(careerMilestone.subtitle, 'Career milestone must have level & skills subtitle');
   assert.ok(careerMilestone.url, 'Career milestone must have a link');
 
-  // Verify Interview Prep milestone
   const interviewMilestone = roadmapProgress.milestones.find(m => m.type === 'interview');
   assert.ok(interviewMilestone, 'Interview Prep milestone must exist');
   assert.ok(interviewMilestone.title.includes('Interview:'), 'Interview milestone must include category section');
@@ -202,13 +158,11 @@ runTest('TEST 7: Career Roadmap milestones & Next Milestone', () => {
   assert.ok(interviewMilestone.subtitle, 'Interview milestone must include subsection/topic');
   assert.ok(interviewMilestone.question, 'Interview milestone must include active/next question preview');
 
-  // Verify interview prep details method
   const interviewDetails = DashboardDataService.getInterviewPrepDetails();
   assert.ok(interviewDetails.categoryTitle, 'Interview details must have category section title');
   assert.ok(interviewDetails.topicName, 'Interview details must have subsection/topic name');
   assert.ok(interviewDetails.nextQuestion, 'Interview details must provide next question text');
 
-  // Verify dynamic career change persistence
   Storage.set('career_roadmaps_progress', {
     activeCareer: 'frontend-developer',
     activeCareerStatus: 'active',
@@ -226,49 +180,35 @@ runTest('TEST 7: Career Roadmap milestones & Next Milestone', () => {
   assert.ok(updatedCareerMilestone.title.toLowerCase().includes('frontend'));
   assert.strictEqual(updatedCareerMilestone.percentage, updatedProgress.percent);
 
-  // Clean up
   Storage.set('career_roadmaps_progress', {});
 });
 
-// ----------------------------------------------------
-// TEST 8: Notes Count
-// ----------------------------------------------------
 runTest('TEST 8: Developer Notes Count', () => {
   const notesCount = DashboardDataService.getNotesCount();
   assert.strictEqual(typeof notesCount, 'number');
   assert.ok(notesCount >= 0);
 
-  // Add mock note in storage
   Storage.set('dev_notes', [{ id: '1', title: 'Test Note' }, { id: '2', title: 'Second Note' }]);
   const updatedCount = DashboardDataService.getNotesCount();
   assert.strictEqual(updatedCount, 2);
 
-  // Clean up
   Storage.set('dev_notes', []);
 });
 
-// ----------------------------------------------------
-// TEST 9: Calendar Data Generation & Leap Year
-// ----------------------------------------------------
 runTest('TEST 9: Calendar generation and leap year handling', () => {
-  // February 2024 (Leap year - 29 days)
+
   const feb2024 = DashboardDataService.getCalendarData(2024, 1, '2024-02-15');
   const feb2024CurrentMonthDays = feb2024.days.filter(d => d.isCurrentMonth);
   assert.strictEqual(feb2024CurrentMonthDays.length, 29, 'Feb 2024 must have 29 days');
 
-  // February 2026 (Non-leap year - 28 days)
   const feb2026 = DashboardDataService.getCalendarData(2026, 1, '2026-02-15');
   const feb2026CurrentMonthDays = feb2026.days.filter(d => d.isCurrentMonth);
   assert.strictEqual(feb2026CurrentMonthDays.length, 28, 'Feb 2026 must have 28 days');
 
-  // Selected date identification
   const selectedDay = feb2026.days.find(d => d.dateStr === '2026-02-15');
   assert.ok(selectedDay && selectedDay.isSelected, '2026-02-15 must be flagged isSelected');
 });
 
-// ----------------------------------------------------
-// TEST 10: AI Suggestion Determinism
-// ----------------------------------------------------
 runTest('TEST 10: AI Suggestion Engine', () => {
   const suggestion = DashboardDataService.getAISuggestion();
   assert.ok(suggestion, 'Must return an AI suggestion');
@@ -277,17 +217,12 @@ runTest('TEST 10: AI Suggestion Engine', () => {
   assert.ok(suggestion.targetUrl, 'Suggestion must have a targetUrl');
 });
 
-// ----------------------------------------------------
-// TEST 11: Focus Time Today
-// ----------------------------------------------------
 runTest('TEST 11: Focus Time Today Aggregation', () => {
   const todayStr = DashboardDataService.getTodayDateStr();
 
-  // Initially 0
   const initial = DashboardDataService.getFocusTimeToday();
   assert.strictEqual(typeof initial.minutes, 'number');
 
-  // Log mock 25 min session today
   Storage.set('timer_sessions', [
     {
       id: 'sess-1',
@@ -310,13 +245,9 @@ runTest('TEST 11: Focus Time Today Aggregation', () => {
   assert.strictEqual(updated.displayStr, '55m');
   assert.strictEqual(updated.sessionsCount, 2);
 
-  // Clean up
   Storage.set('timer_sessions', []);
 });
 
-// ----------------------------------------------------
-// Final Results
-// ----------------------------------------------------
 console.log('\n----------------------------------------------------');
 console.log(`Test Execution Finished: ${passCount} Passed, ${failCount} Failed`);
 console.log('----------------------------------------------------');

@@ -1,7 +1,4 @@
-/**
- * Core Computer Science Prompts Collection (11 Prompts)
- * Covers OOP, OS (Processes, Threads, Deadlocks, Memory), and Computer Networks (OSI, TCP, DNS, HTTP/3, WebSockets).
- */
+
 module.exports = [
   {
     id: 'cs-process-vs-thread-deep-dive',

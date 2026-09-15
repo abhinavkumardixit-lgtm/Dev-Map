@@ -1,8 +1,4 @@
-/* ==========================================================================
-   DevPilot-AI - Modern GitHub Analyzer Stylesheet
-   ========================================================================== */
 
-/* Main Analyzer Container & Grid Protections */
 .analyzer-container {
   width: 100%;
   max-width: 1400px;
@@ -11,14 +7,12 @@
   min-width: 0;
 }
 
-/* Ensure all grid and flex items inside analyzer respect column boundaries */
 .analyzer-container *,
 .analyzer-state * {
   min-width: 0;
   box-sizing: border-box;
 }
 
-/* State Containers */
 .analyzer-state {
   display: none;
   width: 100%;
@@ -29,7 +23,6 @@
   display: block;
 }
 
-/* Skeleton Loading Shimmer */
 .skeleton {
   background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
   background-size: 200% 100%;
@@ -42,7 +35,6 @@
   100% { background-position: -200% 0; }
 }
 
-/* Developer Score Circular Ring */
 .score-circle-container {
   position: relative;
   width: 160px;
@@ -101,7 +93,6 @@
   margin-top: 0.25rem;
 }
 
-/* Sub-Score Bars & 8-Category Score Breakdown */
 .sub-score-bar-bg {
   height: 5px;
   background: #f1f5f9;
@@ -149,7 +140,6 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Tier Badges */
 .tier-beginner {
   background-color: #f1f5f9;
   color: #475569;
@@ -180,7 +170,6 @@
   border: 1px solid #e9d5ff;
 }
 
-/* Language Color Dots & Progress Bars */
 .lang-progress-container {
   height: 8px;
   display: flex;
@@ -203,7 +192,6 @@
   flex-shrink: 0;
 }
 
-/* Predefined Language Colors */
 .lang-JavaScript { background-color: #f7df1e; }
 .lang-TypeScript { background-color: #3178c6; }
 .lang-Python { background-color: #3572A5; }
@@ -223,7 +211,6 @@
 .lang-Shell { background-color: #89e051; }
 .lang-Default { background-color: #64748b; }
 
-/* Timeline Container */
 .timeline-container {
   position: relative;
   padding-left: 2rem;
@@ -264,7 +251,6 @@
   justify-content: center;
 }
 
-/* Event Badges */
 .event-badge {
   font-size: 0.6875rem;
   font-weight: 700;
@@ -286,7 +272,6 @@
 .event-create { background: #e0f2fe; color: #0369a1; }
 .event-default { background: #f1f5f9; color: #475569; }
 
-/* Repository Cards */
 .repo-card {
   display: flex;
   flex-direction: column;
@@ -307,7 +292,6 @@
   box-shadow: var(--shadow-hover);
 }
 
-/* Priority Badges for Suggestions */
 .priority-high {
   background: #fee2e2;
   color: #dc2626;
@@ -323,7 +307,6 @@
   color: #4338ca;
 }
 
-/* Highlighted Top Repository Card */
 .top-repo-card {
   background: linear-gradient(135deg, rgba(79, 70, 229, 0.03) 0%, rgba(99, 102, 241, 0.01) 100%);
   border: 1.5px solid rgba(79, 70, 229, 0.25);
@@ -331,7 +314,6 @@
   border-radius: var(--radius-lg);
 }
 
-/* Quick User Chip Buttons */
 .sample-user-chip {
   display: inline-flex;
   align-items: center;
@@ -356,7 +338,6 @@
   transform: translateY(-1px);
 }
 
-/* Text Wrapping & Overflow Defenses */
 .break-words-anywhere {
   overflow-wrap: anywhere;
   word-break: break-word;

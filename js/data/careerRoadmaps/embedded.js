@@ -1,7 +1,3 @@
-/**
- * MAD DEV — Career Roadmap: Embedded Systems Engineer
- * Complete 5-level dependency path, practical skill tasks, progressive projects, and job-ready checklist.
- */
 
 const embeddedRoadmap = {
   roleId: 'embedded-systems-engineer',

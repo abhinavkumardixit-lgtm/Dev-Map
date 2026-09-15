@@ -1,10 +1,9 @@
-// scripts/interviewPrep/updateSidebars.js
+
 const fs = require('fs');
 const path = require('path');
 
 const rootDir = path.join(__dirname, '../../');
 
-// 1. Update index.html
 const indexPath = path.join(rootDir, 'index.html');
 if (fs.existsSync(indexPath)) {
   let indexContent = fs.readFileSync(indexPath, 'utf8');
@@ -30,7 +29,6 @@ if (fs.existsSync(indexPath)) {
   }
 }
 
-// 2. Update pages/*.html
 const pagesDir = path.join(rootDir, 'pages');
 const pages = fs.readdirSync(pagesDir);
 
@@ -44,9 +42,6 @@ pages.forEach(file => {
     return;
   }
 
-  // Look for roadmaps.html link pattern in pages
-  // Pattern 1: inactive roadmaps link
-  // Pattern 2: active roadmaps link (in roadmaps.html itself)
   const re = /(<a\s+class="[^"]*"\s+href="roadmaps\.html"[\s\S]*?<\/a>)/i;
   const match = html.match(re);
 

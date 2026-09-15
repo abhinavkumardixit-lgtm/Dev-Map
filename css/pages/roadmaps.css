@@ -1,19 +1,9 @@
-/**
- * DevPilot-AI — Career Roadmaps Stylesheet
- * Responsive catalog cards, interactive roadmap timeline, status indicators,
- * progressive project milestones, job-ready checklist, and skill detail modal.
- */
 
-/* Layout & Page Container (Exact DSA Pattern) */
 .roadmap-page-container {
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
 }
-
-/* ==========================================================================
-   1. Catalog & Role Cards
-   ========================================================================== */
 
 .roadmap-catalog-grid {
   display: grid;
@@ -69,7 +59,6 @@
   box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.2);
 }
 
-/* Category Filter Chips */
 .category-tab-btn {
   display: inline-flex;
   align-items: center;
@@ -113,7 +102,6 @@
   border-color: rgba(99, 102, 241, 0.35);
 }
 
-/* Progress bar in role cards */
 .role-progress-bar-bg {
   width: 100%;
   height: 6px;
@@ -133,7 +121,6 @@
   transition: width 0.4s ease;
 }
 
-/* Difficulty Badges */
 .badge-diff-beginner {
   background-color: #f0fdf4;
   color: #166534;
@@ -170,10 +157,6 @@
   border-color: rgba(239, 68, 68, 0.3);
 }
 
-/* ==========================================================================
-   2. Roadmap Detail & Timeline View
-   ========================================================================== */
-
 .roadmap-timeline {
   position: relative;
 }
@@ -199,7 +182,6 @@
   }
 }
 
-/* Level Section Container */
 .roadmap-level-section {
   position: relative;
   margin-bottom: 2.5rem;
@@ -235,7 +217,6 @@
   color: #a5b4fc;
 }
 
-/* Skill Node Grid */
 .skills-node-grid {
   display: grid;
   grid-template-columns: repeat(1, minmax(0, 1fr));
@@ -255,7 +236,6 @@
   }
 }
 
-/* Skill Node Card */
 .skill-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
@@ -283,7 +263,6 @@
   box-shadow: 0 6px 20px -3px rgba(0, 0, 0, 0.35);
 }
 
-/* Status: Completed */
 .skill-card.status-completed {
   border-color: #86efac;
   background: #f0fdf4;
@@ -294,7 +273,6 @@
   background: rgba(34, 197, 94, 0.08);
 }
 
-/* Status: In Progress */
 .skill-card.status-in-progress {
   border-color: #93c5fd;
   background: #eff6ff;
@@ -305,7 +283,6 @@
   background: rgba(59, 130, 246, 0.08);
 }
 
-/* Status: Locked */
 .skill-card.status-locked {
   border-color: #e2e8f0;
   background: #f8fafc;
@@ -318,7 +295,6 @@
   opacity: 0.65;
 }
 
-/* Status: Available */
 .skill-card.status-available {
   border-color: #e2e8f0;
   background: #ffffff;
@@ -333,7 +309,6 @@
   border-color: #6366f1;
 }
 
-/* Status Indicator Icon Badges */
 .status-icon-badge {
   width: 1.75rem;
   height: 1.75rem;
@@ -400,7 +375,6 @@
   }
 }
 
-/* AI Relevance Pill */
 .ai-relevance-pill {
   display: inline-flex;
   align-items: center;
@@ -420,7 +394,6 @@
   border-color: rgba(217, 70, 239, 0.3);
 }
 
-/* Importance Badges */
 .importance-essential {
   color: #4f46e5;
   background: #eef2ff;
@@ -457,9 +430,6 @@
   border-color: #334155;
 }
 
-/* ==========================================================================
-   3. Next Recommended Skill Card
-   ========================================================================== */
 .next-skill-banner {
   background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
   color: #ffffff;
@@ -471,9 +441,6 @@
   box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.25);
 }
 
-/* ==========================================================================
-   4. Projects & Job-Ready Checklist
-   ========================================================================== */
 .project-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
@@ -510,9 +477,6 @@
   background-color: #334155;
 }
 
-/* ==========================================================================
-   5. Skill Detail Modal / Drawer
-   ========================================================================== */
 .skill-modal-backdrop {
   position: fixed;
   inset: 0;
@@ -555,11 +519,6 @@
   color: #f8fafc;
 }
 
-/* ==========================================================================
-   6. Career Commitment, Role States, and Progression Engine Styles
-   ========================================================================== */
-
-/* Role Card Status Overrides */
 .role-card.active-career {
   border-color: #6366f1;
   box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25), 0 10px 25px -5px rgba(99, 102, 241, 0.15);
@@ -656,7 +615,6 @@
   border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
-/* Career Modals Backdrop */
 .career-modal-backdrop {
   position: fixed;
   inset: 0;
@@ -700,7 +658,6 @@
   border: 1px solid #334155;
 }
 
-/* Step Wizard Navigation */
 .step-indicator-bar {
   display: flex;
   align-items: center;
@@ -744,7 +701,6 @@
   border-color: rgba(99, 102, 241, 0.4);
 }
 
-/* Radio Choice Cards */
 .choice-card-option {
   display: flex;
   align-items: center;
@@ -816,7 +772,6 @@
   transform: scale(1);
 }
 
-/* "You Are Here" Bar */
 .you-are-here-bar {
   background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(168, 85, 247, 0.05) 100%);
   border: 1px solid rgba(99, 102, 241, 0.25);
@@ -830,7 +785,6 @@
   border-color: rgba(99, 102, 241, 0.35);
 }
 
-/* Career Locked Screen */
 .career-locked-screen {
   background: #ffffff;
   border: 1px solid #e2e8f0;
@@ -845,7 +799,6 @@
   border-color: #334155;
 }
 
-/* Project Lock Card States */
 .project-card.project-locked {
   opacity: 0.72;
   border-style: dashed;
@@ -855,7 +808,6 @@
   border-color: #10b981;
 }
 
-/* Roadmap Dropdown Menu */
 .roadmap-settings-menu {
   position: absolute;
   right: 0;

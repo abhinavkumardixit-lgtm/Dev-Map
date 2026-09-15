@@ -1,9 +1,6 @@
-/**
- * DSA & Interview Prompt Collection (18 Prompts)
- * Covers LeetCode Hints, No-Spoiler Mentorship Levels 1-5, Patterns, Complexity, and Debugging.
- */
+
 module.exports = [
-  // No-Spoiler Mentorship System: Levels 1 - 5
+
   {
     id: 'dsa-no-spoiler-level1',
     title: 'DSA No-Spoiler Mentor: Level 1 Concept Hint',
@@ -162,7 +159,6 @@ Expected Output Format:
     expectedOutput: 'Production-ready optimal code + correctness proof + complexity derivation + dry-run table'
   },
 
-  // Problem Analysis & Strategy
   {
     id: 'dsa-problem-clarification',
     title: 'LeetCode Problem Deconstruction & Clarifying Questions',

@@ -1,11 +1,4 @@
-/* ==========================================================================
-   DevPilot-AI - Resume Workspace CSS
-   Strictly uses existing DevPilot CSS variables and design tokens.
-   ========================================================================== */
 
-/* ----------------------------------------------------------------
-   View Switcher
-   ---------------------------------------------------------------- */
 .resume-view {
   display: block;
   animation: rv-fadein 0.2s ease;
@@ -16,17 +9,11 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ----------------------------------------------------------------
-   Shared Divider
-   ---------------------------------------------------------------- */
 .rws-divider {
   height: 1px;
   background: var(--color-outline-variant);
 }
 
-/* ----------------------------------------------------------------
-   HUB VIEW
-   ---------------------------------------------------------------- */
 .resume-hub-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -92,7 +79,6 @@
   align-self: flex-start;
 }
 
-/* Hub Stats Row */
 .resume-hub-stats {
   display: flex;
   align-items: center;
@@ -141,10 +127,6 @@
   flex-shrink: 0;
 }
 
-
-/* ----------------------------------------------------------------
-   BUILDER VIEW - Top Bar
-   ---------------------------------------------------------------- */
 .builder-topbar {
   display: flex;
   align-items: center;
@@ -201,7 +183,6 @@
   box-shadow: 0 1px 4px rgba(79, 70, 229, 0.08);
 }
 
-/* ATS Badge */
 .ats-badge {
   display: inline-flex;
   align-items: center;
@@ -235,9 +216,6 @@
   border-color: rgba(245, 158, 11, 0.2);
 }
 
-/* ----------------------------------------------------------------
-   BUILDER VIEW - Split Layout
-   ---------------------------------------------------------------- */
 .resume-builder-split {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -259,7 +237,6 @@
   }
 }
 
-/* Editor Panel */
 .builder-editor-panel {
   display: flex;
   flex-direction: column;
@@ -301,17 +278,13 @@
   }
 }
 
-/* Accordion */
 .form-accordion {
   background: var(--color-surface);
   border: 1px solid var(--color-outline-variant);
   border-radius: var(--radius-md);
   overflow: hidden;
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-  /* BUGFIX: flex-shrink defaults to 1, which causes the flex container
-     (builder-editor-panel) to compress accordion items to fit max-height
-     instead of scrolling. overflow:hidden then clips the expanded content.
-     flex-shrink:0 prevents compression, letting the container scroll correctly. */
+
   flex-shrink: 0;
 }
 
@@ -364,7 +337,6 @@
   display: block;
 }
 
-/* Accordion form helpers */
 .acc-grid-2 {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -430,7 +402,6 @@
   min-height: 76px;
 }
 
-/* Dynamic Entry Items */
 .dynamic-entry {
   background: var(--color-surface-container-low);
   border: 1px solid var(--color-outline-variant);
@@ -512,7 +483,6 @@
   border-style: solid;
 }
 
-/* AI Assist Button */
 .btn-ai-assist {
   display: inline-flex;
   align-items: center;
@@ -535,9 +505,6 @@
   border-color: #7c3aed;
 }
 
-/* ----------------------------------------------------------------
-   BUILDER VIEW - Preview Panel
-   ---------------------------------------------------------------- */
 .builder-preview-panel {
   display: flex;
   flex-direction: column;
@@ -569,7 +536,6 @@
   white-space: nowrap;
 }
 
-/* A4 Scaler */
 .a4-scaler-wrapper {
   width: 100%;
   max-width: 100%;
@@ -583,7 +549,6 @@
   box-sizing: border-box;
 }
 
-/* Custom modern slim scrollbar for A4 scaler preview */
 .a4-scaler-wrapper::-webkit-scrollbar {
   height: 6px;
 }
@@ -599,7 +564,6 @@
   background: #94a3b8;
 }
 
-/* A4 Paper Preview */
 .a4-paper {
   background: #ffffff;
   width: 210mm;
@@ -617,7 +581,6 @@
   box-sizing: border-box;
 }
 
-/* Responsive A4 scaling for smaller screens */
 @media (max-width: 1099px) {
   .a4-scaler-wrapper {
     overflow-x: auto;
@@ -639,11 +602,6 @@
   }
 }
 
-/* ----------------------------------------------------------------
-   RESUME TEMPLATE STYLES (9 REAL PROFESSIONAL FORMATS)
-   ---------------------------------------------------------------- */
-
-/* --- Shared CV Components --- */
 .cv-name {
   font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
   font-weight: 800;
@@ -823,7 +781,6 @@
   border: 1px solid #e2e8f0;
 }
 
-/* Bullet list inside entries */
 .cv-bullet-list {
   margin: 0.25em 0 0 1.1em;
   padding: 0;
@@ -835,9 +792,6 @@
   margin-bottom: 0.2em;
 }
 
-/* ============================================================
-   1. Classic ATS (tpl-0 / tpl-classic-ats)
-   ============================================================ */
 .tpl-classic-ats, .tpl-0 {
   font-family: 'Times New Roman', Times, 'Georgia', serif;
   color: #111827;
@@ -905,9 +859,6 @@
   font-weight: normal;
 }
 
-/* ============================================================
-   2. Modern ATS (tpl-1 / tpl-modern-ats)
-   ============================================================ */
 .tpl-modern-ats, .tpl-1 {
   font-family: 'Inter', system-ui, sans-serif;
 }
@@ -937,9 +888,6 @@
   color: #334155;
 }
 
-/* ============================================================
-   3. Reverse Chronological (tpl-2 / tpl-reverse-chronological)
-   ============================================================ */
 .tpl-reverse-chronological, .tpl-2 {
   font-family: 'Inter', system-ui, sans-serif;
 }
@@ -974,9 +922,6 @@
   color: #0f172a;
 }
 
-/* ============================================================
-   4. Minimal Professional (tpl-3 / tpl-minimal-pro)
-   ============================================================ */
 .tpl-minimal-pro, .tpl-3 {
   font-family: 'Inter', system-ui, sans-serif;
   padding: 22mm 20mm 18mm 20mm;
@@ -1011,9 +956,6 @@
   margin-bottom: 0.7em;
 }
 
-/* ============================================================
-   5. Modern Developer (tpl-4 / tpl-modern-developer)
-   ============================================================ */
 .tpl-modern-developer, .tpl-4 {
   font-family: 'Inter', system-ui, sans-serif;
   padding: 18mm 18mm 16mm 18mm;
@@ -1042,9 +984,6 @@
   letter-spacing: 0.06em;
 }
 
-/* ============================================================
-   6. Executive Professional (tpl-5 / tpl-executive-pro)
-   ============================================================ */
 .tpl-executive-pro, .tpl-5 {
   font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
   padding: 18mm 18mm 16mm 18mm;
@@ -1103,9 +1042,6 @@
   line-height: 1.35;
 }
 
-/* ============================================================
-   7. Academic CV (tpl-6 / tpl-academic-cv)
-   ============================================================ */
 .tpl-academic-cv, .tpl-6 {
   font-family: 'Georgia', 'Times New Roman', serif;
   color: #111827;
@@ -1143,9 +1079,6 @@
   text-transform: uppercase;
 }
 
-/* ============================================================
-   8. Entry-Level / Student (tpl-7 / tpl-student-entry)
-   ============================================================ */
 .tpl-student-entry, .tpl-7 {
   font-family: 'Inter', system-ui, sans-serif;
 }
@@ -1179,9 +1112,6 @@
   color: #065f46;
 }
 
-/* ============================================================
-   9. Custom (tpl-8 / tpl-custom)
-   ============================================================ */
 .tpl-custom, .tpl-8 {
   font-family: 'Inter', system-ui, sans-serif;
 }
@@ -1198,9 +1128,6 @@
   padding-bottom: 0.15em;
 }
 
-/* ----------------------------------------------------------------
-   TEMPLATE PICKER MODAL
-   ---------------------------------------------------------------- */
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -1361,9 +1288,6 @@
   border-color: var(--color-primary);
 }
 
-/* ----------------------------------------------------------------
-   RESET RESUME MODAL
-   ---------------------------------------------------------------- */
 .reset-modal {
   background: var(--color-surface);
   border: 1px solid var(--color-outline-variant);
@@ -1511,9 +1435,6 @@
   gap: 0.375rem;
 }
 
-/* ----------------------------------------------------------------
-   ANALYZER VIEW
-   ---------------------------------------------------------------- */
 .analyzer-upload-zone {
   border: 2px dashed var(--color-outline-variant);
   border-radius: var(--radius-lg);
@@ -1562,7 +1483,6 @@
   flex-wrap: wrap;
 }
 
-/* File Preview Strip */
 .file-preview-strip {
   display: flex;
   align-items: center;
@@ -1594,7 +1514,6 @@
   margin-top: 2px;
 }
 
-/* Score Grid */
 .analyzer-score-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -1670,7 +1589,6 @@
   margin-top: 2px;
 }
 
-/* Analyzer Content Grid */
 .analyzer-content-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -1689,7 +1607,6 @@
   gap: 1rem;
 }
 
-/* Card Section Header */
 .card-section-header {
   display: flex;
   align-items: center;
@@ -1703,7 +1620,6 @@
   color: var(--color-on-surface);
 }
 
-/* ATS Checks */
 .ats-checks-list {
   display: flex;
   flex-direction: column;
@@ -1740,7 +1656,6 @@
   margin-top: 1px;
 }
 
-/* Content Quality */
 .content-quality-list {
   display: flex;
   flex-direction: column;
@@ -1785,7 +1700,6 @@
   transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Skills Pills */
 .skills-pill-group {
   display: flex;
   flex-wrap: wrap;
@@ -1834,7 +1748,6 @@
   margin: 0.75rem 0;
 }
 
-/* JD Match Results */
 .jd-match-bar-wrapper {
   margin-top: 0.875rem;
 }
@@ -1888,7 +1801,6 @@
   margin-bottom: 0.375rem;
 }
 
-/* GitHub Correlation */
 .github-corr-item {
   display: flex;
   align-items: center;
@@ -1919,7 +1831,6 @@
 .corr-partial   { color: var(--color-warning); }
 .corr-missing   { color: var(--color-error); }
 
-/* AI Recommendations */
 .ai-rec-list {
   display: flex;
   flex-direction: column;
@@ -1978,9 +1889,6 @@
   line-height: 1.5;
 }
 
-/* ----------------------------------------------------------------
-   PRINT STYLES
-   ---------------------------------------------------------------- */
 @media print {
   #sidebar,
   #top-nav,
@@ -2042,9 +1950,6 @@
   }
 }
 
-/* ----------------------------------------------------------------
-   RESPONSIVE OVERRIDES
-   ---------------------------------------------------------------- */
 @media (max-width: 767px) {
   .resume-hub-stats {
     flex-direction: column;
@@ -2101,11 +2006,6 @@
   }
 }
 
-/* ================================================================
-   REAL RESUME ANALYZER DASHBOARD STYLES
-   ================================================================ */
-
-/* Loading State */
 .analyzer-loading-overlay {
   display: flex;
   align-items: center;
@@ -2149,7 +2049,6 @@
   color: var(--color-on-surface-variant);
 }
 
-/* Results Area (Scrollable below upload zone) */
 .analyzer-results-area {
   margin-top: 2rem;
   display: flex;
@@ -2159,7 +2058,6 @@
   cursor: default;
 }
 
-/* Ensure no text typing / I-beam cursor appears across analyzer dashboard elements */
 #view-analyzer,
 #view-analyzer p,
 #view-analyzer h1,
@@ -2185,7 +2083,6 @@
   cursor: default;
 }
 
-/* Clickable buttons and links keep pointer cursor */
 #view-analyzer button,
 #view-analyzer a,
 #view-analyzer label[for],
@@ -2197,14 +2094,12 @@
   cursor: pointer !important;
 }
 
-/* Text typing cursor ONLY inside editable textareas and inputs */
 #view-analyzer textarea,
 #view-analyzer input[type="text"],
 #view-analyzer .jd-textarea-enhanced {
   cursor: text !important;
 }
 
-/* Analyzed File Strip */
 .analyzer-file-info-bar {
   display: flex;
   align-items: center;
@@ -2216,7 +2111,6 @@
   box-shadow: var(--shadow-subtle);
 }
 
-/* Hero Score Card */
 .analyzer-score-hero {
   display: flex;
   align-items: center;
@@ -2308,7 +2202,6 @@
   font-style: italic;
 }
 
-/* Analyzer Section Cards */
 .analyzer-section-card {
   background: var(--color-surface);
   border: 1px solid var(--color-outline-variant);
@@ -2342,7 +2235,6 @@
   border-radius: var(--radius-full);
 }
 
-/* Score Breakdown Grid */
 .score-breakdown-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -2387,7 +2279,6 @@
   transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Check Item Styles */
 .analyzer-check-item {
   display: flex;
   align-items: flex-start;
@@ -2450,7 +2341,6 @@
   font-style: italic;
 }
 
-/* Section Checks Group Label */
 .section-group-label {
   font-size: 0.6875rem;
   font-weight: 700;
@@ -2460,7 +2350,6 @@
   margin-bottom: 0.25rem;
 }
 
-/* 2-Column Details Grid */
 .analyzer-details-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -2473,7 +2362,6 @@
   gap: 1.5rem;
 }
 
-/* Experience Stats Grid */
 .exp-stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -2530,7 +2418,6 @@
   line-height: 1.4;
 }
 
-/* Skills Category Section */
 .detected-skills-summary {
   display: flex;
   justify-content: space-between;
@@ -2560,7 +2447,6 @@
   margin-bottom: 0.35rem;
 }
 
-/* Project Detail Items - Strict 3-Column Grid Alignment */
 .project-details-grid {
   display: flex;
   flex-direction: column;
@@ -2643,7 +2529,6 @@
   }
 }
 
-/* Content Quality Stats */
 .cq-stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -2683,7 +2568,6 @@
   padding: 0.5rem 0;
 }
 
-/* Improvement Suggestions List */
 .suggestions-list {
   display: flex;
   flex-direction: column;
@@ -2771,18 +2655,12 @@
   font-size: 0.6875rem;
 }
 
-/* Job Description Matcher */
 .jd-instructions {
   font-size: 0.8125rem;
   color: var(--color-on-surface-variant);
   margin-bottom: 0.75rem;
 }
 
-/* ============================================================
-   JOB RECOMMENDATION & MATCHING STYLES
-   ============================================================ */
-
-/* Best Fit Card */
 .best-fit-card {
   background: linear-gradient(135deg, rgba(79, 70, 229, 0.08) 0%, rgba(16, 185, 129, 0.08) 100%);
   border: 2px solid rgba(79, 70, 229, 0.35);
@@ -2887,7 +2765,6 @@
   color: #92400e;
 }
 
-/* Job Recommendations Grid */
 .job-recommendations-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
@@ -2957,7 +2834,6 @@
   margin-top: 0.2rem;
 }
 
-/* Match Progress Bar */
 .job-rec-bar-bg {
   height: 6px;
   background: var(--color-surface-container-high);
@@ -2972,7 +2848,6 @@
   transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Readiness Badge */
 .readiness-badge {
   display: inline-flex;
   align-items: center;
@@ -3011,7 +2886,6 @@
   border: 1px solid var(--color-outline-variant);
 }
 
-/* Skill Breakdown in Job Card */
 .job-rec-skills-section {
   display: flex;
   flex-direction: column;
@@ -3084,7 +2958,6 @@
   color: #ffffff;
 }
 
-/* Roadmap Box in Job Card */
 .job-rec-roadmap-box {
   background: var(--color-surface-container-low);
   border: 1px solid var(--color-outline-variant);
@@ -3133,9 +3006,6 @@
   margin-top: 1px;
 }
 
-/* ============================================================
-   ADVANCED JOB DESCRIPTION MATCHER STYLES
-   ============================================================ */
 .jd-matcher-container {
   display: flex;
   flex-direction: column;
@@ -3254,7 +3124,6 @@
   margin-top: 2px;
 }
 
-/* JD Factors Grid */
 .jd-factors-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -3288,7 +3157,6 @@
   color: var(--color-primary);
 }
 
-/* JD Verdict & Readiness Strip */
 .jd-verdict-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -3353,7 +3221,6 @@
   letter-spacing: 0.03em;
 }
 
-/* Responsive Overrides */
 @media (max-width: 900px) {
   .analyzer-details-grid {
     grid-template-columns: 1fr;
@@ -3393,7 +3260,6 @@
   }
 }
 
-/* Eligibility Badges */
 .eligibility-badge {
   display: inline-flex;
   align-items: center;
@@ -3491,11 +3357,6 @@
   margin-top: 0.4rem;
 }
 
-/* ----------------------------------------------------------------
-   RESUME VALIDATION & CONFIDENCE ENGINE STYLES
-   ---------------------------------------------------------------- */
-
-/* Invalid Document Rejection Hero */
 .analyzer-rejection-card {
   background: var(--color-surface);
   border: 1.5px solid rgba(239, 68, 68, 0.4);
@@ -3614,7 +3475,6 @@
   color: var(--color-on-surface);
 }
 
-/* Confidence Warning Banner (Confidence 60-75%) */
 .confidence-warning-banner {
   background: var(--color-warning-bg);
   border: 1.5px solid rgba(245, 158, 11, 0.4);
@@ -3647,7 +3507,6 @@
   line-height: 1.5;
 }
 
-/* Consistency & Contradiction Alert Card */
 .consistency-alert-card {
   background: #fffbeb;
   border: 1.5px solid rgba(245, 158, 11, 0.45);
@@ -3684,7 +3543,6 @@
   border-radius: var(--radius-sm);
 }
 
-/* Section Confidence & Candidate Level Badges */
 .section-confidence-pill {
   display: inline-flex;
   align-items: center;
@@ -3726,7 +3584,6 @@
   border: 1px solid rgba(79, 70, 229, 0.2);
 }
 
-/* Evidence Tooltip & Provenance Tag */
 .evidence-tag {
   display: inline-flex;
   align-items: center;
@@ -3736,11 +3593,6 @@
   cursor: help;
 }
 
-/* ============================================================
-   STRUCTURED RESUME ANALYZER DASHBOARD STYLES
-   ============================================================ */
-
-/* Top RESUME ANALYSIS Header */
 .analyzer-dashboard-header {
   margin-bottom: 1.5rem;
   padding-bottom: 0.75rem;
@@ -3792,7 +3644,6 @@
   gap: 0.75rem;
 }
 
-/* 8-Pillar Score Grid */
 .eight-pillar-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -4017,7 +3868,6 @@
   animation: rv-fadein 0.2s ease;
 }
 
-/* Check summaries and detail lists containers */
 .edu-check-summary,
 .formatting-checks-list,
 .project-checks-list {
@@ -4026,7 +3876,6 @@
   gap: 0.4rem;
 }
 
-/* Dedicated CONTACT & LINKS Card */
 .contact-links-card {
   background: var(--color-surface);
   border: 1px solid var(--color-outline-variant);
@@ -4271,7 +4120,6 @@
   line-height: 1.35;
 }
 
-/* Phone validation badge */
 .phone-status-badge {
   display: inline-flex;
   align-items: center;
@@ -4296,7 +4144,6 @@
   animation: rv-pulse-subtle 1.5s ease infinite;
 }
 
-/* Project Links & Live Demo Badges - Strict Column Widths */
 .project-detail-links {
   display: flex;
   align-items: center;
@@ -4398,7 +4245,6 @@
   border: 1px dashed var(--color-outline-variant);
 }
 
-/* Project Warning Box (Directly beside project) */
 .project-demo-badge-wrap {
   position: relative;
   display: inline-flex;
@@ -4437,7 +4283,6 @@
   color: #7f1d1d;
 }
 
-/* Certificate Items & Evidence Badges (Requirement: Certification Link Isolation) */
 .cert-items-list {
   display: flex;
   flex-direction: column;
@@ -4510,7 +4355,6 @@
   border: 1px solid rgba(239, 68, 68, 0.35);
 }
 
-/* Section-by-Section Analysis Cards (Part 6) */
 .section-analysis-grid {
   display: flex;
   flex-direction: column;
@@ -4625,7 +4469,6 @@
   border-top: 1px solid var(--color-outline-variant);
 }
 
-/* Secondary "Ask AI About Your Resume" Panel (Part 11) */
 .resume-ai-assistant-card {
   background: var(--color-surface);
   border: 1px solid var(--color-outline-variant);
@@ -4753,7 +4596,6 @@
   line-height: 1.45;
 }
 
-/* Collapsible Key Drawer */
 .ai-gemini-key-drawer {
   background: var(--color-surface-container-low);
   border: 1px solid var(--color-outline-variant);
@@ -4897,5 +4739,4 @@
   border-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15);
 }
-
 

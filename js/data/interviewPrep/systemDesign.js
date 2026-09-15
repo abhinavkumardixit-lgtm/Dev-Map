@@ -1,6 +1,3 @@
-// js/data/interviewPrep/systemDesign.js
-// Complete Question Bank & Case Studies for System Design
-// 20 High-Yield MCQs + 10 Complete End-to-End System Design Case Studies
 
 window.interviewPrepSystemDesign = {
   id: 'system_design',
@@ -813,7 +810,6 @@ window.interviewPrepSystemDesign = {
   }
 ]
 };
-
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = window.interviewPrepSystemDesign;

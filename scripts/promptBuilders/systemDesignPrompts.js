@@ -1,7 +1,4 @@
-/**
- * System Design Prompts Collection (12 Prompts)
- * Covers URL Shortener, Chat, YouTube, Instagram Feed, Rate Limiter, Cache, Uber, Stripe, and Master Interview Framework.
- */
+
 module.exports = [
   {
     id: 'sys-design-interview-master-template',

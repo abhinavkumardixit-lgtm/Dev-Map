@@ -1,7 +1,3 @@
-/**
- * MAD DEV — Operating Systems Question Bank
- * 150 authentic placement/interview MCQs across 15 topics.
- */
 
 (function () {
   'use strict';

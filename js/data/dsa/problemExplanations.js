@@ -1,23 +1,3 @@
-/**
- * MAD DEV — DSA Problem Explanations Engine & Repository
- * Comprehensive 15-Section pedagogical problem breakdowns:
- * 1. Understand Problem
- * 2. Why This Problem Matters
- * 3. Identify Pattern & Reason
- * 4. Recognition Signals
- * 5. Thought Process
- * 6. Approach (Step-by-step)
- * 7. Algorithm
- * 8. Pseudocode
- * 9. Example Walkthrough (Trace table)
- * 10. Edge Cases
- * 11. Multi-Language Code (Python, C++, Java, JavaScript)
- * 12. Code Explanation (Synchronized per language)
- * 13. Complexity (Time & Space)
- * 14. Common Mistakes
- * 15. Key Takeaways
- * + 3 Progressive Hints & Reveal Approach
- */
 
 (function () {
   'use strict';
@@ -25,11 +5,8 @@
   const root = typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : this);
   root.DsaProblemDatabase = root.DsaProblemDatabase || {};
 
-  // Hand-curated flagship problem explanations
   const curatedExplanations = {
-    // --------------------------------------------------------------------------
-    // LC 367: Valid Perfect Square
-    // --------------------------------------------------------------------------
+
     "lc-367": {
       id: "lc-367",
       leetcodeNumber: 367,
@@ -102,32 +79,32 @@
     def isPerfectSquare(self, num: int) -> bool:
         if num < 2:
             return True
-        
+
         left, right = 2, num // 2
         while left <= right:
             mid = left + (right - left) // 2
             guess_squared = mid * mid
-            
+
             if guess_squared == num:
                 return True
             elif guess_squared < num:
                 left = mid + 1
             else:
                 right = mid - 1
-                
+
         return False`,
         cpp: `class Solution {
 public:
     bool isPerfectSquare(int num) {
         if (num < 2) return true;
-        
+
         long long left = 2;
         long long right = num / 2;
-        
+
         while (left <= right) {
             long long mid = left + (right - left) / 2;
             long long square = mid * mid;
-            
+
             if (square == num) {
                 return true;
             } else if (square < num) {
@@ -136,21 +113,21 @@ public:
                 right = mid - 1;
             }
         }
-        
+
         return false;
     }
 };`,
         java: `class Solution {
     public boolean isPerfectSquare(int num) {
         if (num < 2) return true;
-        
+
         long left = 2;
         long right = num / 2;
-        
+
         while (left <= right) {
             long mid = left + (right - left) / 2;
             long square = mid * mid;
-            
+
             if (square == num) {
                 return true;
             } else if (square < num) {
@@ -159,7 +136,7 @@ public:
                 right = mid - 1;
             }
         }
-        
+
         return false;
     }
 }`,
@@ -169,14 +146,14 @@ public:
  */
 var isPerfectSquare = function(num) {
     if (num < 2) return true;
-    
+
     let left = 2;
     let right = Math.floor(num / 2);
-    
+
     while (left <= right) {
         const mid = Math.floor(left + (right - left) / 2);
         const square = mid * mid;
-        
+
         if (square === num) {
             return true;
         } else if (square < num) {
@@ -185,7 +162,7 @@ var isPerfectSquare = function(num) {
             right = mid - 1;
         }
     }
-    
+
     return false;
 };`
       },
@@ -244,9 +221,6 @@ var isPerfectSquare = function(num) {
       githubUrl: null
     },
 
-    // --------------------------------------------------------------------------
-    // LC 1: Two Sum
-    // --------------------------------------------------------------------------
     "arr-tp-01": {
       id: "arr-tp-01",
       leetcodeNumber: 1,
@@ -399,9 +373,6 @@ var twoSum = function(nums, target) {
       githubUrl: null
     },
 
-    // --------------------------------------------------------------------------
-    // LC 15: 3Sum
-    // --------------------------------------------------------------------------
     "arr-tp-08": {
       id: "arr-tp-08",
       leetcodeNumber: 15,
@@ -476,13 +447,13 @@ var twoSum = function(nums, target) {
         nums.sort()
         res = []
         n = len(nums)
-        
+
         for i in range(n - 2):
             if nums[i] > 0:
                 break
             if i > 0 and nums[i] == nums[i - 1]:
                 continue
-                
+
             left, right = i + 1, n - 1
             while left < right:
                 total = nums[i] + nums[left] + nums[right]
@@ -498,7 +469,7 @@ var twoSum = function(nums, target) {
                     left += 1
                 else:
                     right -= 1
-                    
+
         return res`,
         cpp: `class Solution {
 public:
@@ -506,11 +477,11 @@ public:
         std::sort(nums.begin(), nums.end());
         std::vector<std::vector<int>> res;
         int n = nums.size();
-        
+
         for (int i = 0; i < n - 2; ++i) {
             if (nums[i] > 0) break;
             if (i > 0 && nums[i] == nums[i - 1]) continue;
-            
+
             int left = i + 1, right = n - 1;
             while (left < right) {
                 int total = nums[i] + nums[left] + nums[right];
@@ -535,11 +506,11 @@ public:
         Arrays.sort(nums);
         List<List<Integer>> res = new ArrayList<>();
         int n = nums.length;
-        
+
         for (int i = 0; i < n - 2; i++) {
             if (nums[i] > 0) break;
             if (i > 0 && nums[i] == nums[i - 1]) continue;
-            
+
             int left = i + 1, right = n - 1;
             while (left < right) {
                 int total = nums[i] + nums[left] + nums[right];
@@ -567,14 +538,14 @@ var threeSum = function(nums) {
     nums.sort((a, b) => a - b);
     const res = [];
     const n = nums.length;
-    
+
     for (let i = 0; i < n - 2; i++) {
         if (nums[i] > 0) break;
         if (i > 0 && nums[i] === nums[i - 1]) continue;
-        
+
         let left = i + 1;
         let right = n - 1;
-        
+
         while (left < right) {
             const total = nums[i] + nums[left] + nums[right];
             if (total === 0) {
@@ -639,9 +610,6 @@ var threeSum = function(nums) {
       githubUrl: null
     },
 
-    // --------------------------------------------------------------------------
-    // LC 704: Binary Search
-    // --------------------------------------------------------------------------
     "arr-bs-01": {
       id: "arr-bs-01",
       leetcodeNumber: 704,
@@ -704,7 +672,7 @@ var threeSum = function(nums) {
         python: `class Solution:
     def search(self, nums: list[int], target: int) -> int:
         left, right = 0, len(nums) - 1
-        
+
         while left <= right:
             mid = left + (right - left) // 2
             if nums[mid] == target:
@@ -713,14 +681,14 @@ var threeSum = function(nums) {
                 left = mid + 1
             else:
                 right = mid - 1
-                
+
         return -1`,
         cpp: `class Solution {
 public:
     int search(std::vector<int>& nums, int target) {
         int left = 0;
         int right = nums.size() - 1;
-        
+
         while (left <= right) {
             int mid = left + (right - left) / 2;
             if (nums[mid] == target) {
@@ -738,7 +706,7 @@ public:
     public int search(int[] nums, int target) {
         int left = 0;
         int right = nums.length - 1;
-        
+
         while (left <= right) {
             int mid = left + (right - left) / 2;
             if (nums[mid] == target) {
@@ -760,7 +728,7 @@ public:
 var search = function(nums, target) {
     let left = 0;
     let right = nums.length - 1;
-    
+
     while (left <= right) {
         const mid = Math.floor(left + (right - left) / 2);
         if (nums[mid] === target) {
@@ -821,11 +789,6 @@ var search = function(nums, target) {
     }
   };
 
-  /**
-   * Universal Pattern-Grounded Explanation Synthesizer
-   * Creates rich, authentic 15-part explanations for all 1000+ questions based on authentic
-   * metadata (title, number, category, pattern, subPattern, signals, difficulty, leetcodeUrl).
-   */
   function synthesizeExplanation(question) {
     const qid = question.id;
     const num = question.leetcodeNumber || question.number || '';
@@ -843,7 +806,6 @@ var search = function(nums, target) {
         ];
     const lcUrl = question.leetcodeUrl || `https://leetcode.com/problems/${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}/`;
 
-    // Language-specific clean template generators based on subpattern and category
     const codeTemplates = generateCodeTemplates(title, num, cat, pat, subPat, diff);
 
     return {
@@ -910,13 +872,9 @@ var search = function(nums, target) {
     };
   }
 
-  /**
-   * Helper to generate authentic code and explanations for any problem
-   */
   function generateCodeTemplates(title, num, cat, pat, subPat, diff) {
     const fnName = title.toLowerCase().replace(/[^a-z0-9]+(.)/g, (m, chr) => chr.toUpperCase()).replace(/[^a-zA-Z0-9]/g, '');
 
-    // Python code
     const pythonCode = `class Solution:
     def ${fnName}(self, nums: list[int]) -> int:
         """
@@ -925,19 +883,18 @@ var search = function(nums, target) {
         """
         if not nums:
             return 0
-            
+
         # Core ${pat} logic
         left, right = 0, len(nums) - 1
         result = 0
-        
+
         while left <= right:
             # Process invariant under ${subPat}
             result = max(result, nums[left])
             left += 1
-            
+
         return result`;
 
-    // C++ code
     const cppCode = `#include <vector>
 #include <algorithm>
 
@@ -946,42 +903,40 @@ public:
     int ${fnName}(std::vector<int>& nums) {
         // Optimal ${pat} (${subPat}) for #${num} ${title}
         if (nums.empty()) return 0;
-        
+
         int left = 0;
         int right = static_cast<int>(nums.size()) - 1;
         int result = 0;
-        
+
         while (left <= right) {
             result = std::max(result, nums[left]);
             ++left;
         }
-        
+
         return result;
     }
 };`;
 
-    // Java code
     const javaCode = `import java.util.*;
 
 class Solution {
     public int ${fnName}(int[] nums) {
         // Optimal ${pat} (${subPat}) for #${num} ${title}
         if (nums == null || nums.length == 0) return 0;
-        
+
         int left = 0;
         int right = nums.length - 1;
         int result = 0;
-        
+
         while (left <= right) {
             result = Math.max(result, nums[left]);
             left++;
         }
-        
+
         return result;
     }
 }`;
 
-    // JavaScript code
     const jsCode = `/**
  * Optimal ${pat} solution for #${num} ${title}
  * @param {number[]} nums
@@ -989,16 +944,16 @@ class Solution {
  */
 var ${fnName} = function(nums) {
     if (!nums || nums.length === 0) return 0;
-    
+
     let left = 0;
     let right = nums.length - 1;
     let result = 0;
-    
+
     while (left <= right) {
         result = Math.max(result, nums[left]);
         left++;
     }
-    
+
     return result;
 };`;
 
@@ -1042,18 +997,13 @@ var ${fnName} = function(nums) {
     };
   }
 
-  /**
-   * Main Public API: Get explanation for any question by ID
-   */
   root.DsaProblemDatabase.getExplanation = function (qid) {
     if (!qid) return null;
 
-    // 1. Return hand-curated explanation if exists by exact ID
     if (curatedExplanations[qid]) {
       return curatedExplanations[qid];
     }
 
-    // 2. Check if curated has matching leetcodeNumber
     const numericStr = String(qid).replace(/[^0-9]/g, '');
     if (numericStr) {
       if (curatedExplanations[`lc-${numericStr}`]) {
@@ -1066,14 +1016,12 @@ var ${fnName} = function(nums) {
       }
     }
 
-    // 3. Lookup question in global questions list
     let question = null;
     const allQ = root.dsaAllQuestions;
     if (allQ && Array.isArray(allQ)) {
       question = allQ.find(q => q.id === qid);
     }
 
-    // 4. Lookup in dsaRoadmap if not found
     const rMap = root.dsaRoadmap;
     if (!question && rMap && Array.isArray(rMap)) {
       for (const cat of rMap) {
@@ -1094,12 +1042,10 @@ var ${fnName} = function(nums) {
       }
     }
 
-    // 5. If found, synthesize explanation
     if (question) {
       return synthesizeExplanation(question);
     }
 
-    // Fallback if ID is numeric
     if (numericStr) {
       let matchNum = (allQ || []).find(q => String(q.leetcodeNumber) === numericStr);
       if (!matchNum && rMap && Array.isArray(rMap)) {
@@ -1129,18 +1075,11 @@ var ${fnName} = function(nums) {
     return null;
   };
 
-  /**
-   * Register a custom explanation dynamically
-   */
   root.DsaProblemDatabase.registerExplanation = function (qid, explanationData) {
     if (!qid || !explanationData) return;
     curatedExplanations[qid] = explanationData;
   };
 
-  /**
-   * Register a batch of problem explanations
-   * @param {Object} batchMap - Map of question ID to explanation object
-   */
   root.DsaProblemDatabase.registerBatch = function (batchMap) {
     if (!batchMap || typeof batchMap !== 'object') return;
     for (const qid in batchMap) {
@@ -1150,9 +1089,6 @@ var ${fnName} = function(nums) {
     }
   };
 
-  /**
-   * Get all registered curated explanations
-   */
   root.DsaProblemDatabase.getAllCurated = function () {
     return curatedExplanations;
   };

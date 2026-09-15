@@ -1,5 +1,3 @@
-// js/data/interviewPrep/webDevelopment.js
-// Complete Question Bank for Web Development (14 topics * 10 = 140 MCQs)
 
 window.interviewPrepWebDev = {
   id: 'web_development',
@@ -1986,7 +1984,6 @@ window.interviewPrepWebDev = {
   }
 ]
 };
-
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = window.interviewPrepWebDev;

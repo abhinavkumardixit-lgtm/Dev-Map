@@ -1,7 +1,3 @@
-/**
- * MAD DEV - Code Snippet Vault Data
- * Static structured dataset containing real, copy-paste-ready, production & DSA code snippets.
- */
 
 const SNIPPET_CATEGORIES = [
   {
@@ -62,9 +58,7 @@ const SNIPPET_CATEGORIES = [
 ];
 
 const SNIPPETS_DATA = [
-  // =============================================================
-  // PRESERVED ORIGINAL SNIPPETS (Enriched with full schema)
-  // =============================================================
+
   {
     id: 's1',
     title: 'Robust Debounce with Cancellation',
@@ -211,10 +205,10 @@ class LRUCache:
     code: `vector<int> dijkstra(int V, vector<vector<pair<int, int>>>& adj, int src) {
     priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> pq;
     vector<int> dist(V, 1e9);
-    
+
     dist[src] = 0;
     pq.push({0, src});
-    
+
     while (!pq.empty()) {
         auto [d, u] = pq.top(); pq.pop();
         if (d > dist[u]) continue;
@@ -234,9 +228,6 @@ class LRUCache:
     tags: ['dsa', 'cpp', 'graph', 'dijkstra', 'shortest-path', 'priority-queue']
   },
 
-  // =============================================================
-  // C++ DSA SNIPPETS (Arrays, Strings, STL, Search, Trees, DP)
-  // =============================================================
   {
     id: 'cpp_arr_lower_upper_bound',
     title: 'Binary Search: std::lower_bound & std::upper_bound',
@@ -253,15 +244,15 @@ using namespace std;
 
 int main() {
     vector<int> nums = {1, 2, 4, 4, 4, 6, 8};
-    
+
     // First element >= 4 (index 2)
     auto lb = lower_bound(nums.begin(), nums.end(), 4);
     int lb_idx = distance(nums.begin(), lb);
-    
+
     // First element > 4 (index 5)
     auto ub = upper_bound(nums.begin(), nums.end(), 4);
     int ub_idx = distance(nums.begin(), ub);
-    
+
     // Frequency of 4: ub - lb = 5 - 2 = 3
     int count = ub - lb;
     cout << "Index >= 4: " << lb_idx << ", Count of 4s: " << count << endl;
@@ -319,7 +310,7 @@ using namespace std;
 void coordinateCompress(vector<int>& coords) {
     // 1. Sort elements
     sort(coords.begin(), coords.end());
-    
+
     // 2. Erase adjacent duplicates
     coords.erase(unique(coords.begin(), coords.end()), coords.end());
 }
@@ -424,7 +415,7 @@ vector<int> nextGreaterElement(const vector<int>& nums) {
     int n = nums.size();
     vector<int> result(n, -1);
     stack<int> st; // Stores indices of unresolved elements
-    
+
     for (int i = 0; i < n; i++) {
         while (!st.empty() && nums[i] > nums[st.top()]) {
             result[st.top()] = nums[i];
@@ -492,12 +483,12 @@ vector<int> topologicalSort(int V, vector<vector<int>>& adj) {
     for (int u = 0; u < V; u++) {
         for (int v : adj[u]) inDegree[v]++;
     }
-    
+
     queue<int> q;
     for (int i = 0; i < V; i++) {
         if (inDegree[i] == 0) q.push(i);
     }
-    
+
     vector<int> topoOrder;
     while (!q.empty()) {
         int u = q.front(); q.pop();
@@ -506,7 +497,7 @@ vector<int> topologicalSort(int V, vector<vector<int>>& adj) {
             if (--inDegree[v] == 0) q.push(v);
         }
     }
-    
+
     // If order size != V, a cycle exists!
     if (topoOrder.size() != V) return {};
     return topoOrder;
@@ -532,7 +523,7 @@ using namespace std;
 
 int lengthOfLIS(vector<int>& nums) {
     vector<int> tails; // tails[i] stores smallest tail of all increasing subsequences of length i+1
-    
+
     for (int x : nums) {
         auto it = lower_bound(tails.begin(), tails.end(), x);
         if (it == tails.end()) {
@@ -593,9 +584,6 @@ int countSetBits(unsigned int n) {
     tags: ['cpp', 'bit-manipulation', 'math', 'tricks', 'dsa']
   },
 
-  // =============================================================
-  // JAVASCRIPT SNIPPETS (Array methods, Objects, Async, DOM)
-  // =============================================================
   {
     id: 'js_throttle_utility',
     title: 'Throttle Function Implementation',
@@ -637,7 +625,7 @@ int countSetBits(unsigned int n) {
   if (typeof structuredClone === 'function') {
     return structuredClone(obj);
   }
-  
+
   // Robust recursive fallback handling circular references
   const seen = new WeakMap();
   function clone(val) {
@@ -671,7 +659,7 @@ int countSetBits(unsigned int n) {
     difficulty: 'Medium',
     description: 'Waits for all promises to resolve or reject without aborting early on the first failure.',
     code: `async function fetchMultipleServices(urls) {
-  const promises = urls.map(url => 
+  const promises = urls.map(url =>
     fetch(url).then(res => {
       if (!res.ok) throw new Error(\`HTTP \${res.status}\`);
       return res.json();
@@ -679,11 +667,11 @@ int countSetBits(unsigned int n) {
   );
 
   const results = await Promise.allSettled(promises);
-  
+
   const fulfilled = results
     .filter(r => r.status === 'fulfilled')
     .map(r => r.value);
-    
+
   const rejected = results
     .filter(r => r.status === 'rejected')
     .map(r => r.reason);
@@ -731,9 +719,6 @@ int countSetBits(unsigned int n) {
     tags: ['javascript', 'dom', 'intersection-observer', 'lazy-loading', 'performance']
   },
 
-  // =============================================================
-  // BACKEND / NODE.JS & EXPRESS SNIPPETS
-  // =============================================================
   {
     id: 'be_express_jwt_middleware',
     title: 'Express.js JWT Authentication Middleware',
@@ -803,9 +788,6 @@ module.exports = errorHandler;`,
     tags: ['express', 'error-handling', 'node', 'backend', 'clean-code']
   },
 
-  // =============================================================
-  // DATABASE / SQL SNIPPETS
-  // =============================================================
   {
     id: 'sql_cte_recursive',
     title: 'SQL Recursive CTE: Organizational Hierarchy',
@@ -817,7 +799,7 @@ module.exports = errorHandler;`,
     description: 'Traverses hierarchical manager-employee relationships using a Recursive Common Table Expression.',
     code: `WITH RECURSIVE OrgHierarchy AS (
     -- Anchor member: find top-level CEO (manager_id is NULL)
-    SELECT 
+    SELECT
         employee_id,
         name,
         manager_id,
@@ -828,7 +810,7 @@ module.exports = errorHandler;`,
     UNION ALL
 
     -- Recursive member: join employees under current hierarchy level
-    SELECT 
+    SELECT
         e.employee_id,
         e.name,
         e.manager_id,
@@ -855,18 +837,18 @@ SELECT * FROM OrgHierarchy ORDER BY depth, employee_id;`,
     code: `BEGIN;
 
 -- Lock the source account row to prevent race conditions
-SELECT balance FROM accounts 
-WHERE account_id = 101 
+SELECT balance FROM accounts
+WHERE account_id = 101
 FOR UPDATE;
 
 -- Deduct from sender
-UPDATE accounts 
-SET balance = balance - 250.00 
+UPDATE accounts
+SET balance = balance - 250.00
 WHERE account_id = 101 AND balance >= 250.00;
 
 -- Add to recipient
-UPDATE accounts 
-SET balance = balance + 250.00 
+UPDATE accounts
+SET balance = balance + 250.00
 WHERE account_id = 202;
 
 -- If all queries succeed, commit permanently
@@ -881,9 +863,6 @@ COMMIT;
     tags: ['sql', 'postgres', 'transactions', 'acid', 'locking', 'concurrency']
   },
 
-  // =============================================================
-  // COMPUTER SCIENCE / OOP & SYSTEM DESIGN SNIPPETS
-  // =============================================================
   {
     id: 'cs_singleton_pattern',
     title: 'Thread-Safe Singleton Pattern (Meyer\'s Singleton)',
@@ -958,9 +937,6 @@ class TokenBucketRateLimiter:
     tags: ['python', 'system-design', 'rate-limiter', 'token-bucket', 'algorithms']
   },
 
-  // =============================================================
-  // PYTHON / AI & DATA UTILITIES
-  // =============================================================
   {
     id: 'py_pandas_data_cleaning',
     title: 'Pandas Common Data Cleaning & Aggregation Pipeline',
@@ -975,21 +951,21 @@ class TokenBucketRateLimiter:
 def clean_sales_data(df: pd.DataFrame) -> pd.DataFrame:
     # 1. Drop duplicates
     df = df.drop_duplicates(subset=['order_id'])
-    
+
     # 2. Impute missing values
     df['quantity'] = df['quantity'].fillna(0).astype(int)
     df['price'] = df['price'].fillna(df['price'].median())
-    
+
     # 3. Create derived feature
     df['total_revenue'] = df['quantity'] * df['price']
-    
+
     # 4. Group by category and aggregate
     summary = df.groupby('category').agg(
         total_sales=('total_revenue', 'sum'),
         average_order_value=('total_revenue', 'mean'),
         order_count=('order_id', 'count')
     ).reset_index()
-    
+
     return summary`,
     explanation: 'Demonstrates idiomatic vectorized Pandas operations for cleaning and grouped analytics without slow Python loops.',
     complexity: { time: 'O(N)', space: 'O(N)' },
@@ -1024,7 +1000,7 @@ class PredictionResponse(BaseModel):
 async def predict(payload: PredictionRequest):
     if len(payload.features) != 4:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, 
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="Expected exactly 4 features for model input."
         )
     # Perform mock ML model prediction
@@ -1037,9 +1013,6 @@ async def predict(payload: PredictionRequest):
     tags: ['python', 'fastapi', 'rest-api', 'ai', 'pydantic']
   },
 
-  // =============================================================
-  // GIT / DEV TOOLS (Git, Linux, Docker)
-  // =============================================================
   {
     id: 'dev_docker_multistage',
     title: 'Multi-Stage Dockerfile for Node.js Production',
@@ -1110,9 +1083,6 @@ git commit --amend -m "New descriptive message"`,
     tags: ['git', 'version-control', 'devops', 'cli', 'troubleshooting']
   },
 
-  // =============================================================
-  // ADDITIONAL DSA C++ ROADMAP SNIPPETS
-  // =============================================================
   {
     id: 'cpp_arr_accumulate_minmax',
     title: 'STL Algorithms: min_element, max_element & accumulate',
@@ -1309,7 +1279,7 @@ vector<int> maxSlidingWindow(vector<int>& nums, int k) {
 ListNode* reverseList(ListNode* head) {
     ListNode *prev = nullptr;
     ListNode *curr = head;
-    
+
     while (curr) {
         ListNode *nextTemp = curr->next; // Save next pointer
         curr->next = prev;              // Reverse link
@@ -1444,9 +1414,6 @@ int minEatingSpeed(vector<int>& piles, int h) {
     tags: ['cpp', 'binary-search', 'search-on-answer', 'greedy', 'leetcode']
   },
 
-  // =============================================================
-  // JAVASCRIPT & WEB DEV EXPANDED SNIPPETS
-  // =============================================================
   {
     id: 'js_array_map_filter_reduce',
     title: 'Functional Array Pipeline: map, filter & reduce',
@@ -1517,9 +1484,6 @@ console.log('Total sales:', totalSales); // 350`,
     tags: ['javascript', 'localstorage', 'caching', 'ttl', 'browser']
   },
 
-  // =============================================================
-  // PYTHON / AI EXPANDED SNIPPETS
-  // =============================================================
   {
     id: 'py_collections_counter_defaultdict',
     title: 'Python Collections: Counter and defaultdict',
@@ -1584,9 +1548,6 @@ largest = -heapq.heappop(max_heap) # Returns 20`,
     tags: ['python', 'heapq', 'priority-queue', 'min-heap', 'dsa']
   },
 
-  // =============================================================
-  // HTML/CSS SNIPPETS
-  // =============================================================
   {
     id: 'css_modern_center',
     title: 'Modern CSS Centering: Flexbox vs Grid',
@@ -1639,9 +1600,6 @@ largest = -heapq.heappop(max_heap) # Returns 20`,
     tags: ['css', 'grid', 'responsive', 'cards', 'layout']
   },
 
-  // =============================================================
-  // SQL / DATABASE EXPANDED SNIPPETS
-  // =============================================================
   {
     id: 'sql_window_functions_ranking',
     title: 'SQL Window Functions: ROW_NUMBER, RANK & DENSE_RANK',
@@ -1651,7 +1609,7 @@ largest = -heapq.heappop(max_heap) # Returns 20`,
     langClass: 'lang-sql',
     difficulty: 'Medium',
     description: 'Ranks rows within partitions to solve Nth highest queries and deduplication.',
-    code: `SELECT 
+    code: `SELECT
     employee_id,
     department_id,
     salary,
@@ -1669,9 +1627,6 @@ FROM employees;`,
     tags: ['sql', 'window-functions', 'rank', 'dense-rank', 'analytics']
   },
 
-  // =============================================================
-  // OOP & SYSTEM DESIGN EXPANDED SNIPPETS
-  // =============================================================
   {
     id: 'cs_oop_polymorphism_cpp',
     title: 'C++ Virtual Functions & Abstract Interfaces',
@@ -1721,14 +1676,14 @@ int main() {
     difficulty: 'Medium',
     description: 'High-scale pagination using indexed cursor filters instead of slow OFFSET scanning.',
     code: `-- Slow: OFFSET scans and discards 100,000 rows (O(N) performance degradation)
-SELECT * FROM posts 
-ORDER BY created_at DESC 
+SELECT * FROM posts
+ORDER BY created_at DESC
 LIMIT 20 OFFSET 100000;
 
 -- Fast: Cursor/Keyset Pagination (O(log N) indexed B-Tree seek)
-SELECT * FROM posts 
+SELECT * FROM posts
 WHERE (created_at, id) < ('2026-09-01 12:00:00', 4920)
-ORDER BY created_at DESC, id DESC 
+ORDER BY created_at DESC, id DESC
 LIMIT 20;`,
     explanation: 'OFFSET requires the database to read, sort, and throw away all preceding rows. Cursor pagination uses the last seen row values as an indexed WHERE predicate, jumping directly to the next page in O(log N).',
     complexity: { time: 'O(log N) indexed seek', space: 'O(1)' },
@@ -2186,25 +2141,24 @@ LIMIT 20;`,
   }
 ];
 
-// Helper functions for snippets lookup and recommendations
 function getSnippetById(id) {
   return SNIPPETS_DATA.find(s => s.id === id) || null;
 }
 
 function getRelatedSnippets(currentSnippet, limit = 4) {
   if (!currentSnippet) return [];
-  
+
   return SNIPPETS_DATA
     .filter(s => s.id !== currentSnippet.id)
     .map(s => {
       let score = 0;
-      // Matching subcategory is strongest signal
+
       if (s.subcategory === currentSnippet.subcategory) score += 5;
-      // Matching category
+
       if (s.category === currentSnippet.category) score += 3;
-      // Matching language
+
       if (s.language === currentSnippet.language) score += 2;
-      // Matching tags
+
       if (Array.isArray(s.tags) && Array.isArray(currentSnippet.tags)) {
         const overlap = s.tags.filter(t => currentSnippet.tags.includes(t)).length;
         score += overlap * 2;
@@ -2216,7 +2170,6 @@ function getRelatedSnippets(currentSnippet, limit = 4) {
     .map(item => item.snippet);
 }
 
-// Export for browser and Node.js
 if (typeof window !== 'undefined') {
   window.SNIPPET_CATEGORIES = SNIPPET_CATEGORIES;
   window.SNIPPETS_DATA = SNIPPETS_DATA;

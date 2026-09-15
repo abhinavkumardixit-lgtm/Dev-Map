@@ -1,18 +1,3 @@
-/**
- * MAD DEV — Central Dashboard Data Aggregation Service (DashboardDataService)
- * 
- * Single Source of Truth aggregator for the MAD DEV Dashboard.
- * Reads directly from authoritative application services:
- * - Habits & Daily Goals: HabitService & HabitsData
- * - DSA Roadmap: window.dsaRoadmap & Storage (dsa_progress, dsa_roadmap_evaluations)
- * - Career Roadmaps: window.careerProgressionEngine & careerRoles/Roadmaps
- * - Interview Prep: devpilot_interview_prep_progress & interviewPrepRegistry
- * - Notes: Storage (dev_notes) & DEFAULT_NOTES
- * - Timer: Storage (timer_sessions) & TimerData
- * - GitHub: GitHub REST API (public events) with localStorage caching & Settings
- * 
- * Supports both Browser and Node.js environments.
- */
 
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
@@ -23,13 +8,11 @@
 })(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
-  // Constants
   const STORAGE_KEY_GITHUB_SETTINGS = 'github_settings';
   const STORAGE_KEY_GITHUB_CACHE_PREFIX = 'github_cache_';
   const DEFAULT_GITHUB_USERNAME = '2k25adityasharma';
-  const GITHUB_CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes cache
+  const GITHUB_CACHE_TTL_MS = 5 * 60 * 1000;
 
-  // Helpers
   function getStorage() {
     if (typeof window !== 'undefined' && window.Storage && typeof window.Storage.get === 'function') {
       return window.Storage;
@@ -175,22 +158,17 @@
     return '00000000-0000-4000-a000-000000000001';
   }
 
-  // ==========================================
-  // 1. STREAK
-  // ==========================================
   function getStreak() {
     const habitsData = getHabitsData();
     const storage = getStorage();
     const userId = getUserId();
 
-    // Read habits
     let habits = storage.get(`u_${userId}_habits`, null);
     if (!Array.isArray(habits)) {
       habits = storage.get('habits_data', []);
     }
     if (!Array.isArray(habits)) habits = [];
 
-    // Read completions
     let completions = storage.get(`u_${userId}_completions`, null);
     if (!Array.isArray(completions)) {
       completions = storage.get('habits_completions', []);
@@ -215,9 +193,6 @@
     return { currentStreak: 0, isAtRisk: false, isExtendedToday: false };
   }
 
-  // ==========================================
-  // 2. DAILY GOALS & TODAY'S MAIN GOAL
-  // ==========================================
   function getDailyGoals(dateStr = null) {
     const targetDate = dateStr || getTodayDateStr();
     const storage = getStorage();
@@ -230,7 +205,7 @@
     }
 
     if (!Array.isArray(goals)) {
-      // Seed default developer daily goals on initial run
+
       goals = [
         {
           id: 'goal-seed-1',
@@ -280,7 +255,6 @@
       storage.set(storeKey, goals);
     }
 
-    // Return goals matching target date (or all if stored without dates)
     const matching = goals.filter(g => !g.date || g.date === targetDate);
     return matching.length > 0 ? matching : goals;
   }
@@ -305,7 +279,6 @@
     const completedCount = goals.filter(g => g.completed).length;
     const percent = Math.round((completedCount / totalCount) * 100);
 
-    // Prioritize high priority or first incomplete goal
     let mainGoal = goals.find(g => g.category && g.category.toLowerCase().includes('coding') && !g.completed);
     if (!mainGoal) mainGoal = goals.find(g => !g.completed);
     if (!mainGoal) mainGoal = goals[0];
@@ -351,9 +324,6 @@
     return null;
   }
 
-  // ==========================================
-  // 3. DSA ROADMAP — NEXT UNFINISHED PROBLEM & STATS
-  // ==========================================
   function getNextDSAItem() {
     const roadmap = getDsaRoadmap();
     const storage = getStorage();
@@ -460,7 +430,7 @@
       difficulty: nextProblem.difficulty || 'Easy',
       leetcodeNumber: nextProblem.leetcodeNumber || nextProblem.number || nextProblem.id,
       problemId: nextProblem.id,
-      percentage: totalPercentage, // Total DSA roadmap progress (real DSA progress, matching roadmap widget)
+      percentage: totalPercentage,
       percent: totalPercentage,
       totalSolved: dsaStats.solved,
       totalQuestions: dsaStats.total,
@@ -514,9 +484,6 @@
     return getDSAProgress().solved;
   }
 
-  // ==========================================
-  // 4. CAREER ROADMAP & INTERVIEW PROGRESS
-  // ==========================================
   function getInterviewPrepDetails() {
     let recent = null;
     let progressMap = {};
@@ -531,11 +498,9 @@
       }
     } catch (e) {}
 
-    // Find active / recent category & topic
     let categoryId = recent && recent.categoryId ? recent.categoryId : null;
     let topicName = recent && recent.topic ? recent.topic : null;
 
-    // If no recent, check progressMap for any topic practiced
     if (!categoryId && progressMap && typeof progressMap === 'object') {
       const topicKeys = Object.keys(progressMap).filter(k => k.startsWith('topic:'));
       if (topicKeys.length > 0) {
@@ -552,7 +517,6 @@
       }
     }
 
-    // Default fallback if brand new user
     if (!categoryId) {
       categoryId = 'operatingSystems';
       topicName = 'Process Management & Scheduling';
@@ -582,7 +546,6 @@
       }
     }
 
-    // Calculate topic stats
     const tKey = `topic:${categoryId}:${topicName}`;
     const topicProg = progressMap[tKey] || { attempted: 0, correct: 0 };
     const topicTotal = questions.length > 0 ? questions.length : 10;
@@ -590,7 +553,6 @@
     const topicCorrect = topicProg.correct || 0;
     const topicPercent = topicTotal > 0 ? Math.min(100, Math.round((topicAttempted / topicTotal) * 100)) : 0;
 
-    // Pick active or next unattempted question
     if (questions.length > 0) {
       const unattempted = questions.find(q => {
         const qStat = progressMap[`q:${q.id}`];
@@ -627,7 +589,6 @@
     const state = (rawState && typeof rawState === 'object') ? rawState : {};
     let activeCareerId = state.activeCareer || null;
 
-    // If no explicit active career, find if user has made progress on any career role
     if (!activeCareerId && roles && roles.length > 0) {
       for (const r of roles) {
         if (state[r.id] && Array.isArray(state[r.id].completed) && state[r.id].completed.length > 0) {
@@ -635,7 +596,7 @@
           break;
         }
       }
-      // If still none, default to flagship 'full-stack-developer' role
+
       if (!activeCareerId) {
         activeCareerId = 'full-stack-developer';
       }
@@ -694,7 +655,6 @@
     const careerNextText = nextSkillTitle ? `Next: ${nextSkillTitle}` : 'Explore Role Roadmap';
     const interviewNextText = `Q: ${interviewDetails.nextQuestion}`;
 
-    // 3 Key Dynamic Milestones: DSA Roadmap, Active Career Course, Interview Prep
     const milestones = [
       {
         title: 'Data Structures & Algorithms',
@@ -764,9 +724,6 @@
     };
   }
 
-  // ==========================================
-  // 5. INTERVIEW PREP PROGRESS
-  // ==========================================
   function getInterviewPrepProgress() {
     let progressMap = {};
     try {
@@ -791,9 +748,9 @@
     });
 
     const accuracy = totalAttempted > 0 ? Math.round((totalCorrect / totalAttempted) * 100) : 0;
-    // Normalized baseline across the 18 categories (~2,170 questions)
+
     const estimatedTotalQuestions = 2170;
-    const progressPercent = Math.min(100, Math.round((totalAttempted / Math.max(1, 150)) * 100)); // Scaled milestone of 150 practice MCQs
+    const progressPercent = Math.min(100, Math.round((totalAttempted / Math.max(1, 150)) * 100));
 
     return {
       totalAttempted,
@@ -805,9 +762,6 @@
     };
   }
 
-  // ==========================================
-  // 6. NOTES COUNT
-  // ==========================================
   function getNotesCount() {
     const storage = getStorage();
     const storedNotes = storage.get('dev_notes', null);
@@ -830,9 +784,6 @@
     return 0;
   }
 
-  // ==========================================
-  // 7. GITHUB SETTINGS & ACTIVITY ENGINE
-  // ==========================================
   function getGithubSettings() {
     const storage = getStorage();
     const stored = storage.get(STORAGE_KEY_GITHUB_SETTINGS, null);
@@ -876,7 +827,6 @@
     const cacheKey = `${STORAGE_KEY_GITHUB_CACHE_PREFIX}${username}`;
     const storage = getStorage();
 
-    // 1. Check local cache unless forceRefresh
     if (!forceRefresh) {
       const cached = storage.get(cacheKey, null);
       if (cached && cached.timestamp && (Date.now() - cached.timestamp < GITHUB_CACHE_TTL_MS)) {
@@ -884,7 +834,6 @@
       }
     }
 
-    // 2. Fetch fresh public events from GitHub REST API
     try {
       const url = `https://api.github.com/users/${encodeURIComponent(username)}/events/public?per_page=30`;
       const response = await fetch(url, {
@@ -908,9 +857,8 @@
         throw new Error('Invalid response format from GitHub');
       }
 
-      // 3. Process Events & Count Commits This Week
       const now = new Date();
-      // Start of current week (Monday at 00:00:00)
+
       const dayOfWeek = now.getDay();
       const diffToMon = (dayOfWeek === 0 ? -6 : 1) - dayOfWeek;
       const monday = new Date(now);
@@ -1002,7 +950,6 @@
         updatedAt: Date.now()
       };
 
-      // Save to cache
       storage.set(cacheKey, {
         timestamp: Date.now(),
         data: resultData
@@ -1011,7 +958,7 @@
       return { ...resultData, fromCache: false };
     } catch (err) {
       console.warn('[DashboardDataService] Error loading GitHub activity:', err);
-      // If we have stale cache, return it with error indicator
+
       const cached = storage.get(cacheKey, null);
       if (cached && cached.data) {
         return { ...cached.data, fromCache: true, isStale: true, error: err.message, username };
@@ -1027,14 +974,10 @@
     }
   }
 
-  // ==========================================
-  // 8. RECENT ACTIVITY STREAM
-  // ==========================================
   async function getRecentActivity() {
     const storage = getStorage();
     const activities = [];
 
-    // 1. GitHub Activity (Highest priority)
     try {
       const gh = await getGithubActivity();
       if (gh && Array.isArray(gh.events)) {
@@ -1047,7 +990,7 @@
             text: evt.title,
             subtitle: `${evt.repo} • ${evt.timeAgoStr}`,
             timeAgo: evt.timeAgoStr,
-            dotColor: '#10b981', // Emerald
+            dotColor: '#10b981',
             timestamp: new Date(evt.createdAt).getTime(),
             url: evt.url
           });
@@ -1055,14 +998,13 @@
       }
     } catch (e) {}
 
-    // 2. Real Solved LeetCode / DSA Problems
     try {
       const evaluations = storage.get('dsa_roadmap_evaluations', {}) || {};
       const roadmap = getDsaRoadmap();
       const solvedIds = Object.keys(evaluations);
 
       if (solvedIds.length > 0 && Array.isArray(roadmap)) {
-        // Take latest solved question
+
         const latestId = solvedIds[solvedIds.length - 1];
         let foundQ = null;
         for (const cat of roadmap) {
@@ -1082,15 +1024,14 @@
             text: `Solved ${foundQ.title}`,
             subtitle: `#${foundQ.leetcodeNumber || foundQ.id} • DSA Roadmap`,
             timeAgo: 'Recently',
-            dotColor: '#4f46e5', // Indigo
-            timestamp: Date.now() - (2 * 3600 * 1000), // Recent within today
+            dotColor: '#4f46e5',
+            timestamp: Date.now() - (2 * 3600 * 1000),
             url: `pages/dsa.html#row-${foundQ.id}`
           });
         }
       }
     } catch (e) {}
 
-    // 3. Real Notes Created
     try {
       const notes = storage.get('dev_notes', []);
       if (Array.isArray(notes) && notes.length > 0) {
@@ -1103,14 +1044,13 @@
           text: `Created Note: ${latestNote.title}`,
           subtitle: `${latestNote.category || 'General'} • Notes Knowledge Base`,
           timeAgo: formatTimeAgo(latestNote.createdAt),
-          dotColor: '#f59e0b', // Amber
+          dotColor: '#f59e0b',
           timestamp: latestNote.createdAt ? new Date(latestNote.createdAt).getTime() : Date.now() - (5 * 3600 * 1000),
           url: 'pages/notes.html'
         });
       }
     } catch (e) {}
 
-    // 4. Real Focus Timer Sessions
     try {
       const sessions = storage.get('timer_sessions', []);
       if (Array.isArray(sessions) && sessions.length > 0) {
@@ -1124,17 +1064,15 @@
           text: `Completed ${durMin}m Focus: ${latestSession.task || 'Deep Work'}`,
           subtitle: `Pomodoro Timer • ${formatTimeAgo(latestSession.completedAt)}`,
           timeAgo: formatTimeAgo(latestSession.completedAt),
-          dotColor: '#8b5cf6', // Violet
+          dotColor: '#8b5cf6',
           timestamp: new Date(latestSession.completedAt).getTime(),
           url: 'pages/timer.html'
         });
       }
     } catch (e) {}
 
-    // Sort newest first and limit to 4 items
     activities.sort((a, b) => b.timestamp - a.timestamp);
 
-    // If completely fresh (zero user activity), provide authentic initial prompt
     if (activities.length === 0) {
       activities.push({
         id: 'welcome_1',
@@ -1153,14 +1091,10 @@
     return activities.slice(0, 4);
   }
 
-  // ==========================================
-  // 9. AI SUGGESTION ENGINE (Deterministic)
-  // ==========================================
   function getAISuggestion() {
     const nextDSA = getNextDSAItem();
     const career = getCareerRoadmapProgress();
 
-    // Priority 1: If active career track has an upcoming skill
     if (career.hasActiveCareer && career.nextSkillTitle) {
       const chatPrompt = `Explain the core concepts and implementation best practices for "${career.nextSkillTitle}" in ${career.roleTitle}.`;
       return {
@@ -1179,7 +1113,6 @@
       };
     }
 
-    // Priority 2: Next unfinished DSA problem
     if (nextDSA && nextDSA.problemId && !nextDSA.isComplete) {
       const chatPrompt = `How to solve "${nextDSA.problemTitle}"? Please explain the intuition, optimal approach, and provide clean JavaScript code with time & space complexity.`;
       return {
@@ -1198,7 +1131,6 @@
       };
     }
 
-    // Priority 3: Fallback fresh starter
     const fallbackPrompt = 'Explain sliding window and two-pointer algorithmic techniques with optimal JavaScript examples and time complexity analysis.';
     return {
       track: 'DSA Practice',
@@ -1216,32 +1148,25 @@
     };
   }
 
-  // ==========================================
-  // 10. CALENDAR DATA ENGINE
-  // ==========================================
   function getCalendarData(year, month, selectedDateStr = null) {
     const now = new Date();
     const curYear = year !== undefined && year !== null ? year : now.getFullYear();
-    const curMonth = month !== undefined && month !== null ? month : now.getMonth(); // 0-indexed
+    const curMonth = month !== undefined && month !== null ? month : now.getMonth();
 
     const todayStr = getTodayDateStr();
     const activeDate = selectedDateStr || todayStr;
 
-    // Month title (e.g. "October 2026")
     const monthNames = [
       'January', 'February', 'March', 'April', 'May', 'June',
       'July', 'August', 'September', 'October', 'November', 'December'
     ];
     const monthTitle = `${monthNames[curMonth]} ${curYear}`;
 
-    // Days in current month
-    const firstDayOfMonth = new Date(curYear, curMonth, 1).getDay(); // 0 is Sun, 1 is Mon...
+    const firstDayOfMonth = new Date(curYear, curMonth, 1).getDay();
     const daysInMonth = new Date(curYear, curMonth + 1, 0).getDate();
 
-    // Days in previous month
     const daysInPrevMonth = new Date(curYear, curMonth, 0).getDate();
 
-    // Collect habit completions from storage for activity dots
     const storage = getStorage();
     const activeDatesSet = new Set();
     const completions = storage.get('habits_completions', []);
@@ -1254,7 +1179,6 @@
 
     const cells = [];
 
-    // Previous month trailing days
     for (let i = firstDayOfMonth - 1; i >= 0; i--) {
       const dayNum = daysInPrevMonth - i;
       const prevMonthIdx = curMonth === 0 ? 11 : curMonth - 1;
@@ -1272,7 +1196,6 @@
       });
     }
 
-    // Current month days
     for (let dayNum = 1; dayNum <= daysInMonth; dayNum++) {
       const dateStr = `${curYear}-${String(curMonth + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
 
@@ -1287,7 +1210,6 @@
       });
     }
 
-    // Next month leading days to complete grid (multiples of 7)
     const remainingSlots = (7 - (cells.length % 7)) % 7;
     for (let dayNum = 1; dayNum <= remainingSlots; dayNum++) {
       const nextMonthIdx = curMonth === 11 ? 0 : curMonth + 1;
@@ -1316,9 +1238,6 @@
     };
   }
 
-  // ==========================================
-  // 11. TODAY FOCUS TIME
-  // ==========================================
   function getFocusTimeToday() {
     const storage = getStorage();
     const rawSessions = storage.get('timer_sessions', []);
@@ -1360,9 +1279,6 @@
     return { minutes: 0, displayStr: '0m', sessionsCount: 0 };
   }
 
-  // ==========================================
-  // 12. UTILITIES
-  // ==========================================
   function formatTimeAgo(dateString) {
     if (!dateString) return '';
     const date = new Date(dateString);

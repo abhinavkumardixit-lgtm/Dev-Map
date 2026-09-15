@@ -1,11 +1,3 @@
-/**
- * MAD DEV — Career Roles Catalog Dataset
- * 20 authentic industry career roles categorized across:
- * - Development
- * - Data & AI
- * - DevOps & Cloud
- * - Security & QA
- */
 
 const careerCategories = [
   {
@@ -35,9 +27,7 @@ const careerCategories = [
 ];
 
 const careerRoles = [
-  // ==========================================
-  // CATEGORY: DEVELOPMENT (7 Roles)
-  // ==========================================
+
   {
     id: 'frontend-developer',
     title: 'Frontend Developer',
@@ -130,9 +120,6 @@ const careerRoles = [
     isPriority: false
   },
 
-  // ==========================================
-  // CATEGORY: DATA & AI (7 Roles)
-  // ==========================================
   {
     id: 'data-analyst',
     title: 'Data Analyst',
@@ -225,9 +212,6 @@ const careerRoles = [
     isPriority: false
   },
 
-  // ==========================================
-  // CATEGORY: DEVOPS & CLOUD (3 Roles)
-  // ==========================================
   {
     id: 'devops-engineer',
     title: 'DevOps Engineer',
@@ -268,9 +252,6 @@ const careerRoles = [
     isPriority: false
   },
 
-  // ==========================================
-  // CATEGORY: SECURITY & QA (3 Roles)
-  // ==========================================
   {
     id: 'cloud-security-engineer',
     title: 'Cloud Security Engineer',
@@ -312,7 +293,6 @@ const careerRoles = [
   }
 ];
 
-// Browser & CommonJS Node.js export pattern
 if (typeof window !== 'undefined') {
   window.careerCategories = careerCategories;
   window.careerRoles = careerRoles;

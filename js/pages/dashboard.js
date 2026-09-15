@@ -1,17 +1,12 @@
-/**
- * MAD DEV - Modern Reactive Dashboard Module
- * Fully Data-Driven Controller connecting the existing UI to authentic application state
- */
 
 (function () {
   'use strict';
 
-  // Component State
   let currentCalDate = new Date();
   let selectedDateStr = (typeof DashboardDataService !== 'undefined' && DashboardDataService.getTodayDateStr)
     ? DashboardDataService.getTodayDateStr()
     : new Date().toISOString().split('T')[0];
-  let taskFilterMode = 'all'; // 'all' | 'active'
+  let taskFilterMode = 'all';
   let cachedGithubData = null;
   let isGithubLoading = false;
   let lastSyncTimestamp = Date.now();
@@ -20,9 +15,6 @@
     initDashboard();
   });
 
-  /**
-   * Main Dashboard Initializer
-   */
   function initDashboard() {
     renderGreeting();
     renderStreak();
@@ -49,9 +41,6 @@
     }
   }
 
-  // ==========================================
-  // 1. GREETING & DEVELOPER PROFILE
-  // ==========================================
   function renderGreeting() {
     const greetingEl = document.getElementById('user-greeting');
     const subtitleEl = document.getElementById('user-greeting-subtitle');
@@ -90,9 +79,6 @@
     }
   }
 
-  // ==========================================
-  // 2. MOMENTUM STREAK CARD
-  // ==========================================
   function renderStreak() {
     const streakTitleEl = document.getElementById('streak-title');
     const streakCountEl = document.getElementById('streak-count');
@@ -118,9 +104,6 @@
     }
   }
 
-  // ==========================================
-  // 3. TODAY'S MAIN GOAL
-  // ==========================================
   function renderMainGoal() {
     const titleEl = document.getElementById('main-goal-title');
     const priorityEl = document.getElementById('main-goal-priority');
@@ -153,9 +136,6 @@
     }
   }
 
-  // ==========================================
-  // 4. CONTINUE LEARNING CARD
-  // ==========================================
   function renderContinueLearning() {
     const categoryEl = document.getElementById('continue-category');
     const titleEl = document.getElementById('continue-title');
@@ -189,9 +169,6 @@
     }
   }
 
-  // ==========================================
-  // 5. AI SUGGESTION CARD
-  // ==========================================
   function renderAISuggestion() {
     const textEl = document.getElementById('ai-suggestion-text');
     const topicEl = document.getElementById('ai-suggestion-topic');
@@ -210,9 +187,6 @@
     }
   }
 
-  // ==========================================
-  // 6. GITHUB ACTIVITY CARD
-  // ==========================================
   async function fetchAndRenderGitHub(forceRefresh = false) {
     const countEl = document.getElementById('github-commit-count');
     const eventsListEl = document.getElementById('github-events-list');
@@ -223,7 +197,6 @@
     if (isGithubLoading && !forceRefresh) return;
     isGithubLoading = true;
 
-    // Show initial or loading state if no cached data yet
     if (!cachedGithubData && eventsListEl) {
       eventsListEl.innerHTML = `
         <div class="flex items-center gap-2 py-2 text-outline text-label-sm animate-pulse">
@@ -287,9 +260,6 @@
     }
   }
 
-  // ==========================================
-  // 7. LEETCODE & NOTES STATS
-  // ==========================================
   function renderLeetCodeAndNotesStats() {
     const leetCodeEl = document.getElementById('stat-leetcode-count');
     const notesEl = document.getElementById('stat-notes-count');
@@ -302,7 +272,6 @@
     if (leetCodeEl) leetCodeEl.textContent = leetCodeCount;
     if (notesEl) notesEl.textContent = notesCount;
 
-    // Render LeetCode sparkline reflecting solved count
     const lcSparkline = document.getElementById('leetcode-sparkline');
     if (lcSparkline) {
       const heights = [3, 4, 2, 5, Math.min(6, Math.max(2, Math.round(leetCodeCount / 10)))];
@@ -311,7 +280,6 @@
       `).join('');
     }
 
-    // Render Notes sparkline reflecting notes count
     const notesSparkline = document.getElementById('notes-sparkline');
     if (notesSparkline) {
       const heights = [4, 2, 5, 3, Math.min(6, Math.max(2, Math.round(notesCount / 5)))];
@@ -321,9 +289,6 @@
     }
   }
 
-  // ==========================================
-  // 8. ROADMAP PROGRESS (Dynamic Courses & Interview Prep)
-  // ==========================================
   function renderRoadmapProgress() {
     const listEl = document.getElementById('roadmap-progress-list');
     const milestoneEl = document.getElementById('roadmap-next-milestone');
@@ -347,10 +312,10 @@
       listEl.innerHTML = progress.milestones.map((item, index) => {
         const colorClass = colorClasses[index % colorClasses.length];
         const linkUrl = item.url || '#';
-        const badgeColor = item.type === 'dsa' 
-          ? 'bg-primary/10 text-primary' 
-          : item.type === 'career' 
-            ? 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400' 
+        const badgeColor = item.type === 'dsa'
+          ? 'bg-primary/10 text-primary'
+          : item.type === 'career'
+            ? 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
             : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400';
 
         return `
@@ -380,8 +345,8 @@
     }
 
     if (milestoneEl && progress.nextMilestone) {
-      const milestoneTarget = progress.career?.roleId 
-        ? `pages/roadmaps.html#role=${progress.career.roleId}` 
+      const milestoneTarget = progress.career?.roleId
+        ? `pages/roadmaps.html#role=${progress.career.roleId}`
         : 'pages/roadmaps.html';
       milestoneEl.innerHTML = `
         <a href="${milestoneTarget}" class="flex items-center gap-2 hover:text-primary transition-colors truncate">
@@ -392,9 +357,6 @@
     }
   }
 
-  // ==========================================
-  // 9. TODAY'S TASKS LIST & FILTER
-  // ==========================================
   function renderTasksSection() {
     const taskListEl = document.getElementById('task-list');
     const completedCountEl = document.getElementById('tasks-completed-count');
@@ -452,13 +414,12 @@
       `;
     }).join('');
 
-    // Bind checkboxes
     taskListEl.querySelectorAll('.task-checkbox').forEach(cb => {
       cb.addEventListener('change', (e) => {
         const goalId = e.target.getAttribute('data-id');
         if (goalId && typeof DashboardDataService !== 'undefined') {
           DashboardDataService.toggleDailyGoal(goalId);
-          // Re-render affected sections
+
           renderTasksSection();
           renderMainGoal();
           renderStreak();
@@ -469,9 +430,6 @@
     });
   }
 
-  // ==========================================
-  // 10. INTERACTIVE MINI CALENDAR
-  // ==========================================
   function renderCalendar() {
     const monthTitleEl = document.getElementById('cal-month-title');
     const gridEl = document.getElementById('cal-grid');
@@ -513,7 +471,6 @@
       `;
     }).join('');
 
-    // Bind day clicks
     gridEl.querySelectorAll('[data-date]').forEach(cell => {
       cell.addEventListener('click', () => {
         const clickedDate = cell.getAttribute('data-date');
@@ -527,9 +484,6 @@
     });
   }
 
-  // ==========================================
-  // 11. RECENT ACTIVITY TIMELINE
-  // ==========================================
   async function renderRecentActivity() {
     const listEl = document.getElementById('recent-activity-list');
     if (typeof DashboardDataService === 'undefined' || !listEl) return;
@@ -570,9 +524,6 @@
     }).join('');
   }
 
-  // ==========================================
-  // 12. CODING ACTIVITY HEATMAP
-  // ==========================================
   function renderHeatmap() {
     const heatmapContainer = document.getElementById('heatmap-container');
     if (!heatmapContainer) return;
@@ -586,13 +537,11 @@
       'bg-primary'
     ];
 
-    // Build real 28-week activity view
     const today = new Date();
     const daysToShow = 28 * 7;
     const startDate = new Date(today);
     startDate.setDate(today.getDate() - daysToShow + 1);
 
-    // Collect activity dates from habits
     let activityMap = {};
     if (typeof Storage !== 'undefined') {
       const habits = Storage.get('habits_data', []);
@@ -640,9 +589,6 @@
     }
   }
 
-  // ==========================================
-  // 13. PRODUCTIVITY SUMMARY & GLOBAL TIMER
-  // ==========================================
   function renderFooterProductivity() {
     const focusTimeEl = document.getElementById('focus-time-display');
     const focusBtn = document.getElementById('start-focus-btn');
@@ -657,7 +603,6 @@
       const state = window.GlobalTimer.getState();
       updateTimerButtonState(state, focusBtn, focusBtnText);
 
-      // Subscribe to global timer state updates
       window.GlobalTimer.subscribe((newState) => {
         updateTimerButtonState(newState, focusBtn, focusBtnText);
         if (typeof DashboardDataService !== 'undefined' && focusTimeEl) {
@@ -687,11 +632,8 @@
     }
   }
 
-  // ==========================================
-  // 14. EVENT LISTENERS
-  // ==========================================
   function initEventListeners() {
-    // Calendar month navigation
+
     const prevBtn = document.getElementById('cal-prev-btn');
     const nextBtn = document.getElementById('cal-next-btn');
 
@@ -709,7 +651,6 @@
       });
     }
 
-    // Task filter toggle
     const filterBtn = document.getElementById('btn-filter-tasks');
     if (filterBtn) {
       filterBtn.addEventListener('click', () => {
@@ -722,7 +663,6 @@
       });
     }
 
-    // Timer button action
     const focusBtn = document.getElementById('start-focus-btn');
     if (focusBtn) {
       focusBtn.addEventListener('click', () => {
@@ -744,7 +684,6 @@
       });
     }
 
-    // Command palette triggers
     initCommandPalette();
   }
 
@@ -783,11 +722,8 @@
     }
   }
 
-  // ==========================================
-  // 15. CROSS-PAGE REALTIME SYNCHRONIZATION
-  // ==========================================
   function initCrossPageSync() {
-    // 1. Cross-tab window storage event listener
+
     window.addEventListener('storage', (e) => {
       if (!e.key) return;
       if (
@@ -802,7 +738,6 @@
       }
     });
 
-    // 2. Realtime BroadcastChannel
     if (typeof BroadcastChannel !== 'undefined') {
       try {
         const channel = new BroadcastChannel('devpilot_habits_realtime');
@@ -812,7 +747,6 @@
       } catch (err) {}
     }
 
-    // 3. Tab focus / visibility change sync
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') {
         const now = Date.now();
@@ -839,7 +773,6 @@
     renderFooterProductivity();
   }
 
-  // Utility
   function escapeHtml(str) {
     if (str === null || str === undefined) return '';
     return String(str)

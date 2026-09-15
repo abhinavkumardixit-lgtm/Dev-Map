@@ -1,15 +1,3 @@
-/**
- * MAD DEV — Automated Regression Test Suite for Resume Analyzer Bug Fixes
- * 
- * Verifies fixes for:
- * - Bug 1: Email detection false negative (20 realistic email variations + delimiter cases)
- * - Bug 2: Project parser double-counts entries (multiple project formatting styles)
- * - Bug 3: Layout/column detection operating on document structure, not flattened text
- * - Bug 4: Certification tiering with configurable issuer list (Tier 1 vs Tier 2 scoring)
- * - Bug 5: Professional email check casual heuristic soft-flag
- * - Bug 6: Professional summary full-scope scan & keywords in second half of paragraph
- * - Integration: 3 full resumes testing contact header, separated project tech stack, and table layout
- */
 
 const assert = require('assert');
 const analyzer = require('../../js/pages/resumeAnalyzer.js');
@@ -46,127 +34,124 @@ function execute(name, fn) {
   if (runTest(name, fn)) passedCount++;
 }
 
-// ---------------------------------------------------------------------
-// BUG 1 REGRESSION: Email Extraction & Delimiter Tolerance (20 Cases)
-// ---------------------------------------------------------------------
 console.log(`${colors.yellow}--- BUG 1: Email Detection Edge Cases ---${colors.reset}`);
 
 const emailVariations = [
-  // 1. Dot in local part + adjacent to pipes on header line
+
   {
     input: "Aditya Sharma\nfirstname.lastname.dev@gmail.com | +91 9876543210 | Bangalore | linkedin.com/in/user | github.com/user",
     expected: "firstname.lastname.dev@gmail.com",
     desc: "Dot in local part (.dev) on multi-field header line"
   },
-  // 2. Tight delimiter pipe with no spaces
+
   {
     input: "John Doe\nemail@domain.com|+919876543210|linkedin.com/in/user|github.com/user",
     expected: "email@domain.com",
     desc: "Tight delimiter pipe with no surrounding whitespace"
   },
-  // 3. Plus sign and multi-level subdomain
+
   {
     input: "Jane Smith\nuser.name+tag@sub.example.co.uk | +1 555-0199 | Austin, TX",
     expected: "user.name+tag@sub.example.co.uk",
     desc: "Plus-tag and ccTLD subdomain (.co.uk)"
   },
-  // 4. Hyphen in local part with comma delimiter
+
   {
     input: "Dev Person\njohn-doe@company.org, San Francisco, CA | linkedin.com/in/johndoe",
     expected: "john-doe@company.org",
     desc: "Hyphen in local part with comma delimiter"
   },
-  // 5. Underscore, numbers, and tight slash delimiter
+
   {
     input: "Coder\njane_doe123@domain.io/github.com/janedoe|+1 (555) 012-3456",
     expected: "jane_doe123@domain.io",
     desc: "Underscore, digits, and tight slash delimiter"
   },
-  // 6. Multi-level subdomains with country code
+
   {
     input: "Test User\nname@subdomain.domain.co.in|Pune, India|github.com/test",
     expected: "name@subdomain.domain.co.in",
     desc: "Multi-level Indian academic/commercial subdomain"
   },
-  // 7. Semicolon delimiters
+
   {
     input: "Header Line\nfirst.last@domain.com;+91 9876543210;github.com/flast",
     expected: "first.last@domain.com",
     desc: "Semicolon-separated contact line"
   },
-  // 8. Tightly bounded between pipes
+
   {
     input: "Contact\n|contact@company.ai|+91-9876543210|",
     expected: "contact@company.ai",
     desc: "Tightly bounded by leading and trailing pipes"
   },
-  // 9. Parentheses wrapping
+
   {
     input: "Header\n(dev.user@tech.org) [linkedin.com/in/devuser] (+91 9123456789)",
     expected: "dev.user@tech.org",
     desc: "Email wrapped in parentheses"
   },
-  // 10. Square brackets wrapping
+
   {
     input: "Header\n[engineer.alex@cloud.app] [San Francisco, CA]",
     expected: "engineer.alex@cloud.app",
     desc: "Email wrapped in square brackets"
   },
-  // 11. Angle brackets
+
   {
     input: "Header\n<developer@innovate.tech> | +1-800-555-0199",
     expected: "developer@innovate.tech",
     desc: "Email enclosed in angle brackets"
   },
-  // 12. mailto prefix
+
   {
     input: "Header\nmailto:candidate.pro@work.org | Phone: +1-555-0188",
     expected: "candidate.pro@work.org",
     desc: "Email with mailto: prefix"
   },
-  // 13. Dot at end of sentence
+
   {
     input: "Contact Me\nPlease reach me at dev@domain.com. Available immediately.",
     expected: "dev@domain.com",
     desc: "Email followed immediately by period at end of sentence"
   },
-  // 14. Academic edu email
+
   {
     input: "Student\nalex.student2025@university.edu | New York, NY",
     expected: "alex.student2025@university.edu",
     desc: "Academic .edu domain"
   },
-  // 15. Hyphenated domain
+
   {
     input: "Founder\nfounder@fast-growing-startup.io | Austin, TX",
     expected: "founder@fast-growing-startup.io",
     desc: "Hyphenated domain name"
   },
-  // 16. Multiple dots in local part
+
   {
     input: "Engineer\na.b.c.d@enterprise.net | Seattle, WA",
     expected: "a.b.c.d@enterprise.net",
     desc: "Multiple dots in local part"
   },
-  // 17. Merged with adjacent phone from raw PDF extraction
+
   {
     input: "Header\njohn@example.com+919876543210 | Bangalore",
     expected: "john@example.com",
     desc: "Merged adjacent phone without whitespace (PDF extraction artifact)"
   },
-  // 18. Merged with adjacent word from raw PDF extraction
+
   {
     input: "Header\njohn@example.comExperience in React and Node.js",
     expected: "john@example.com",
     desc: "Merged adjacent text without whitespace (PDF extraction artifact)"
   },
-  // 19. Corporate long TLD
+
   {
     input: "Consultant\nconsultant.lead@global.corporate | London, UK",
     expected: "consultant.lead@global.corporate",
     desc: "Long corporate TLD"
   },
-  // 20. Colon label prefix
+
   {
     input: "Header\nEmail:priya.sharma99@gmail.com | Phone:+91 9876543210",
     expected: "priya.sharma99@gmail.com",
@@ -176,12 +161,11 @@ const emailVariations = [
 
 execute('TEST 1.1: Batch of 20 realistic email variations detected correctly', () => {
   emailVariations.forEach((tc, idx) => {
-    // Both raw extraction and extraction after sanitizeExtractedText must pass
+
     const rawRes = analyzer.extractContactInfo(tc.input);
     assert.strictEqual(rawRes.email, true, `Variation ${idx + 1} (${tc.desc}) failed raw email detection`);
     assert.strictEqual(rawRes.details.email.toLowerCase(), tc.expected.toLowerCase(), `Variation ${idx + 1} expected ${tc.expected}, got ${rawRes.details.email}`);
 
-    // Test after sanitizeExtractedText (matching real document pipeline)
     const sanitizedRes = analyzer.extractContactInfo(analyzer.detectDocumentLayout ? tc.input : tc.input);
     assert.strictEqual(sanitizedRes.email, true, `Variation ${idx + 1} failed sanitized email detection`);
   });
@@ -224,9 +208,6 @@ Software engineer specializing in React and Node.js.
   assert.strictEqual(falseEmailSuggestion, undefined, 'Must NOT generate false "Add Professional Email" suggestion');
 });
 
-// ---------------------------------------------------------------------
-// BUG 2 REGRESSION: Project Parser Double-Counting & Segmentation
-// ---------------------------------------------------------------------
 console.log(`\n${colors.yellow}--- BUG 2: Project Parser Multi-Style Segmentation ---${colors.reset}`);
 
 execute('TEST 2.1: Project segmentation with title then tech-stack on separate lines does not double count', () => {
@@ -271,12 +252,10 @@ Tech Stack: C++, Python, WebSocket, Redis
   assert.ok(projectNames.some(n => n.includes('Project Gamma')), 'Project Gamma must be recognized as title');
   assert.ok(projectNames.some(n => n.includes('Project Delta')), 'Project Delta must be recognized as title');
 
-  // Verify tech-stack was NOT treated as standalone projects
   assert.ok(!projectNames.some(n => n.includes('React, Node.js, Express, MongoDB')), 'Tech-stack line must not be project title');
   assert.ok(!projectNames.some(n => n.includes('Go, Kubernetes, Prometheus, Grafana')), 'Tech-stack line must not be project title');
   assert.ok(!projectNames.some(n => n.includes('github.com/user/project-beta')), 'URL line must not be project title');
 
-  // Verify substantive bullets attached to Project Alpha
   const alphaProj = projAnalysis.details.find(p => p.name.includes('Project Alpha'));
   assert.ok(alphaProj, 'Project Alpha found');
   assert.ok(alphaProj.textLines.length >= 4, `Project Alpha should have >= 4 lines, got ${alphaProj.textLines.length}`);
@@ -291,15 +270,11 @@ execute('TEST 2.2: isTechStackOrLinksLine identifies tech lists and URL continua
   assert.strictEqual(analyzer.isTechStackOrLinksLine('Technologies: React, Redux, Tailwind CSS'), true);
   assert.strictEqual(analyzer.isTechStackOrLinksLine('https://github.com/developer/repo'), true);
 
-  // Negative checks: Real project headers and bullet points must NOT match
   assert.strictEqual(analyzer.isTechStackOrLinksLine('Project Alpha — Distributed Task Orchestrator'), false);
   assert.strictEqual(analyzer.isTechStackOrLinksLine('SONIQX — Web Audiometer & Diagnostic Suite'), false);
   assert.strictEqual(analyzer.isTechStackOrLinksLine('• Architected full-stack career platform with automated resume scoring'), false);
 });
 
-// ---------------------------------------------------------------------
-// BUG 3 REGRESSION: Layout/Column Detection on Document Structure
-// ---------------------------------------------------------------------
 console.log(`\n${colors.yellow}--- BUG 3: Document Structure Layout Inspection ---${colors.reset}`);
 
 execute('TEST 3.1: Genuinely single-column resume classifies as single-column ATS pass', () => {
@@ -335,7 +310,7 @@ B.Tech in Computer Science | 2018 - 2022
 });
 
 execute('TEST 3.2: Multi-column table layout classifies as complex layout ATS warning', () => {
-  // Simulate multi-column document structure (e.g. table-based docx or two-column PDF)
+
   const tableDocStruct = {
     isMultiColumn: true,
     hasTables: true,
@@ -371,9 +346,9 @@ B.Tech | 2022
 });
 
 execute('TEST 3.3: PDF horizontal text-block cluster detector correctly identifies two-column layout', () => {
-  // Simulated PDF items with two distinct X-clusters at identical Y heights
+
   const twoColumnPdfItems = [
-    // Column 1 (Left: x in 40..180) and Column 2 (Right: x in 320..500) at same Y coordinates
+
     { transform: [1, 0, 0, 1, 50, 700], width: 120, str: 'Education History' },
     { transform: [1, 0, 0, 1, 330, 700], width: 140, str: 'Work Experience' },
 
@@ -395,9 +370,6 @@ execute('TEST 3.3: PDF horizontal text-block cluster detector correctly identifi
   assert.strictEqual(pdfLayout.columnCount, 2, 'Should report 2 columns');
 });
 
-// ---------------------------------------------------------------------
-// BUG 4 REGRESSION: Certification Tiering System (Configurable Lookup)
-// ---------------------------------------------------------------------
 console.log(`\n${colors.yellow}--- BUG 4: Certification Tiering ---${colors.reset}`);
 
 execute('TEST 4.1: Tier 1 industry certifications score higher than Tier 2 course completions', () => {
@@ -433,8 +405,7 @@ Udemy — Python for Beginners (2024)
 
 execute('TEST 4.2: Certification tiers are configurable at runtime', () => {
   const originalTiers = analyzer.getCertificationTiers();
-  
-  // Dynamically add a new custom vendor to Tier 1
+
   analyzer.setCertificationTiers({
     tier1: [...(originalTiers.tier1 || []), 'custom-enterprise-vendor']
   });
@@ -452,13 +423,9 @@ Certified Architecture Master — Custom-Enterprise-Vendor (2024)
   assert.strictEqual(certResult.hasTier1, true, 'Custom vendor should now be recognized as Tier 1');
   assert.ok(certResult.score >= 3, 'Should receive Tier 1 scoring boost');
 
-  // Restore original tiers
   analyzer.setCertificationTiers(originalTiers);
 });
 
-// ---------------------------------------------------------------------
-// BUG 5 REGRESSION: Casual Email Heuristic Soft Flag
-// ---------------------------------------------------------------------
 console.log(`\n${colors.yellow}--- BUG 5: Professional Email Casual Handle Heuristic ---${colors.reset}`);
 
 execute('TEST 5.1: Casual email handle generates soft flag without failing hard email presence', () => {
@@ -468,15 +435,12 @@ coolguy12345@yahoo.com | +1 555-0199 | New York, NY
   `;
   const contact = analyzer.extractContactInfo(casualText);
 
-  // Hard email check MUST PASS (prevents Bug 1 regression)
   assert.strictEqual(contact.email, true, 'Casual email must still pass email detection');
   assert.strictEqual(contact.details.email, 'coolguy12345@yahoo.com');
 
-  // Soft flag triggers
   assert.strictEqual(contact.isCasualEmail, true, 'Should flag casual email handle');
   assert.strictEqual(contact.isProfessionalEmail, false, 'isProfessionalEmail should be false for casual handle');
 
-  // Generate suggestions
   const suggestions = analyzer.generateSuggestions(
     contact, { detected: {} }, { exists: false }, { all: [] },
     { isFresher: true, weakBullets: [] }, { found: false, details: [] },
@@ -503,9 +467,6 @@ aditya.sharma.dev@gmail.com | +91 98765 43210
   assert.strictEqual(contact.isProfessionalEmail, true, 'isProfessionalEmail must be true');
 });
 
-// ---------------------------------------------------------------------
-// BUG 6 REGRESSION: Full Summary Scope Scan & Keyword Detection
-// ---------------------------------------------------------------------
 console.log(`\n${colors.yellow}--- BUG 6: Full Paragraph Summary Scan Scope ---${colors.reset}`);
 
 execute('TEST 6.1: Technical keywords placed in the second half of a summary are detected', () => {
@@ -530,7 +491,6 @@ B.Tech in Computer Science | 2018 - 2022
   const parsed = analyzer.parseResumeSections(resumeWithLateKeywords);
   assert.strictEqual(parsed.detected.summary, true, 'Summary section detected');
 
-  // Summary content must NOT be truncated by the section parser
   assert.ok(parsed.sectionContent.summary.includes('REST APIs'), 'Summary content must contain second-half keywords');
 
   const skills = analyzer.extractSkills(resumeWithLateKeywords, parsed);
@@ -542,9 +502,6 @@ B.Tech in Computer Science | 2018 - 2022
   assert.ok(summaryAnalysis.score >= 6, `Summary score should be >= 6, got ${summaryAnalysis.score}`);
 });
 
-// ---------------------------------------------------------------------
-// END-TO-END VERIFICATION OF THE 3 RESUME SCENARIOS
-// ---------------------------------------------------------------------
 console.log(`\n${colors.yellow}--- END-TO-END SCENARIOS: (a) Header Line, (b) Split Projects, (c) Table Layout ---${colors.reset}`);
 
 execute('SCENARIO (a): Resume with email on same line as phone, location, LinkedIn, GitHub scores correctly', () => {
@@ -676,9 +633,6 @@ JavaScript, TypeScript, React, Node.js, AWS
   assert.strictEqual(complexLayoutCheck.pass, false, 'Table layout must NOT pass as clean single-column linear order');
 });
 
-// ---------------------------------------------------------------------
-// SUMMARY REPORT
-// ---------------------------------------------------------------------
 console.log(`\n${colors.blue}====================================================`);
 console.log(` Regression Test Results: ${passedCount} / ${totalCount} Passed`);
 console.log(`====================================================${colors.reset}\n`);

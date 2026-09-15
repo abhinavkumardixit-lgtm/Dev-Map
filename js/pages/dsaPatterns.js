@@ -1,25 +1,16 @@
-/**
- * MAD DEV — DSA Pattern Learning Controller
- * Handles Pattern Learning dashboard metrics, Today's Pattern recommendation,
- * Weak Patterns detection, Pattern Catalog filtering/search, Dedicated Pattern
- * Study View (12-point curriculum, C++ copy, walkthrough trace, inline quiz),
- * 'Identify the Pattern' Training Arena, and bidirectional progress synchronization.
- */
 
 (function () {
   'use strict';
 
-  // Global namespace for pattern controller
   window.DsaPatternController = {};
 
-  // State
-  let dsaProgress = {}; // Dedicated Pattern Learning progress: tracks solved questions in Pattern Learning
+  let dsaProgress = {};
   let patternStats = {};
   let currentPattern = null;
   let currentArenaIndex = 0;
   let arenaScore = { correct: 0, total: 0, streak: 0 };
   let activeEvaluatingQuestion = null;
-  let activeEvaluatingContext = 'patternLearning'; // 'patternLearning' | 'roadmap'
+  let activeEvaluatingContext = 'patternLearning';
   let currentPatternQuestions = [];
   let studyScrollSpyObserver = null;
 
@@ -29,20 +20,15 @@
     mastery: 'all'
   };
 
-  // DOM Elements cache
   let dom = {};
 
-  /**
-   * Initializes the Pattern Learning Module
-   */
   function init() {
-    // Check data availability
+
     if (!window.dsaPatternsRoadmap || !window.dsaAllQuestions) {
       console.warn('Pattern Learning data not loaded yet.');
       return;
     }
 
-    // Load progress from dedicated Pattern Learning Storage key
     dsaProgress = Storage.get('dsa_pattern_progress', {}) || {};
     patternStats = Storage.get('dsa_pattern_stats', {
       viewed: {},
@@ -52,7 +38,6 @@
     }) || { viewed: {}, quizzes: {}, weak: {}, evaluations: {} };
     if (!patternStats.evaluations) patternStats.evaluations = {};
 
-    // Auto-heal/sync any evaluated questions into dsaProgress for Pattern Learning
     let needsProgressSync = false;
     Object.keys(patternStats.evaluations).forEach(qid => {
       if (patternStats.evaluations[qid] && !dsaProgress[qid]) {
@@ -64,27 +49,23 @@
       Storage.set('dsa_pattern_progress', dsaProgress);
     }
 
-    // Cache elements
     dom = {
-      // Main container & views
+
       container: document.getElementById('dsa-pattern-learning-view'),
       roadmapView: document.getElementById('dsa-roadmap-view'),
       tabRoadmap: document.getElementById('tab-btn-roadmap'),
       tabPatterns: document.getElementById('tab-btn-patterns'),
 
-      // Dashboard stats
       metricLearned: document.getElementById('pl-stat-learned'),
       metricPracticed: document.getElementById('pl-stat-practiced'),
       metricMastered: document.getElementById('pl-stat-mastered'),
       metricWeak: document.getElementById('pl-stat-weak'),
 
-      // Reset Modal & Buttons
       btnReset: document.getElementById('pl-btn-reset'),
       resetModal: document.getElementById('pl-reset-modal'),
       btnCancelReset: document.getElementById('pl-btn-cancel-reset'),
       btnConfirmReset: document.getElementById('pl-btn-confirm-reset'),
 
-      // Question Solve Evaluation Modal
       solveModal: document.getElementById('pl-solve-modal'),
       solveModalTitle: document.getElementById('pl-solve-modal-title'),
       solveModalLcNum: document.getElementById('pl-solve-modal-lcnum'),
@@ -93,7 +74,6 @@
       solveModalClear: document.getElementById('pl-solve-modal-clear'),
       solveModalOptions: document.getElementById('pl-solve-modal-options'),
 
-      // Locked Question Sequence Modal
       lockedModal: document.getElementById('pl-locked-modal'),
       lockedModalStep: document.getElementById('pl-locked-modal-step'),
       lockedModalTitle: document.getElementById('pl-locked-modal-title'),
@@ -102,23 +82,19 @@
       btnLockedGoto: document.getElementById('pl-btn-locked-goto'),
       lockedGotoText: document.getElementById('pl-locked-goto-text'),
 
-      // Excessive Assistance Alert Modal
       excessiveModal: document.getElementById('pl-excessive-help-modal'),
       excessiveCount: document.getElementById('pl-excessive-help-count'),
       btnExcessiveReview: document.getElementById('pl-btn-excessive-review'),
       btnExcessiveDismiss: document.getElementById('pl-btn-excessive-dismiss'),
 
-      // Weak patterns banner/section
       weakBanner: document.getElementById('pl-weak-section'),
       weakChipsList: document.getElementById('pl-weak-chips'),
 
-      // Arena launcher
       btnLaunchArena: document.getElementById('pl-btn-launch-arena'),
       arenaModal: document.getElementById('pl-arena-modal'),
       btnCloseArena: document.getElementById('pl-arena-close'),
       arenaContainer: document.getElementById('pl-arena-content'),
 
-      // Catalog view
       catalogSection: document.getElementById('pl-catalog-section'),
       catalogSearch: document.getElementById('pl-catalog-search'),
       catalogClearSearch: document.getElementById('pl-catalog-search-clear'),
@@ -128,32 +104,20 @@
       catalogCountBadge: document.getElementById('pl-catalog-count-badge'),
       catalogEmptyState: document.getElementById('pl-catalog-empty'),
 
-      // Dedicated Pattern Study View
       studyViewSection: document.getElementById('pl-study-view-section'),
       btnBackToCatalog: document.getElementById('pl-btn-back-catalog'),
       studyViewContainer: document.getElementById('pl-study-container')
     };
 
-    // Render components
     renderDashboard();
     renderCategoryChips();
     renderPatternCatalog();
 
-    // Attach listeners
     attachEventListeners();
 
-    // Listen for progress updates across views
     window.addEventListener('dsaProgressSync', onProgressSync);
   }
 
-  /**
-   * Calculates the mastery level for a pattern:
-   * 'Not Started' | 'Learning' | 'Practicing' | 'Mastered' | 'Weak'
-   *
-   * Weak Criteria:
-   * 1. nonSelfCount >= 2 (User selected AI help or copy/paste on 2 or more questions in this pattern)
-   * 2. Pattern Recognition Quiz accuracy < 60%
-   */
   function calculatePatternMastery(pattern) {
     const pid = pattern.id;
     const isWeakByQuiz = !!patternStats.weak[pid];
@@ -198,10 +162,6 @@
     return 'Not Started';
   }
 
-  /**
-   * Calculates deterministic Pattern Mastery Score (0 - 100%)
-   * Formula: 60% problem completion + 30% quiz accuracy + 10% revision
-   */
   function calculatePatternMasteryScore(pattern) {
     if (!pattern) return 0;
     const questionIds = pattern.practiceQuestionIds || [];
@@ -230,9 +190,6 @@
     return Math.min(100, Math.max(0, score));
   }
 
-  /**
-   * Counts solved questions and evaluation breakdown for a given pattern
-   */
   function getPatternSolvedCount(pattern) {
     const questionIds = pattern.practiceQuestionIds || [];
     const evaluations = patternStats.evaluations || {};
@@ -273,9 +230,6 @@
     };
   }
 
-  /**
-   * Renders dashboard metrics and weak pattern notices
-   */
   function renderDashboard() {
     const patterns = window.dsaPatternsRoadmap || [];
     let learnedCount = 0;
@@ -289,13 +243,10 @@
       const isWeak = mastery === 'Weak' || stats.isWeakByEvaluation || !!patternStats.weak[pat.id];
       const isAllSolved = stats.total > 0 && stats.solved >= stats.total;
 
-      // When user solves 1 or more questions on any pattern in Pattern Learning:
-      // Counted as a Practiced Pattern!
       if (!isWeak && (stats.solved >= 1 || mastery === 'Practicing' || mastery === 'Mastered')) {
         practicedCount++;
       }
 
-      // Mastered patterns require all 10 questions solved
       if (!isWeak && (isAllSolved || mastery === 'Mastered')) {
         masteredCount++;
       }
@@ -309,7 +260,6 @@
     if (dom.metricMastered) dom.metricMastered.textContent = `${masteredCount} / ${patterns.length}`;
     if (dom.metricWeak) dom.metricWeak.textContent = `${weakPatternsList.length}`;
 
-    // Weak patterns banner
     if (dom.weakBanner && dom.weakChipsList) {
       if (weakPatternsList.length > 0) {
         dom.weakBanner.classList.remove('hidden');
@@ -326,20 +276,15 @@
     }
   }
 
-  /**
-   * Smart Today's Pattern recommendation logic:
-   * Recommends a weak pattern first, or lowest mastery / unstarted pattern, rotated by date
-   */
   function renderTodayRecommendation(patterns, weakPatternsList) {
     if (!patterns || patterns.length === 0) return;
 
     let target = null;
 
-    // Priority 1: Weak pattern
     if (weakPatternsList.length > 0) {
       target = weakPatternsList[0];
     } else {
-      // Priority 2: Not Started or Learning pattern rotated by day of year
+
       const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
       const unmastered = patterns.filter(p => calculatePatternMastery(p) !== 'Mastered');
       if (unmastered.length > 0) {
@@ -353,7 +298,7 @@
       dom.todayPatternTitle.textContent = target.name;
       if (dom.todayPatternCategory) dom.todayPatternCategory.textContent = target.categoryName;
       if (dom.todayPatternOneLiner) dom.todayPatternOneLiner.textContent = target.oneLiner;
-      
+
       if (dom.todayPatternSignals) {
         const sigs = target.recognitionSignals ? target.recognitionSignals.slice(0, 3) : [];
         dom.todayPatternSignals.innerHTML = sigs.map(s => `
@@ -370,9 +315,6 @@
     }
   }
 
-  /**
-   * Renders the category chips filter bar
-   */
   function renderCategoryChips() {
     if (!dom.categoryChipsContainer) return;
 
@@ -403,9 +345,6 @@
     `).join('');
   }
 
-  /**
-   * Renders the Pattern Catalog grid of pattern cards
-   */
   function renderPatternCatalog() {
     if (!dom.patternCardsGrid) return;
 
@@ -415,10 +354,9 @@
     const masteryFilter = catalogFilterState.mastery;
 
     const filtered = patterns.filter(pat => {
-      // 1. Category check
+
       if (catFilter !== 'all' && pat.categoryId !== catFilter) return false;
 
-      // 2. Mastery check
       const mastery = calculatePatternMastery(pat);
       if (masteryFilter !== 'all') {
         if (masteryFilter === 'mastered' && mastery !== 'Mastered') return false;
@@ -429,7 +367,6 @@
         if (masteryFilter === 'in-progress' && !['Learning', 'Practicing'].includes(mastery)) return false;
       }
 
-      // 3. Search query check (name, category, oneliner, recognition signals)
       if (query) {
         const inName = pat.name.toLowerCase().includes(query);
         const inCat = pat.categoryName.toLowerCase().includes(query);
@@ -511,9 +448,6 @@
     }).join('');
   }
 
-  /**
-   * Opens the Dedicated Pattern View for a specific pattern ID
-   */
   function openPatternStudyView(patternId) {
     const patterns = window.dsaPatternsRoadmap || [];
     const pat = patterns.find(p => p.id === patternId);
@@ -521,29 +455,22 @@
 
     currentPattern = pat;
 
-    // Mark pattern as viewed in stats
     patternStats.viewed[pat.id] = true;
     Storage.set('dsa_pattern_stats', patternStats);
     renderDashboard();
 
-    // Hide catalog section, show study section
     if (dom.catalogSection) dom.catalogSection.classList.add('hidden');
     if (dom.studyViewSection) dom.studyViewSection.classList.remove('hidden');
 
     renderPatternStudyContent(pat);
 
-    // Initialize Scroll Spy for the 9 sections
     setTimeout(() => {
       initStudyScrollSpy();
     }, 150);
 
-    // Scroll to top of study view smoothly
     window.scrollTo({ top: 120, behavior: 'smooth' });
   }
 
-  /**
-   * Closes the Dedicated Pattern View and returns to the catalog
-   */
   function closePatternStudyView() {
     disconnectStudyScrollSpy();
     currentPattern = null;
@@ -585,9 +512,6 @@
     }
   }
 
-  /**
-   * Initializes IntersectionObserver & scroll-based Scroll Spy for the 9 curriculum sections
-   */
   function initStudyScrollSpy() {
     disconnectStudyScrollSpy();
 
@@ -610,14 +534,12 @@
       if (isManualAnchorClick) return;
       if (!currentPattern || !dom.studyViewSection || dom.studyViewSection.classList.contains('hidden')) return;
 
-      // 1. If reached bottom of page (Practice Problems), guarantee sec-practice is active
       const isBottom = (window.innerHeight + window.pageYOffset) >= (document.documentElement.scrollHeight - 70);
       if (isBottom) {
         setActiveAnchor('sec-practice');
         return;
       }
 
-      // 2. Determine section currently under the sticky anchor bar
       const bar = document.getElementById('pl-study-anchor-bar');
       const barHeight = bar ? bar.offsetHeight : 54;
       const threshold = barHeight + 70;
@@ -666,9 +588,6 @@
     }
   }
 
-  /**
-   * Renders the full 12-point curriculum inside the Dedicated Pattern Study View
-   */
   function renderPatternStudyContent(pat) {
     if (!dom.studyViewContainer) return;
 
@@ -691,7 +610,6 @@
     currentPatternQuestions = patternQuestions;
     const masteryScore = calculatePatternMasteryScore(pat);
 
-    // Render curriculum content
     dom.studyViewContainer.innerHTML = `
       <!-- Study View Hero Header -->
       <div class="pl-study-hero">
@@ -952,7 +870,6 @@
       </section>
     `;
 
-    // Attach copy button listener
     const copyBtn = document.getElementById('pl-btn-copy-cpp');
     if (copyBtn) {
       copyBtn.addEventListener('click', () => {
@@ -970,20 +887,15 @@
       });
     }
 
-    // Attach quiz option listeners
     const quizOptions = dom.studyViewContainer.querySelectorAll('.pl-quiz-opt-btn');
     quizOptions.forEach(btn => {
       btn.addEventListener('click', onQuizOptionClick);
     });
 
-    // Re-initialize Scroll Spy on fresh DOM nodes and position anchor bar
     initStudyScrollSpy();
     setActiveAnchor(currentActiveSectionId);
   }
 
-  /**
-   * Generates HTML for practice questions inside the study view with strict sequential locking (1 -> 10)
-   */
   function renderPracticeQuestionsList(questions) {
     if (!questions || questions.length === 0) {
       return `<p class="text-sm text-slate-500 py-4 text-center">No questions found for this pattern.</p>`;
@@ -992,13 +904,10 @@
     const evaluations = patternStats.evaluations || {};
 
     return questions.map((q, idx) => {
-      const currentNum = idx + 1; // 1-based number
+      const currentNum = idx + 1;
       const prevNum = idx;
       const prevQ = idx > 0 ? questions[idx - 1] : null;
 
-      // Sequential lock rule:
-      // Question 1 (idx === 0) is always unlocked.
-      // Question i (idx > 0) is locked unless ALL preceding questions 0..(idx-1) have been attempted/evaluated.
       const prevQuestions = questions.slice(0, idx);
       const isLocked = idx > 0 && !prevQuestions.every(prev => {
         const evPrev = evaluations[prev.id];
@@ -1045,7 +954,6 @@
         `;
       }
 
-      // Unlocked Question Row
       let evalPillHtml = '';
       let rowStatusClass = '';
 
@@ -1090,7 +998,6 @@
         `;
       }
 
-      // Checkbox Box Custom Styling & Exact Modal Evaluation Icon
       let boxCustomClass = 'pl-eval-box';
       let boxIconHtml = '';
 
@@ -1144,9 +1051,6 @@
     }).join('');
   }
 
-  /**
-   * Handles quiz option selection in pattern study view
-   */
   function onQuizOptionClick(e) {
     const btn = e.currentTarget;
     const patId = btn.dataset.quizPat;
@@ -1164,7 +1068,6 @@
     const feedback = document.getElementById(`quiz-feedback-${patId}-${qIndex}`);
     if (!card || !feedback) return;
 
-    // Disable all options in this quiz card
     const allBtns = card.querySelectorAll('.pl-quiz-opt-btn');
     allBtns.forEach((b, idx) => {
       b.disabled = true;
@@ -1175,7 +1078,6 @@
       }
     });
 
-    // Show feedback
     feedback.classList.remove('hidden');
     const headerEl = feedback.querySelector('.pl-feedback-header');
     const explEl = feedback.querySelector('.pl-feedback-expl');
@@ -1190,7 +1092,6 @@
 
     if (explEl) explEl.textContent = quiz.explanation;
 
-    // Save quiz attempt
     if (!patternStats.quizzes[patId]) {
       patternStats.quizzes[patId] = { correct: 0, total: 0, accuracy: 0 };
     }
@@ -1208,9 +1109,6 @@
     renderDashboard();
   }
 
-  /**
-   * "🎯 Identify the Pattern" Training Arena
-   */
   function openTrainingArena() {
     if (!dom.arenaModal || !dom.arenaContainer) return;
 
@@ -1234,7 +1132,7 @@
     if (drills.length === 0 || !dom.arenaContainer) return;
 
     if (currentArenaIndex >= drills.length) {
-      // Completed all drills
+
       renderArenaSummary();
       return;
     }
@@ -1285,7 +1183,6 @@
       </div>
     `;
 
-    // Attach click listeners to arena options
     const optBtns = dom.arenaContainer.querySelectorAll('.pl-arena-opt-btn');
     optBtns.forEach(btn => {
       btn.addEventListener('click', onArenaOptionSelect);
@@ -1306,7 +1203,6 @@
       arenaScore.streak = 0;
     }
 
-    // Disable buttons
     const allBtns = dom.arenaContainer.querySelectorAll('.pl-arena-opt-btn');
     allBtns.forEach((b, idx) => {
       b.disabled = true;
@@ -1387,9 +1283,6 @@
     document.getElementById('pl-btn-arena-finish')?.addEventListener('click', closeTrainingArena);
   }
 
-  /**
-   * Question Checkbox Toggle Handler with Decoupled Storage
-   */
   function onQuestionCheckboxChange(e) {
     const checkbox = e.target.closest('.dsa-checkbox-input, .pl-question-check');
     if (!checkbox) return;
@@ -1412,18 +1305,15 @@
       delete patternStats.evaluations[qid];
     }
 
-    // Persist to dedicated Pattern Learning storage
     Storage.set('dsa_pattern_progress', dsaProgress);
     Storage.set('dsa_pattern_stats', patternStats);
 
-    // Update row styling
     const row = document.getElementById(`pl-qrow-${qid}`);
     if (row) {
       if (isChecked) row.classList.add('is-solved');
       else row.classList.remove('is-solved');
     }
 
-    // Notify pattern learning components only
     const event = new CustomEvent('dsaProgressSync', { detail: { qid, isChecked, source: 'patternLearning' } });
     window.dispatchEvent(event);
 
@@ -1433,9 +1323,6 @@
     }
   }
 
-  /**
-   * Opens the Question Solve Evaluation Modal for a specific problem
-   */
   function openSolveEvaluationModal(qid, context = 'patternLearning') {
     if (!dom.solveModal) return;
     const allQuestions = window.dsaAllQuestions || [];
@@ -1454,7 +1341,6 @@
     activeEvaluatingQuestion = q;
     activeEvaluatingContext = context || 'patternLearning';
 
-    // Refresh state from Storage
     patternStats = Storage.get('dsa_pattern_stats', { viewed: {}, quizzes: {}, weak: {}, evaluations: {} }) || {};
     if (!patternStats.evaluations) patternStats.evaluations = {};
     dsaProgress = Storage.get('dsa_pattern_progress', {}) || {};
@@ -1463,7 +1349,6 @@
     if (dom.solveModalLcNum) dom.solveModalLcNum.textContent = lcNum ? `#${lcNum}` : '';
     if (dom.solveModalTitle) dom.solveModalTitle.textContent = q.title;
 
-    // Highlight existing selection based on context
     let ev = null;
     if (activeEvaluatingContext === 'roadmap') {
       const roadmapEvaluations = Storage.get('dsa_roadmap_evaluations', {}) || {};
@@ -1487,9 +1372,6 @@
     dom.solveModal.classList.add('open');
   }
 
-  /**
-   * Closes the Question Solve Evaluation Modal
-   */
   function closeSolveEvaluationModal() {
     activeEvaluatingQuestion = null;
     activeEvaluatingContext = 'patternLearning';
@@ -1499,14 +1381,10 @@
     }
   }
 
-  /**
-   * Handles user selecting a solve quality option (self | help30 | help50 | cross)
-   */
   function onSolveOptionSelected(solveType) {
     if (!activeEvaluatingQuestion) return;
     const qid = activeEvaluatingQuestion.id;
 
-    // If evaluated from Roadmap, update Roadmap's storage ONLY
     if (activeEvaluatingContext === 'roadmap') {
       const roadmapProgress = Storage.get('dsa_progress', {}) || {};
       const roadmapEvaluations = Storage.get('dsa_roadmap_evaluations', {}) || {};
@@ -1523,7 +1401,6 @@
       return;
     }
 
-    // Pattern Learning path: save to dedicated pattern stores
     patternStats = Storage.get('dsa_pattern_stats', { viewed: {}, quizzes: {}, weak: {}, evaluations: {} }) || {};
     if (!patternStats.evaluations) patternStats.evaluations = {};
     patternStats.evaluations[qid] = solveType;
@@ -1536,7 +1413,6 @@
 
     closeSolveEvaluationModal();
 
-    // Check how many problems in this pattern have non-100% options
     let nonSelfCount = 0;
     if (currentPattern) {
       const qids = currentPattern.practiceQuestionIds || [];
@@ -1556,15 +1432,11 @@
       renderPatternStudyContent(currentPattern);
     }
 
-    // If user clicked non-100% options 2 or more times in this pattern, show excessive help blur popup!
     if (nonSelfCount >= 2 && solveType !== 'self') {
       openExcessiveHelpModal(nonSelfCount, currentPattern ? currentPattern.name : 'this pattern');
     }
   }
 
-  /**
-   * Handles resetting a question back to unattempted
-   */
   function onClearSolveEvaluation() {
     if (!activeEvaluatingQuestion) return;
     const qid = activeEvaluatingQuestion.id;
@@ -1609,9 +1481,6 @@
     }
   }
 
-  /**
-   * Opens the Locked Question Sequence Alert Modal
-   */
   function openLockedModal(qNum, prevNum, prevQid, prevTitle) {
     if (!dom.lockedModal) return;
 
@@ -1640,9 +1509,6 @@
     dom.lockedModal.classList.add('open');
   }
 
-  /**
-   * Closes the Locked Question Sequence Alert Modal
-   */
   function closeLockedModal() {
     if (dom.lockedModal) {
       dom.lockedModal.classList.remove('open');
@@ -1650,9 +1516,6 @@
     }
   }
 
-  /**
-   * Opens the Excessive Assistance Alert Modal (>= 2 Non-100% Solves)
-   */
   function openExcessiveHelpModal(count, patName) {
     if (!dom.excessiveModal) return;
 
@@ -1666,9 +1529,6 @@
     dom.excessiveModal.classList.add('open');
   }
 
-  /**
-   * Closes the Excessive Assistance Alert Modal
-   */
   function closeExcessiveHelpModal() {
     if (dom.excessiveModal) {
       dom.excessiveModal.classList.remove('open');
@@ -1676,21 +1536,16 @@
     }
   }
 
-  /**
-   * Sync event listener when other components modify progress
-   */
   function onProgressSync(e) {
     const { source, qid, isChecked } = e.detail || {};
 
-    // Roadmap actions must NEVER mutate Pattern Learning!
     if (source === 'roadmap' || source === 'roadmapReset') return;
-    if (source === 'patternLearning') return; // Already handled locally
+    if (source === 'patternLearning') return;
 
     dsaProgress = Storage.get('dsa_pattern_progress', {}) || {};
     patternStats = Storage.get('dsa_pattern_stats', { viewed: {}, quizzes: {}, weak: {}, evaluations: {} }) || {};
     if (!patternStats.evaluations) patternStats.evaluations = {};
 
-    // Update practice questions checkbox if visible
     if (qid) {
       const check = document.querySelector(`.pl-question-check[data-qid="${qid}"]`);
       if (check) check.checked = isChecked;
@@ -1707,11 +1562,8 @@
     }
   }
 
-  /**
-   * Attaches interactive event listeners
-   */
   function attachEventListeners() {
-    // 0. Anchor Bar Navigation within Pattern Study View
+
     document.addEventListener('click', (e) => {
       const anchor = e.target.closest('.pl-anchor-link');
       if (!anchor) return;
@@ -1741,7 +1593,6 @@
       });
     });
 
-    // 1. Dual View Tab Pill Switching (Roadmap vs Pattern Learning)
     if (dom.tabRoadmap && dom.tabPatterns) {
       dom.tabRoadmap.addEventListener('click', () => {
         dom.tabRoadmap.classList.add('active');
@@ -1765,13 +1616,12 @@
       });
     }
 
-    // 2. Delegated study pattern clicks across cards and recommendations
     document.addEventListener('click', (e) => {
       const studyBtn = e.target.closest('[data-study-pattern]');
       if (studyBtn) {
         const pid = studyBtn.dataset.studyPattern;
         if (pid) {
-          // Switch to Pattern Learning tab if in Roadmap
+
           if (dom.tabPatterns && !dom.tabPatterns.classList.contains('active')) {
             dom.tabPatterns.click();
           }
@@ -1780,12 +1630,10 @@
       }
     });
 
-    // 3. Back to catalog button
     if (dom.btnBackToCatalog) {
       dom.btnBackToCatalog.addEventListener('click', closePatternStudyView);
     }
 
-    // Delegated click on practice questions to open Problem Detail (ONLY on Explain button)
     document.addEventListener('click', (e) => {
       const explainBtn = e.target.closest('#pl-practice-list .dsa-btn-explain, #pl-practice-list [data-open-explain]');
       if (!explainBtn) return;
@@ -1798,7 +1646,6 @@
       }
     });
 
-    // 4. Catalog Search Input
     if (dom.catalogSearch) {
       dom.catalogSearch.addEventListener('input', (e) => {
         catalogFilterState.search = e.target.value;
@@ -1822,7 +1669,6 @@
       });
     }
 
-    // 5. Category Chips selection
     if (dom.categoryChipsContainer) {
       dom.categoryChipsContainer.addEventListener('click', (e) => {
         const chip = e.target.closest('.pl-category-chip');
@@ -1838,7 +1684,6 @@
       });
     }
 
-    // 6. Mastery segmented filter
     if (dom.masteryFilterSegments) {
       dom.masteryFilterSegments.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -1850,7 +1695,6 @@
       });
     }
 
-    // 7. Arena Launcher
     if (dom.btnLaunchArena) {
       dom.btnLaunchArena.addEventListener('click', openTrainingArena);
     }
@@ -1865,7 +1709,6 @@
       });
     }
 
-    // 8. Quick Pattern Filters Chips
     const quickChips = document.querySelectorAll('[data-pl-quick-filter]');
     quickChips.forEach(chip => {
       chip.addEventListener('click', () => {
@@ -1886,7 +1729,6 @@
       });
     });
 
-    // 9. Reset Pattern Learning Modal Controls
     if (dom.btnReset && dom.resetModal) {
       dom.btnReset.addEventListener('click', () => {
         dom.resetModal.classList.remove('hidden');
@@ -1929,7 +1771,6 @@
       });
     }
 
-    // 10. Question Solve Evaluation Modal Controls
     if (dom.solveModalClose) {
       dom.solveModalClose.addEventListener('click', closeSolveEvaluationModal);
     }
@@ -1950,7 +1791,6 @@
       });
     }
 
-    // 11. Locked Question Sequence Modal Controls
     if (dom.btnLockedCancel) {
       dom.btnLockedCancel.addEventListener('click', closeLockedModal);
     }
@@ -1963,7 +1803,6 @@
       });
     }
 
-    // 12. Excessive Assistance Alert Modal Controls
     if (dom.btnExcessiveDismiss) {
       dom.btnExcessiveDismiss.addEventListener('click', closeExcessiveHelpModal);
     }
@@ -1986,7 +1825,6 @@
       });
     }
 
-    // Handle clicking evaluation options (Self, AI Help 30%, AI Help 50%, Cross)
     if (dom.solveModalOptions) {
       dom.solveModalOptions.addEventListener('click', (e) => {
         const btn = e.target.closest('.pl-solve-opt-btn');
@@ -1998,10 +1836,9 @@
       });
     }
 
-    // Delegated click for question rows (locked clicks & evaluation clicks)
     if (dom.studyViewContainer) {
       dom.studyViewContainer.addEventListener('click', (e) => {
-        // A. If clicked a locked question or its lock icon/pill
+
         const lockedTrigger = e.target.closest('.pl-trigger-locked') || e.target.closest('.pl-locked-question');
         if (lockedTrigger) {
           e.preventDefault();
@@ -2014,7 +1851,6 @@
           return;
         }
 
-        // B. If clicked to evaluate an unlocked question
         const trigger = e.target.closest('.pl-trigger-eval');
         if (trigger) {
           e.preventDefault();
@@ -2024,7 +1860,7 @@
         }
       });
     }
-    // Listen for open evaluation modal requests from Roadmap
+
     window.addEventListener('openDsaSolveModal', (e) => {
       if (e.detail && e.detail.qid) {
         openSolveEvaluationModal(e.detail.qid, e.detail.context || 'patternLearning');
@@ -2032,7 +1868,6 @@
     });
   }
 
-  // Expose API on namespace
   window.DsaPatternController = {
     init,
     openPatternStudyView,
@@ -2041,7 +1876,6 @@
     openSolveEvaluationModal
   };
 
-  // Run on DOM ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {

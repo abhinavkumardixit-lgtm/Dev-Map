@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+
 """
 DevPilot-AI — Comprehensive 28 Patterns Curriculum (12-Point Learning Framework)
 Covers all 28 patterns across 16 major DSA categories:
@@ -8,7 +8,7 @@ Complexity, Pitfalls, C++ template, Walkthrough trace, and Quizzes.
 
 def get_patterns_curriculum():
     patterns = [
-        # 1. Array - Two Pointers
+
         {
             "id": "array-two-pointers",
             "name": "Two Pointers",
@@ -45,7 +45,6 @@ def get_patterns_curriculum():
                 "Integer overflow during `nums[left] + nums[right]` check with extreme 32-bit values."
             ],
             "cppTemplate": """// Template: Converging Two Pointers (e.g., Pair Search in Sorted Array)
-#include <vector>
 
 std::vector<int> twoPointersSearch(std::vector<int>& nums, int target) {
     int left = 0;
@@ -91,7 +90,6 @@ std::vector<int> twoPointersSearch(std::vector<int>& nums, int target) {
             ]
         },
 
-        # 2. Array - Sliding Window
         {
             "id": "array-sliding-window",
             "name": "Sliding Window",
@@ -126,8 +124,6 @@ std::vector<int> twoPointersSearch(std::vector<int>& nums, int target) {
                 "Off-by-one error when calculating window size: size is `(right - left + 1)`, not `(right - left)`."
             ],
             "cppTemplate": """// Template: Dynamic Sliding Window (Shortest Subarray with Sum >= target)
-#include <vector>
-#include <algorithm>
 
 int minSubArrayLen(int target, std::vector<int>& nums) {
     int left = 0, currentSum = 0;
@@ -163,7 +159,6 @@ int minSubArrayLen(int target, std::vector<int>& nums) {
             ]
         },
 
-        # 3. Array - Prefix Based
         {
             "id": "array-prefix-based",
             "name": "Prefix Based",
@@ -198,8 +193,6 @@ int minSubArrayLen(int target, std::vector<int>& nums) {
                 "Modulo arithmetic in 'divisible by K' problems: negative remainder must be normalized via `((rem % k) + k) % k`."
             ],
             "cppTemplate": """// Template: Prefix Sum with Hash Map (Subarray Sum Equals K)
-#include <vector>
-#include <unordered_map>
 
 int subarraySum(std::vector<int>& nums, int k) {
     std::unordered_map<int, int> prefixCounts;
@@ -236,7 +229,6 @@ int subarraySum(std::vector<int>& nums, int k) {
             ]
         },
 
-        # 4. Array - Kadane's / Subarray
         {
             "id": "array-kadanes-subarray",
             "name": "Kadane's / Subarray",
@@ -270,8 +262,6 @@ int subarraySum(std::vector<int>& nums, int k) {
                 "In Circular Subarray, edge case where all numbers are negative causes `totalSum - minSum == 0`."
             ],
             "cppTemplate": """// Template: Kadane's Algorithm for Maximum Subarray Sum
-#include <vector>
-#include <algorithm>
 
 int maxSubArray(std::vector<int>& nums) {
     int currentSum = nums[0];
@@ -304,7 +294,6 @@ int maxSubArray(std::vector<int>& nums) {
             ]
         },
 
-        # 5. Array - Binary Search
         {
             "id": "array-binary-search",
             "name": "Binary Search",
@@ -339,7 +328,6 @@ int maxSubArray(std::vector<int>& nums) {
                 "In rotated arrays with duplicates (LC #81), worst-case degrades to O(N) when `nums[left] == nums[mid] == nums[right]`."
             ],
             "cppTemplate": """// Template: Binary Search on Answer Space (Lower Bound / Minimum Feasible)
-#include <vector>
 
 bool isFeasible(int mid, const std::vector<int>& weights, int days);
 
@@ -378,7 +366,6 @@ int shipWithinDays(std::vector<int>& weights, int days) {
             ]
         },
 
-        # 6. String - Sliding Window
         {
             "id": "string-sliding-window",
             "name": "Sliding Window",
@@ -404,9 +391,6 @@ int shipWithinDays(std::vector<int>& weights, int days) {
             "complexity": {"time": "O(N)", "space": "O(1) (alphabet size <= 128)", "note": "Linear scan over string."},
             "pitfalls": ["Allocating new substrings inside the loop causing O(N^2) time.", "Failing to handle uppercase vs lowercase distinctions."],
             "cppTemplate": """// Template: Longest Substring Without Repeating Characters
-#include <string>
-#include <vector>
-#include <algorithm>
 
 int lengthOfLongestSubstring(std::string s) {
     std::vector<int> lastIndex(256, -1);
@@ -442,7 +426,6 @@ int lengthOfLongestSubstring(std::string s) {
             ]
         },
 
-        # 7. String - Two Pointers
         {
             "id": "string-two-pointers",
             "name": "Two Pointers",
@@ -459,8 +442,6 @@ int lengthOfLongestSubstring(std::string s) {
             "complexity": {"time": "O(N)", "space": "O(1)", "note": "Constant space in-place comparisons."},
             "pitfalls": ["Forgetting to skip non-alphanumeric characters and lowercase comparison in Valid Palindrome.", "Overlooking out-of-bounds pointer advancement when using nested while loops to skip delimiters or whitespace."],
             "cppTemplate": """// Template: Valid Palindrome (ignoring non-alphanumeric)
-#include <string>
-#include <cctype>
 
 bool isPalindrome(std::string s) {
     int left = 0, right = s.size() - 1;
@@ -490,7 +471,6 @@ bool isPalindrome(std::string s) {
             ]
         },
 
-        # 8. String - Pattern Matching
         {
             "id": "string-pattern-matching",
             "name": "Pattern Matching",
@@ -507,8 +487,6 @@ bool isPalindrome(std::string s) {
             "complexity": {"time": "O(N + M)", "space": "O(M)", "note": "Linear in text and pattern lengths."},
             "pitfalls": ["Integer overflow in rolling hash; use 64-bit integers and prime modulo arithmetic.", "Hash collisions in Rabin-Karp rolling hash when working with large strings without 64-bit integer arithmetic or double hashing modulo 10^9+7."],
             "cppTemplate": """// Template: KMP LPS Table Construction & Search
-#include <string>
-#include <vector>
 
 std::vector<int> buildLPS(const std::string& pat) {
     int m = pat.size();
@@ -544,7 +522,6 @@ std::vector<int> buildLPS(const std::string& pat) {
             ]
         },
 
-        # 9. Hash Map - Frequency Based
         {
             "id": "hashmap-frequency",
             "name": "Frequency Based",
@@ -561,8 +538,6 @@ std::vector<int> buildLPS(const std::string& pat) {
             "complexity": {"time": "O(N)", "space": "O(U) where U is unique elements", "note": "Linear pass."},
             "pitfalls": ["Using `std::map` (O(log N) operations) when `std::unordered_map` or an array gives O(1).", "Using default integer keys instead of composite string serializations for multidimensional state counters."],
             "cppTemplate": """// Template: Character Frequency Map
-#include <string>
-#include <vector>
 
 bool isAnagram(std::string s, std::string t) {
     if (s.size() != t.size()) return false;
@@ -591,7 +566,6 @@ bool isAnagram(std::string s, std::string t) {
             ]
         },
 
-        # 10. Hash Map - Lookup Based
         {
             "id": "hashmap-lookup",
             "name": "Lookup Based",
@@ -608,8 +582,6 @@ bool isAnagram(std::string s, std::string t) {
             "complexity": {"time": "O(N)", "space": "O(N)", "note": "O(1) average hash lookup."},
             "pitfalls": ["Inserting current element before checking complement (can match element with itself if target == 2 * num).", "Overlooking duplicate elements when mapping values to indices, inadvertently overwriting previous valid indices during iteration."],
             "cppTemplate": """// Template: Two Sum via Hash Map Lookup
-#include <vector>
-#include <unordered_map>
 
 std::vector<int> twoSum(std::vector<int>& nums, int target) {
     std::unordered_map<int, int> seen;
@@ -640,7 +612,6 @@ std::vector<int> twoSum(std::vector<int>& nums, int target) {
             ]
         },
 
-        # 11. Hash Map - Grouping Pattern
         {
             "id": "hashmap-grouping",
             "name": "Grouping & Index Mapping",
@@ -657,10 +628,6 @@ std::vector<int> twoSum(std::vector<int>& nums, int target) {
             "complexity": {"time": "O(N * K log K)", "space": "O(N * K)", "note": "Grouping into hash buckets."},
             "pitfalls": ["Key collision if canonical string is not properly delimited (e.g., counts 1 and 11 colliding with 11 and 1).", "Memory bloat when grouping massive strings without clearing intermediate stringstream buffers or canonical key representations."],
             "cppTemplate": """// Template: Group Anagrams
-#include <vector>
-#include <string>
-#include <unordered_map>
-#include <algorithm>
 
 std::vector<std::vector<std::string>> groupAnagrams(std::vector<std::string>& strs) {
     std::unordered_map<std::string, std::vector<std::string>> groups;
@@ -692,7 +659,6 @@ std::vector<std::vector<std::string>> groupAnagrams(std::vector<std::string>& st
             ]
         },
 
-        # 12. Stack - Monotonic Stack
         {
             "id": "stack-monotonic",
             "name": "Monotonic Stack",
@@ -718,8 +684,6 @@ std::vector<std::vector<std::string>> groupAnagrams(std::vector<std::string>& st
             "complexity": {"time": "O(N)", "space": "O(N)", "note": "Each index is pushed and popped at most once."},
             "pitfalls": ["Storing values instead of indices (indices are needed to calculate widths and distances).", "Off-by-one errors with empty stack boundaries."],
             "cppTemplate": """// Template: Next Greater Element / Daily Temperatures
-#include <vector>
-#include <stack>
 
 std::vector<int> dailyTemperatures(std::vector<int>& temperatures) {
     int n = temperatures.size();
@@ -757,7 +721,6 @@ std::vector<int> dailyTemperatures(std::vector<int>& temperatures) {
             ]
         },
 
-        # 13. Stack - Expression Handling
         {
             "id": "stack-expressions",
             "name": "Min/Max & Expression Handling",
@@ -774,8 +737,6 @@ std::vector<int> dailyTemperatures(std::vector<int>& temperatures) {
             "complexity": {"time": "O(N)", "space": "O(N)", "note": "Linear scan with stack memory."},
             "pitfalls": ["Empty stack access when encountering an unexpected closing bracket.", "Integer division truncating towards zero in negative numbers."],
             "cppTemplate": """// Template: Valid Parentheses Matcher
-#include <string>
-#include <stack>
 
 bool isValid(std::string s) {
     std::stack<char> st;
@@ -808,7 +769,6 @@ bool isValid(std::string s) {
             ]
         },
 
-        # 14. Queue / Deque
         {
             "id": "queue-processing",
             "name": "FIFO & Deque Processing",
@@ -825,8 +785,6 @@ bool isValid(std::string s) {
             "complexity": {"time": "O(N)", "space": "O(K)", "note": "Each element is inserted and removed at most once."},
             "pitfalls": ["Forgetting to evict indices that are older than the window boundary `right - k` from the front of the deque.", "Pushing visited nodes back into queue due to marking 'visited' on dequeue rather than upon enqueue, causing exponential duplicate states."],
             "cppTemplate": """// Template: Sliding Window Maximum via Monotonic Deque
-#include <vector>
-#include <deque>
 
 std::vector<int> maxSlidingWindow(std::vector<int>& nums, int k) {
     std::deque<int> dq; // Stores indices
@@ -861,7 +819,6 @@ std::vector<int> maxSlidingWindow(std::vector<int>& nums, int k) {
             ]
         },
 
-        # 15. Linked List - Pointer Techniques
         {
             "id": "ll-pointer-techniques",
             "name": "Pointer Techniques & Cycle Detection",
@@ -878,7 +835,6 @@ std::vector<int> maxSlidingWindow(std::vector<int>& nums, int k) {
             "complexity": {"time": "O(N)", "space": "O(1)", "note": "Zero heap allocations."},
             "pitfalls": ["Null pointer dereference with `fast->next->next` when `fast` or `fast->next` is null.", "Dereferencing nullptr on fast->next when advancing fast pointer by two steps without checking fast != nullptr first."],
             "cppTemplate": """// Template: Floyd's Cycle Detection
-#include <cstddef>
 
 struct ListNode { int val; ListNode *next; ListNode(int x) : val(x), next(nullptr) {} };
 
@@ -910,7 +866,6 @@ bool hasCycle(ListNode *head) {
             ]
         },
 
-        # 16. Linked List - Reversal & Merge
         {
             "id": "ll-reversal-merge",
             "name": "Reversal & Merge Lists",
@@ -927,7 +882,6 @@ bool hasCycle(ListNode *head) {
             "complexity": {"time": "O(N)", "space": "O(1)", "note": "Re-wires existing node pointers in place."},
             "pitfalls": ["Losing reference to `curr->next` before redirecting `curr->next = prev`.", "Memory leaks if not properly handling head pointers."],
             "cppTemplate": """// Template: In-Place Reverse Linked List
-#include <cstddef>
 
 struct ListNode { int val; ListNode *next; ListNode(int x) : val(x), next(nullptr) {} };
 
@@ -961,7 +915,6 @@ ListNode* reverseList(ListNode* head) {
             ]
         },
 
-        # 17. Trees - Traversal & Recursion
         {
             "id": "trees-traversal",
             "name": "Traversal & Recursion Patterns",
@@ -982,7 +935,6 @@ ListNode* reverseList(ListNode* head) {
             "complexity": {"time": "O(N)", "space": "O(H) where H is tree height", "note": "Visits each node once."},
             "pitfalls": ["Not handling the base case `if (!root) return ...` causing immediate crashes.", "Double counting path sums when traversing tree branches without resetting path tracker in post-order unwind."],
             "cppTemplate": """// Template: Bottom-Up Tree DFS (Diameter of Binary Tree)
-#include <algorithm>
 
 struct TreeNode { int val; TreeNode *left, *right; };
 
@@ -1018,7 +970,6 @@ int diameterOfBinaryTree(TreeNode* root) {
             ]
         },
 
-        # 18. Trees - Binary Search Trees
         {
             "id": "trees-bst",
             "name": "Binary Search Trees (BST)",
@@ -1035,7 +986,6 @@ int diameterOfBinaryTree(TreeNode* root) {
             "complexity": {"time": "O(H) = O(log N) balanced", "space": "O(H) recursion stack", "note": "Worst-case O(N) if skewed."},
             "pitfalls": ["Checking only immediate children instead of full subtree bounds `(minVal, maxVal)` during BST validation.", "Integer overflow when initializing BST validation bounds with INT_MIN and INT_MAX instead of long long or pointer wrappers."],
             "cppTemplate": """// Template: Validate BST via Range Bounds
-#include <cstddef>
 
 struct TreeNode { int val; TreeNode *left, *right; };
 
@@ -1068,7 +1018,6 @@ bool isValidBST(TreeNode* root) {
             ]
         },
 
-        # 19. Recursion & Backtracking
         {
             "id": "recursion-backtracking",
             "name": "Backtracking & Exploration",
@@ -1095,7 +1044,6 @@ bool isValidBST(TreeNode* root) {
             "complexity": {"time": "O(2^N) or O(N!)", "space": "O(N) recursion stack", "note": "Exhaustive exploration."},
             "pitfalls": ["Forgetting to pop_back() or undo the choice after recursing, corrupting subsequent sibling paths.", "Forgetting to undo state modification (backtrack step) after recursive call returns, corrupting search path for sibling branches."],
             "cppTemplate": """// Template: Standard Backtracking (Subsets)
-#include <vector>
 
 void backtrack(int start, std::vector<int>& nums, std::vector<int>& current, std::vector<std::vector<int>>& result) {
     result.push_back(current); // Record valid state
@@ -1132,7 +1080,6 @@ std::vector<std::vector<int>> subsets(std::vector<int>& nums) {
             ]
         },
 
-        # 20. Heap / Priority Queue
         {
             "id": "heap-top-k",
             "name": "Top K & Greedy Heaps",
@@ -1153,8 +1100,6 @@ std::vector<std::vector<int>> subsets(std::vector<int>& nums) {
             "complexity": {"time": "O(N log K)", "space": "O(K)", "note": "Logarithmic insertions and constant minimum access."},
             "pitfalls": ["Using a Max-Heap when finding K largest elements (requires storing all N elements, taking O(N log N) space/time instead of O(N log K)).", "Custom comparator logic inverted: in C++ priority_queue<T>, greater<T> yields min-heap, whereas in std::sort it yields descending order."],
             "cppTemplate": """// Template: Top K Elements using Min-Heap
-#include <vector>
-#include <queue>
 
 int findKthLargest(std::vector<int>& nums, int k) {
     // Min-heap
@@ -1188,7 +1133,6 @@ int findKthLargest(std::vector<int>& nums, int k) {
             ]
         },
 
-        # 21. Graphs - Traversal & Cycles
         {
             "id": "graphs-traversal-cycles",
             "name": "Traversal & Topological Sort",
@@ -1209,8 +1153,6 @@ int findKthLargest(std::vector<int>& nums, int k) {
             "complexity": {"time": "O(V + E)", "space": "O(V + E)", "note": "Linear in vertices and edges."},
             "pitfalls": ["Forgetting to mark nodes visited, causing infinite loops on cyclic graphs.", "Failing to reset 3-color state in directed graph cycle detection, mistaking cross-edges for back-edges."],
             "cppTemplate": """// Template: Topological Sort via Kahn's Algorithm (BFS)
-#include <vector>
-#include <queue>
 
 bool canFinish(int numCourses, std::vector<std::vector<int>>& prerequisites) {
     std::vector<std::vector<int>> adj(numCourses);
@@ -1256,7 +1198,6 @@ bool canFinish(int numCourses, std::vector<std::vector<int>>& prerequisites) {
             ]
         },
 
-        # 22. Graphs - DSU & Shortest Path
         {
             "id": "graphs-dsu-shortest-path",
             "name": "Shortest Path & Union-Find (DSU)",
@@ -1276,7 +1217,6 @@ bool canFinish(int numCourses, std::vector<std::vector<int>>& prerequisites) {
             "complexity": {"time": "DSU: O(alpha(N)), Dijkstra: O((V + E) log V)", "space": "O(V + E)", "note": "Near-optimal graph processing."},
             "pitfalls": ["Using Dijkstra on graphs with negative edge weights (requires Bellman-Ford or SPFA instead).", "Using standard BFS instead of Dijkstra's algorithm for graphs with positive non-uniform edge weights, producing suboptimal path lengths."],
             "cppTemplate": """// Template: Disjoint Set Union (DSU) with Path Compression & Rank
-#include <vector>
 
 class DSU {
 public:
@@ -1316,7 +1256,6 @@ public:
             ]
         },
 
-        # 23. Trie
         {
             "id": "trie-prefix-bitwise",
             "name": "Prefix & Bitwise Trie",
@@ -1336,8 +1275,6 @@ public:
             "complexity": {"time": "O(L) per insert/search", "space": "O(Total characters)", "note": "L is the length of the query string."},
             "pitfalls": ["High memory consumption; clean up dynamically allocated nodes or use array-based flat Tries.", "Index out of bounds when input contains uppercase or non-ASCII characters while Trie is indexed strictly by c - 'a'."],
             "cppTemplate": """// Template: Trie (Prefix Tree) Implementation
-#include <string>
-#include <vector>
 
 class Trie {
     struct TrieNode {
@@ -1387,7 +1324,6 @@ public:
             ]
         },
 
-        # 24. DP - Linear & Grid
         {
             "id": "dp-linear-grid",
             "name": "1D & 2D Grid / Linear DP",
@@ -1407,8 +1343,6 @@ public:
             "complexity": {"time": "O(N) or O(M * N)", "space": "O(N) or O(1) space optimized", "note": "Polynomial subproblem evaluations."},
             "pitfalls": ["Base case initialization errors (e.g. `dp[0]` not accounting for 0 elements).", "Index out of bounds on `dp[i-2]`."],
             "cppTemplate": """// Template: House Robber (1D DP with Space Optimization)
-#include <vector>
-#include <algorithm>
 
 int rob(std::vector<int>& nums) {
     if (nums.empty()) return 0;
@@ -1441,7 +1375,6 @@ int rob(std::vector<int>& nums) {
             ]
         },
 
-        # 25. DP - Knapsack & Sequences
         {
             "id": "dp-knapsack-sequences",
             "name": "Knapsack & Sequences",
@@ -1462,8 +1395,6 @@ int rob(std::vector<int>& nums) {
             "complexity": {"time": "O(N * W)", "space": "O(W) 1D space optimized", "note": "Pseudo-polynomial knapsack complexity."},
             "pitfalls": ["Iterating forward in 0/1 Knapsack (causes items to be counted multiple times).", "Overlapping subproblem memo table dimension mismatch between 1-based indexing and 0-based string coordinates."],
             "cppTemplate": """// Template: Coin Change (Fewest Coins - Unbounded Knapsack)
-#include <vector>
-#include <algorithm>
 
 int coinChange(std::vector<int>& coins, int amount) {
     std::vector<int> dp(amount + 1, 1e9);
@@ -1495,7 +1426,6 @@ int coinChange(std::vector<int>& coins, int amount) {
             ]
         },
 
-        # 26. Greedy
         {
             "id": "greedy-intervals-jumps",
             "name": "Intervals & Scheduling Greedy",
@@ -1516,8 +1446,6 @@ int coinChange(std::vector<int>& coins, int amount) {
             "complexity": {"time": "O(N log N) sorting + O(N) pass", "space": "O(N) for output", "note": "Dominated by sorting."},
             "pitfalls": ["Sorting by the wrong endpoint (e.g. sorting by start time instead of end time in activity selection).", "Assuming local greedy choice is globally optimal without verifying the greedy-choice property or optimal substructure."],
             "cppTemplate": """// Template: Merge Overlapping Intervals
-#include <vector>
-#include <algorithm>
 
 std::vector<std::vector<int>> merge(std::vector<std::vector<int>>& intervals) {
     if (intervals.empty()) return {};
@@ -1556,7 +1484,6 @@ std::vector<std::vector<int>> merge(std::vector<std::vector<int>>& intervals) {
             ]
         },
 
-        # 27. Bit Manipulation
         {
             "id": "bit-core-masking",
             "name": "XOR & Bit Masking",
@@ -1577,7 +1504,6 @@ std::vector<std::vector<int>> merge(std::vector<std::vector<int>>& intervals) {
             "complexity": {"time": "O(1) or O(N)", "space": "O(1)", "note": "Fastest primitive CPU instructions."},
             "pitfalls": ["Operator precedence in C++: `+` has higher precedence than `<<` or `^`! Always use parentheses: `(1 << k)`.", "Undefined behavior with negative shifts or shifting by >= 32 bits on 32-bit integers; use 1ULL << shift for 64-bit masks."],
             "cppTemplate": """// Template: Single Number & Bit Operations
-#include <vector>
 
 int singleNumber(std::vector<int>& nums) {
     int xorSum = 0;
@@ -1609,7 +1535,6 @@ bool isPowerOfTwo(int n) {
             ]
         },
 
-        # 28. Sorting Algorithms
         {
             "id": "sorting-algorithms",
             "name": "Classic Sort Algorithms",
@@ -1630,8 +1555,6 @@ bool isPowerOfTwo(int n) {
             "complexity": {"time": "O(N) for Cyclic Sort, O(N log N) for comparison sort", "space": "O(1) in-place", "note": "Linear in-place array placements."},
             "pitfalls": ["Infinite loops in Cyclic Sort when duplicates exist: always check nums[i] != nums[nums[i] - 1] before swapping.", "Off-by-one errors in merge sort midpoint calculation causing infinite recursion when left + 1 == right."],
             "cppTemplate": """// Template: Cyclic Sort (Find First Missing Positive)
-#include <vector>
-#include <algorithm>
 
 int firstMissingPositive(std::vector<int>& nums) {
     int n = nums.size();
@@ -1665,7 +1588,6 @@ int firstMissingPositive(std::vector<int>& nums) {
             ]
         },
 
-        # 29. Range Structures
         {
             "id": "range-trees",
             "name": "Segment & Fenwick Trees",
@@ -1685,7 +1607,6 @@ int firstMissingPositive(std::vector<int>& nums) {
             "complexity": {"time": "O(log N) per update and query", "space": "O(N) for Fenwick, O(4N) for Segment Tree", "note": "Logarithmic dynamic range aggregations."},
             "pitfalls": ["Fenwick tree requires 1-based indexing; index 0 causes infinite loops with `i & (-i)`.", "Forgetting to push pending lazy tags down to child nodes before querying or updating child intervals in lazy propagation."],
             "cppTemplate": """// Template: Fenwick Tree (Binary Indexed Tree)
-#include <vector>
 
 class FenwickTree {
     std::vector<int> tree;

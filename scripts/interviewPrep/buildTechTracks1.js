@@ -1,5 +1,3 @@
-// scripts/interviewPrep/buildTechTracks1.js
-// Generates webDevelopment.js (14 topics * 10 = 140 MCQs) and git.js (10 topics * 10 = 100 MCQs)
 
 const fs = require('fs');
 const path = require('path');
@@ -16,10 +14,9 @@ function q(id, topic, difficulty, question, options, correctAnswer, explanation)
   return { id, topic, difficulty, question, options, correctAnswer, explanation };
 }
 
-// 14. WEB DEVELOPMENT (14 topics * 10 = 140 questions)
 console.log('Generating Web Development questions...');
 const webQuestions = [
-  // 1. HTML5 Semantics & Web Standards
+
   q('wd_h5_1', 'HTML5 Semantics & Web Standards', 'Easy',
     'Which HTML5 element should be used to encapsulate self-contained content that could be distributed independently (such as a blog post or news story)?',
     ['<section>', '<article>', '<aside>', '<div>'], 1,
@@ -61,7 +58,6 @@ const webQuestions = [
     ['It compresses network requests', 'It prevents the opened window from accessing `window.opener` to redirect the parent page (reverse tabnabbing security vulnerability) and suppresses the Referer header', 'It forces links to open in incognito mode', 'It boosts Google PageRank ranking'], 1,
     'Without `noopener`, the target window can manipulate `window.opener.location` to phishing pages (reverse tabnabbing) and runs on the same process thread, degrading performance.'),
 
-  // 2. Modern CSS (Flexbox, Grid, Custom Properties, Animations)
   q('wd_css_1', 'Modern CSS', 'Easy',
     'Which CSS property enables a Flexbox layout on a container element?',
     ['display: flex;', 'flex-direction: row;', 'align-items: center;', 'float: flex;'], 0,
@@ -103,7 +99,6 @@ const webQuestions = [
     ['Container queries only work in SVG containers', 'Media queries respond to the global browser viewport dimensions; Container queries respond to the specific width/height of a parent container element, enabling truly modular responsive components', 'Container queries style Docker containers', 'Container queries replace CSS Flexbox completely'], 1,
     'Container Queries allow a component to inspect the dimensions of its immediate parent container rather than the overall browser window, allowing a component to render as a card in a sidebar and as a horizontal banner in the main area seamlessly.'),
 
-  // 3. JavaScript Core Concepts (Scope, Closures, Hoisting)
   q('wd_js_1', 'JavaScript Core Concepts', 'Easy',
     'What is the difference between `var`, `let`, and `const` regarding scope?',
     ['`var` is block-scoped; `let` and `const` are function-scoped', '`var` is function-scoped and hoisted with undefined; `let` and `const` are block-scoped and reside in the Temporal Dead Zone (TDZ) before declaration', '`const` can be reassigned freely', '`let` is global only'], 1,
@@ -145,7 +140,6 @@ const webQuestions = [
     ['Shallow copy creates a new object; deep copy does not', 'Shallow copy duplicates top-level properties but copies references for nested objects; `JSON.parse(JSON.stringify())` fails to clone Functions, `undefined`, Symbols, Dates (converted to string), Maps/Sets, and throws on circular references', 'JSON cloning works on all JavaScript types flawlessly', 'Object.assign() creates a deep clone'], 1,
     '`JSON.parse(JSON.stringify(obj))` destroys non-JSON types (`undefined`, functions, symbols, BigInt) and crashes on circular graphs. Modern JavaScript provides `structuredClone()` for native deep cloning of complex objects.'),
 
-  // 4. Asynchronous JS (Event Loop, Promises, Async/Await)
   q('wd_async_1', 'Asynchronous JS', 'Easy',
     'Is JavaScript single-threaded or multi-threaded in its main execution context?',
     ['Multi-threaded with 8 worker threads by default', 'Single-threaded: it has one call stack and executes one operation at a time on the main thread', 'Hardware dependent', 'Runs on multiple threads without locks'], 1,
@@ -187,7 +181,6 @@ const webQuestions = [
     ['By running code in try/catch without await', 'By listening to the global `unhandledrejection` event on `window` (or `process.on("unhandledRejection")` in Node) and ensuring all promises have `.catch()` or are wrapped in try/catch with await', 'By disabling promises in package.json', 'By using only callbacks'], 1,
     'Unhandled promise rejections trigger the `window.addEventListener("unhandledrejection")` event in browsers and can terminate Node processes. Robust code uses global rejection hooks and local try/catch with `await`.'),
 
-  // 5. DOM Manipulation & Browser Rendering Engine
   q('wd_dom_1', 'DOM Manipulation & Browser Rendering', 'Easy',
     'What is the DOM (Document Object Model)?',
     ['A JavaScript compiler', 'A programming interface for HTML and XML documents representing the page as a structured tree of nodes/objects that programs can manipulate', 'A CSS layout framework', 'A network socket for browsers'], 1,
@@ -231,8 +224,7 @@ const webQuestions = [
 ];
 
 const gitQuestions = [
-  // 15. GIT & VERSION CONTROL (10 topics * 10 = 100 questions)
-  // 1. Git Architecture & Object Model
+
   q('git_arch_1', 'Git Architecture & Object Model', 'Easy',
     'What are the four fundamental object types stored inside the `.git/objects` directory?',
     ['File, Folder, Branch, Tag', 'Blob, Tree, Commit, and Annotated Tag', 'Head, Index, Remote, Config', 'Delta, Patch, Stash, Pack'], 1,
@@ -275,7 +267,6 @@ const gitQuestions = [
     'The index is a binary cache mapping file paths to blob SHAs and stat cache info. When you `git add`, blobs are written to `.git/objects` and the index references them. `git commit` simply writes Tree objects directly from this pre-computed index.')
 ];
 
-// Write webDevelopment.js
 const webContent = `// js/data/interviewPrep/webDevelopment.js
 // Complete Question Bank for Web Development (HTML5, CSS3, Core JS, Asynchronous JS, DOM)
 
@@ -298,7 +289,6 @@ window.interviewPrepWebDev = {
 fs.writeFileSync(path.join(outDir, 'webDevelopment.js'), webContent);
 console.log(`Successfully generated webDevelopment.js (${webQuestions.length} questions)`);
 
-// Write git.js
 const gitContent = `// js/data/interviewPrep/git.js
 // Complete Question Bank for Git & Version Control Systems
 

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+
 """
 DevPilot-AI — 32 'Identify the Pattern' Training Arena Drills
 Real-world problem scenarios testing pattern recognition skills across all 16 DSA categories.

@@ -1,19 +1,3 @@
-/**
- * DevPilot-AI - Pomodoro Focus Timer Stylesheet
- * 
- * Clean, modern aesthetics following the DevPilot AI design system:
- * - Slate/Indigo/Emerald/Amber brand accents
- * - Glowing SVG circular progress ring
- * - Interactive cycle step pills
- * - Task labeling with quick suggestion chips
- * - Today's Focus stats grid & Sessions History
- * - Distraction-free Fullscreen / Focus Mode
- * - Accessible settings & completion dialogs
- */
-
-/* ==========================================================================
-   1. Mode Selector Tabs
-   ========================================================================== */
 
 .timer-mode-btn {
   display: inline-flex;
@@ -59,10 +43,6 @@
   color: #92400e;
   border-color: #fde68a;
 }
-
-/* ==========================================================================
-   2. Circular Timer & Progress Ring
-   ========================================================================== */
 
 .timer-circle-container {
   position: relative;
@@ -126,10 +106,6 @@
   margin-top: 0.5rem;
 }
 
-/* ==========================================
-   3. Task Label Input
-   ========================================== */
-
 .task-suggestion-chip {
   padding: 0.25rem 0.65rem;
   font-size: 0.75rem;
@@ -147,10 +123,6 @@
   border-color: #cbd5e1;
   color: #1e293b;
 }
-
-/* ==========================================
-   4. Cycle Steps Progress Bar
-   ========================================== */
 
 .cycle-step-pill {
   display: inline-flex;
@@ -187,10 +159,6 @@
   box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
 }
 
-/* ==========================================
-   5. Today's Focus Stats Cards
-   ========================================== */
-
 .stat-metric-card {
   padding: 1rem;
   background-color: #ffffff;
@@ -203,10 +171,6 @@
   transform: translateY(-2px);
   border-color: #cbd5e1;
 }
-
-/* ==========================================
-   6. Today's Sessions History List
-   ========================================== */
 
 .session-history-item {
   display: flex;
@@ -222,10 +186,6 @@
 .session-history-item:hover {
   background-color: #f8fafc;
 }
-
-/* ==========================================
-   7. Distraction-Free Fullscreen Focus Mode
-   ========================================== */
 
 body.focus-mode-active {
   overflow: hidden !important;
@@ -314,7 +274,6 @@ body.focus-mode-active #timer-card::-webkit-scrollbar {
   }
 }
 
-/* Ensure filter tabs are visible and cleanly styled without scrollbars */
 #timer-mode-tabs {
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -340,7 +299,6 @@ body.focus-mode-active .timer-mode-btn {
   font-weight: 600 !important;
 }
 
-/* Top bar with balanced space-between alignment */
 .focus-mode-top-bar {
   display: none;
   align-items: center;
@@ -392,7 +350,6 @@ body.focus-mode-active .focus-mode-top-bar {
   transform: translateY(-1px);
 }
 
-/* Large Circular Clock Display */
 body.focus-mode-active .timer-circle-container {
   width: 330px !important;
   height: 330px !important;
@@ -426,7 +383,6 @@ body.focus-mode-active .timer-mode-badge {
   margin-top: 0.75rem !important;
 }
 
-/* Active Task Label matching DevPilot theme */
 .focus-mode-task-pill {
   display: none;
   align-items: center;
@@ -453,10 +409,9 @@ body.focus-mode-active #focus-mode-task-text {
 }
 
 body.focus-mode-active .focus-mode-only {
-  display: none !important; /* Hide extra row exit button */
+  display: none !important;
 }
 
-/* Action Controls Row */
 body.focus-mode-active #timer-controls-row {
   display: flex !important;
   align-items: center !important;
@@ -502,7 +457,6 @@ body.focus-mode-active #btn-exit-focus-center {
   display: none !important;
 }
 
-/* Cycle Section Typography & Layout */
 body.focus-mode-active #timer-cycle-section {
   border-top: 1px solid #f1f5f9 !important;
   margin-top: 2rem !important;
@@ -535,10 +489,6 @@ body.focus-mode-active .cycle-step-pill {
   border-radius: 9999px !important;
 }
 
-/* ==========================================
-   8. Modals
-   ========================================== */
-
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -565,7 +515,8 @@ body.focus-mode-active .cycle-step-pill {
   width: 100%;
   max-width: 520px;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  overflow: hidden;
+  max-height: 90vh;
+  overflow-y: auto;
   transform: scale(0.95);
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -574,25 +525,21 @@ body.focus-mode-active .cycle-step-pill {
   transform: scale(1);
 }
 
-/* ==========================================
-   9. Mobile Responsiveness
-   ========================================== */
-
 @media (max-width: 640px) {
   .timer-circle-container {
     width: 240px;
     height: 240px;
   }
-  
+
   .timer-time-text {
     font-size: 3rem;
   }
-  
+
   .filter-tabs {
     flex-direction: column;
     gap: 0.5rem;
   }
-  
+
   .timer-mode-btn {
     width: 100%;
     justify-content: center;

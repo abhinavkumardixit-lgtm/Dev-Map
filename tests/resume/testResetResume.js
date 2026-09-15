@@ -1,8 +1,3 @@
-/**
- * Unit & Integration Tests for Resume Reset / Restore functionality
- * Tests the Reset button, modal structure, CSS styles, and state transitions
- * ("Jaisa tha bilkul vaise")
- */
 
 const fs = require('fs');
 const path = require('path');
@@ -32,7 +27,6 @@ const resumeHtml = fs.readFileSync(path.join(rootDir, 'pages/resume.html'), 'utf
 const resumeCss  = fs.readFileSync(path.join(rootDir, 'css/pages/resume.css'), 'utf8');
 const resumeJs   = fs.readFileSync(path.join(rootDir, 'js/pages/resume.js'), 'utf8');
 
-// TEST GROUP 1: HTML Markup & Topbar Controls
 console.log('--- TEST GROUP 1: HTML Markup & Topbar Controls ---');
 test('1.1: Reset button exists in Builder top bar with id="btn-reset-resume"', () => {
   assert.ok(resumeHtml.includes('id="btn-reset-resume"'), 'Button id="btn-reset-resume" must exist');
@@ -63,7 +57,6 @@ test('1.4: Modal provides all 3 restore/reset action options', () => {
   assert.ok(resumeHtml.includes('bilkul jaisa pehle tha') || resumeHtml.includes('jaisa tha bilkul vaise'), 'User context phrase documented in modal');
 });
 
-// TEST GROUP 2: CSS Styles & Responsive Design
 console.log('\n--- TEST GROUP 2: CSS Styles & Responsive Design ---');
 test('2.1: .reset-modal styles defined with proper max-width and border-radius', () => {
   assert.ok(resumeCss.includes('.reset-modal {'), '.reset-modal class must exist');
@@ -82,7 +75,6 @@ test('2.3: Smooth entrance animation resetModalFadeIn configured', () => {
   assert.ok(resumeCss.includes('animation: resetModalFadeIn'), 'Animation applied to modal');
 });
 
-// TEST GROUP 3: JavaScript Implementation & State Flow
 console.log('\n--- TEST GROUP 3: JavaScript Implementation & State Flow ---');
 test('3.1: Event listeners for reset button and modal actions are bound in initBuilderControls', () => {
   assert.ok(resumeJs.includes("document.getElementById('btn-reset-resume')"), 'btn-reset-resume must be queried');
@@ -108,13 +100,12 @@ test('3.3: restoreDefaultResume resets state, updates undo stack and triggers UI
 });
 
 test('3.4: Simulated data reset restores default developer resume cleanly', () => {
-  // Extract defaultResumeState from resumeJs
+
   const stateMatch = resumeJs.match(/const defaultResumeState = (\{[\s\S]*?\n\};)/);
   assert.ok(stateMatch, 'defaultResumeState must be parseable');
-  
-  // Evaluate defaultResumeState safely
+
   const defaultResumeState = eval(`(${stateMatch[1].replace(/;\s*$/, '')})`);
-  
+
   let currentResume = {
     personal: {
       name: 'nvhgvnhvnbnm',
@@ -132,7 +123,6 @@ test('3.4: Simulated data reset restores default developer resume cleanly', () =
     projects: []
   };
 
-  // Simulate reset
   currentResume = JSON.parse(JSON.stringify(defaultResumeState));
   if (currentResume.personal) {
     currentResume.personal.phone = '+91 XXX XXX XXXX';

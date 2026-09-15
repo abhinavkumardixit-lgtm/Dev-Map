@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+
 """
 DevPilot-AI — Authentic LeetCode Problem Catalog Part 2
 360+ Additional Authentic LeetCode problems across all 16 categories.
@@ -6,7 +6,7 @@ DevPilot-AI — Authentic LeetCode Problem Catalog Part 2
 
 def get_part2_questions():
     return [
-        # --- ARRAY & TWO POINTERS ---
+
         (26, "Remove Duplicates from Sorted Array", "Easy", "array", "Array", "array-two-pointers", "Two Pointers", "Fast & Slow", ["sorted array", "remove duplicates in-place", "slow and fast pointer"]),
         (27, "Remove Element", "Easy", "array", "Array", "array-two-pointers", "Two Pointers", "Fast & Slow", ["remove all val in-place", "overwrite with valid element", "two pointers"]),
         (31, "Next Permutation", "Medium", "array", "Array", "array-two-pointers", "Two Pointers", "Pivot & Reverse", ["next lexicographical permutation", "find first decreasing from right", "swap and reverse suffix"]),
@@ -124,7 +124,6 @@ def get_part2_questions():
         (3194, "Minimum Average of Smallest and Largest Elements", "Easy", "array", "Array", "array-two-pointers", "Two Pointers", "Converging Averages", ["repeatedly average smallest and largest", "sort array, two pointers converging", "track minimum average"]),
         (3206, "Alternating Groups I", "Easy", "array", "Array", "array-sliding-window", "Sliding Window", "Circular Window 3", ["alternating 3 tiles in circular array", "colors[i] != colors[i-1] and colors[i] != colors[i+1]", "circular index modulo"]),
 
-        # --- ADVANCED HARD & CLASSIC LEETCODE ---
         (2, "Add Two Numbers", "Medium", "linked-list", "Linked List", "ll-pointer-techniques", "Pointer Techniques & Cycle Detection", "Digit Addition", ["add two numbers represented as linked lists in reverse", "carry propagation", "dummy head creation"]),
         (10, "Regular Expression Matching", "Hard", "dp", "Dynamic Programming", "dp-linear-grid", "1D & 2D Grid / Linear DP", "2D Regex DP", ["support '.' and '*' regular expression matching", "dp[i][j] matches s[0..i] and p[0..j]", "handle star wildcard branches"]),
         (29, "Divide Two Integers", "Medium", "bit-manipulation", "Bit Manipulation", "bit-core-masking", "XOR & Bit Masking", "Bit Doubling Division", ["divide two integers without multiplication or division", "exponential bit shifting (divisor << i)", "handle 32-bit overflow"]),

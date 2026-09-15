@@ -1,15 +1,8 @@
-/**
- * MAD DEV - AI Prompt Vault Controller
- * Manages Multi-Field Search, Collections, Domain Categories, Difficulty Filters,
- * Interactive Variable Substitution, Saved Favorites, and Seamless AI Chat Handoff.
- */
 
-// Fallbacks if data loaded asynchronously
 const fallbackPrompts = typeof PROMPTS_DATA !== 'undefined' ? PROMPTS_DATA : [];
 const fallbackCategories = typeof PROMPT_CATEGORIES !== 'undefined' ? PROMPT_CATEGORIES : [];
 const fallbackCollections = typeof PROMPT_COLLECTIONS !== 'undefined' ? PROMPT_COLLECTIONS : [];
 
-// State Management
 let allPrompts = fallbackPrompts;
 let activeCollection = 'all';
 let activeCategory = 'All';
@@ -18,13 +11,11 @@ let filterSavedOnly = false;
 let filterRecentOnly = false;
 let searchQuery = '';
 
-// Active Modal State
 let currentModalPrompt = null;
 let modalVariableValues = {};
 
-// Local Storage Persistence
 let savedPromptIds = new Set(Storage.get('saved_prompts', []));
-let recentPromptIds = Storage.get('recent_prompts', []); // MRU array of prompt IDs
+let recentPromptIds = Storage.get('recent_prompts', []);
 
 document.addEventListener('DOMContentLoaded', () => {
   initPromptsData();
@@ -38,18 +29,12 @@ document.addEventListener('DOMContentLoaded', () => {
   renderPrompts();
 });
 
-/**
- * Initializes the prompts dataset from global data file.
- */
 function initPromptsData() {
   if (typeof PROMPTS_DATA !== 'undefined' && Array.isArray(PROMPTS_DATA)) {
     allPrompts = PROMPTS_DATA;
   }
 }
 
-/**
- * Renders the Curated Preset Collections bar.
- */
 function initCollectionsUI() {
   const container = document.getElementById('prompt-collections-scroll');
   const collections = typeof PROMPT_COLLECTIONS !== 'undefined' ? PROMPT_COLLECTIONS : fallbackCollections;
@@ -74,25 +59,20 @@ function initCollectionsUI() {
 function selectCollection(colId) {
   activeCollection = colId;
 
-  // Sync chip styles
   const chips = document.querySelectorAll('.collection-chip');
   chips.forEach(c => c.classList.toggle('active', c.getAttribute('data-id') === colId));
 
-  // If specific collection selected, adjust category or reset to All
   const collections = typeof PROMPT_COLLECTIONS !== 'undefined' ? PROMPT_COLLECTIONS : fallbackCollections;
   const col = collections.find(c => c.id === colId);
 
   if (col && col.filterType === 'category') {
     selectCategory(col.target);
   } else {
-    // Keep category as-is or All
+
     renderPrompts();
   }
 }
 
-/**
- * Builds category horizontal scroll tabs and dropdown.
- */
 function initCategoryUI() {
   const tabsContainer = document.getElementById('prompt-category-tabs');
   const dropdown = document.getElementById('prompt-category-dropdown');
@@ -154,9 +134,6 @@ function selectCategory(catName) {
   renderPrompts();
 }
 
-/**
- * Initializes difficulty level chips.
- */
 function initDifficultyUI() {
   const diffTabs = document.querySelectorAll('.prompt-diff-tab');
   diffTabs.forEach(tab => {
@@ -169,9 +146,6 @@ function initDifficultyUI() {
   });
 }
 
-/**
- * Initializes quick filters (Saved, Recent, Clear).
- */
 function initToolbarFilters() {
   const savedBtn = document.getElementById('btn-filter-saved');
   if (savedBtn) {
@@ -248,9 +222,6 @@ window.clearAllFilters = function() {
   renderPrompts();
 };
 
-/**
- * Initializes multi-field search input.
- */
 function initSearch() {
   const searchInput = document.getElementById('prompts-search-input');
   if (searchInput) {
@@ -272,9 +243,6 @@ window.filterPromptByTag = function(tag) {
   }
 };
 
-/**
- * Evaluates all filter criteria and returns matching prompt items.
- */
 function getFilteredPrompts() {
   const q = searchQuery.toLowerCase().trim();
   const tokens = q.split(/\s+/).filter(Boolean);
@@ -283,27 +251,23 @@ function getFilteredPrompts() {
   const currentCollection = collections.find(c => c.id === activeCollection);
 
   let filtered = allPrompts.filter(p => {
-    // Saved filter
+
     if (filterSavedOnly && !savedPromptIds.has(p.id)) {
       return false;
     }
 
-    // Recent filter
     if (filterRecentOnly && !recentPromptIds.includes(p.id)) {
       return false;
     }
 
-    // Category filter
     if (activeCategory !== 'All' && p.category.toLowerCase() !== activeCategory.toLowerCase()) {
       return false;
     }
 
-    // Difficulty filter
     if (activeDifficulty !== 'All' && (p.difficulty || 'Intermediate').toLowerCase() !== activeDifficulty.toLowerCase()) {
       return false;
     }
 
-    // Collection filter
     if (currentCollection && currentCollection.id !== 'all') {
       if (currentCollection.filterType === 'category' && p.category.toLowerCase() !== currentCollection.target.toLowerCase()) {
         return false;
@@ -319,7 +283,6 @@ function getFilteredPrompts() {
       }
     }
 
-    // Multi-token search across Title, Description, Prompt Body, Subcategory, Tags
     if (tokens.length > 0) {
       const tagsStr = Array.isArray(p.tags) ? p.tags.join(' ') : (p.tags || '');
       const varsStr = Array.isArray(p.variables) ? p.variables.join(' ') : '';
@@ -340,9 +303,6 @@ function getFilteredPrompts() {
   return filtered;
 }
 
-/**
- * Renders the prompt cards into the grid.
- */
 function renderPrompts() {
   const container = document.getElementById('prompts-grid');
   const countDisplay = document.getElementById('prompt-results-count');
@@ -351,7 +311,6 @@ function renderPrompts() {
 
   const filtered = getFilteredPrompts();
 
-  // Update counter & clear filters button
   if (countDisplay) {
     countDisplay.textContent = `Showing ${filtered.length} of ${allPrompts.length} prompts`;
   }
@@ -446,9 +405,6 @@ function getCategoryBadgeClass(category) {
   return `badge-${clean}`;
 }
 
-/**
- * Copies raw prompt directly from card.
- */
 window.copyPromptDirect = function(id, btnElement) {
   const prompt = allPrompts.find(p => p.id === id);
   if (!prompt) return;
@@ -474,9 +430,6 @@ window.copyPromptDirect = function(id, btnElement) {
   }
 };
 
-/**
- * Toggles a prompt in Favorites / Saved.
- */
 window.togglePromptFavorite = function(id) {
   if (savedPromptIds.has(id)) {
     savedPromptIds.delete(id);
@@ -489,7 +442,6 @@ window.togglePromptFavorite = function(id) {
   Storage.set('saved_prompts', Array.from(savedPromptIds));
   updateSavedCount();
 
-  // Sync modal button if open
   if (currentModalPrompt && currentModalPrompt.id === id) {
     const modalFavBtn = document.getElementById('modal-btn-favorite');
     if (modalFavBtn) {
@@ -512,9 +464,6 @@ function updateSavedCount() {
   }
 }
 
-/**
- * Tracks a prompt in Recently Used history (MRU).
- */
 function trackRecentPrompt(id) {
   recentPromptIds = recentPromptIds.filter(x => x !== id);
   recentPromptIds.unshift(id);
@@ -524,9 +473,6 @@ function trackRecentPrompt(id) {
   Storage.set('recent_prompts', recentPromptIds);
 }
 
-/**
- * Initializes the Deep Prompt Details & Interactive Variable Modal.
- */
 function initDetailsModal() {
   const modal = document.getElementById('prompt-details-modal');
   const closeBtn = document.getElementById('modal-btn-close');
@@ -603,9 +549,6 @@ function initDetailsModal() {
   }
 }
 
-/**
- * Opens details modal and constructs variable input fields.
- */
 window.openPromptDetails = function(id) {
   const prompt = allPrompts.find(p => p.id === id);
   if (!prompt) return;
@@ -614,7 +557,6 @@ window.openPromptDetails = function(id) {
   modalVariableValues = {};
   trackRecentPrompt(id);
 
-  // Populate header fields
   document.getElementById('modal-title').textContent = prompt.title;
   document.getElementById('modal-description').textContent = prompt.description;
 
@@ -635,7 +577,6 @@ window.openPromptDetails = function(id) {
     usecaseBadge.textContent = prompt.useCase || prompt.subcategory || 'General';
   }
 
-  // Favorite button
   const favBtn = document.getElementById('modal-btn-favorite');
   if (favBtn) {
     const isSaved = savedPromptIds.has(prompt.id);
@@ -644,20 +585,15 @@ window.openPromptDetails = function(id) {
     if (icon) icon.style.fontVariationSettings = isSaved ? '"FILL" 1' : '""';
   }
 
-  // Expected output & tips
   document.getElementById('modal-expected-output').textContent = prompt.expectedOutput || 'Structured technical analysis, code diffs, and verification steps.';
   document.getElementById('modal-tips').textContent = prompt.tips || 'Provide specific technical constraints in your inputs for tailored output.';
 
-  // Build Interactive Variables Section
   buildVariablesSection(prompt);
 
-  // Render initial live preview
   updateSubstitutedPreview();
 
-  // Render Recommended Related Prompts
   renderRelatedPrompts(prompt);
 
-  // Open modal
   const modal = document.getElementById('prompt-details-modal');
   if (modal) modal.classList.add('open');
 };
@@ -669,9 +605,6 @@ function closePromptDetails() {
   modalVariableValues = {};
 }
 
-/**
- * Builds dynamic input form for all {{VARIABLES}} in the prompt.
- */
 function buildVariablesSection(prompt) {
   const container = document.getElementById('modal-variables-inputs');
   const countLabel = document.getElementById('modal-variables-count');
@@ -705,7 +638,6 @@ function buildVariablesSection(prompt) {
     `;
   }).join('');
 
-  // Attach live input listeners
   const inputs = container.querySelectorAll('.var-text-input');
   inputs.forEach(input => {
     input.addEventListener('input', (e) => {
@@ -716,9 +648,6 @@ function buildVariablesSection(prompt) {
   });
 }
 
-/**
- * Computes live substituted prompt string.
- */
 function getSubstitutedPromptText() {
   if (!currentModalPrompt) return '';
   let text = currentModalPrompt.prompt || currentModalPrompt.promptText || '';
@@ -732,9 +661,6 @@ function getSubstitutedPromptText() {
   return text;
 }
 
-/**
- * Updates the preview box in the modal with substituted text and variable highlight spans.
- */
 function updateSubstitutedPreview() {
   const previewBox = document.getElementById('modal-prompt-text');
   if (!previewBox || !currentModalPrompt) return;
@@ -742,17 +668,14 @@ function updateSubstitutedPreview() {
   const rawText = currentModalPrompt.prompt || currentModalPrompt.promptText || '';
   let substituted = rawText;
 
-  // Substitute values
   Object.entries(modalVariableValues).forEach(([v, customVal]) => {
     if (customVal && customVal.trim().length > 0) {
       substituted = substituted.split(v).join(customVal);
     }
   });
 
-  // Escape HTML
   let escaped = escapeHtml(substituted);
 
-  // Highlight any remaining unsubstituted {{VAR}} placeholders
   escaped = escaped.replace(/\{\{[A-Z0-9_]+\}\}/g, (match) => {
     return `<span class="highlight-var">${match}</span>`;
   });
@@ -760,9 +683,6 @@ function updateSubstitutedPreview() {
   previewBox.innerHTML = escaped;
 }
 
-/**
- * Renders recommended related prompts inside the modal.
- */
 function renderRelatedPrompts(currentPrompt) {
   const container = document.getElementById('modal-related-prompts');
   if (!container) return;

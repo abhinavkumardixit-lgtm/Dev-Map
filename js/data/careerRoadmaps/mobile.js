@@ -1,7 +1,3 @@
-/**
- * MAD DEV — Career Roadmap: Mobile Developer
- * Complete 5-level dependency path, practical skill tasks, progressive projects, and job-ready checklist.
- */
 
 const mobileRoadmap = {
   roleId: 'mobile-developer',

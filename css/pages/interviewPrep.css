@@ -1,7 +1,3 @@
-/* ==========================================================================
-   DevPilot-AI — Interview Preparation Stylesheet
-   100% harmonized with DevPilot AI Core Design System, Components & Tokens
-   ========================================================================== */
 
 :root {
   --ip-primary: var(--color-primary);
@@ -35,8 +31,6 @@
   --ip-banner-border: var(--color-outline-variant);
 }
 
-
-/* Typography Consistency with DevPilot AI Workspace */
 .page-title,
 .ip-section-title,
 .ip-cat-title,
@@ -65,7 +59,6 @@ input,
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* Base Layout & Transitions */
 .ip-container {
   max-width: 1400px;
   width: 100%;
@@ -79,7 +72,6 @@ input,
   }
 }
 
-/* Metric Banner Cards */
 .ip-metric-card {
   background: var(--color-surface);
   border: 1px solid var(--color-outline-variant);
@@ -108,7 +100,6 @@ input,
   flex-shrink: 0;
 }
 
-/* Quick Resume Widget */
 .ip-resume-banner {
   background: var(--ip-banner-bg);
   border: 1px solid var(--ip-banner-border);
@@ -123,7 +114,6 @@ input,
   box-shadow: var(--shadow-subtle);
 }
 
-/* Categories Grid */
 .ip-categories-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -149,7 +139,6 @@ input,
   transform: translateY(-2px);
   box-shadow: var(--shadow-hover);
 }
-
 
 .ip-cat-header {
   display: flex;
@@ -212,7 +201,6 @@ input,
   margin-top: 1rem;
 }
 
-/* Category Topics Grid */
 .ip-topic-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -243,9 +231,6 @@ input,
   color: var(--color-on-surface);
 }
 
-/* ======================================================
-   QUESTION ENGINE (Interactive Quiz & Immediate Feedback)
-====================================================== */
 .ip-quiz-card {
   background: var(--color-surface);
   border: 1px solid var(--color-outline-variant);
@@ -254,7 +239,6 @@ input,
   box-shadow: var(--shadow-card);
   margin-bottom: 2rem;
 }
-
 
 .ip-quiz-header {
   display: flex;
@@ -281,7 +265,6 @@ input,
   background: linear-gradient(90deg, #4f46e5, #6366f1);
   transition: width 0.3s ease;
 }
-
 
 .ip-question-text {
   font-size: 1.1875rem;
@@ -337,7 +320,6 @@ input,
   transition: all var(--transition-fast);
 }
 
-/* Option States upon Answer Submission */
 .ip-option-btn.selected-option {
   border-color: var(--color-primary);
   background: var(--color-primary-light);
@@ -350,7 +332,6 @@ input,
   color: #065f46 !important;
 }
 
-
 .ip-option-btn.correct-option .ip-option-badge {
   background: #10b981 !important;
   color: #ffffff !important;
@@ -362,13 +343,11 @@ input,
   color: #b91c1c !important;
 }
 
-
 .ip-option-btn.incorrect-option .ip-option-badge {
   background: #ef4444 !important;
   color: #ffffff !important;
 }
 
-/* Explanation Panel */
 .ip-explanation-panel {
   background: var(--color-surface-container-low);
   border: 1px solid var(--color-outline-variant);
@@ -393,7 +372,6 @@ input,
   color: var(--color-on-surface);
 }
 
-/* Quiz Completion Screen */
 .ip-results-card {
   background: var(--color-surface);
   border: 1px solid var(--color-outline-variant);
@@ -443,7 +421,6 @@ input,
   padding: 1rem;
 }
 
-/* More Practice Action Menu */
 .ip-more-practice-menu {
   display: flex;
   flex-direction: column;
@@ -451,9 +428,6 @@ input,
   margin-top: 2rem;
 }
 
-/* ======================================================
-   60-MINUTE MOCK PLACEMENT TEST
-====================================================== */
 .ip-mock-banner {
   background: var(--ip-banner-bg);
   border: 1px solid var(--ip-banner-border);
@@ -529,9 +503,6 @@ input,
   box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.3);
 }
 
-/* ======================================================
-   CORE SUBJECT CHECKLISTS TAB
-====================================================== */
 .ip-checklist-card {
   background: var(--color-surface);
   border: 1px solid var(--color-outline-variant);
@@ -603,9 +574,6 @@ input,
   text-decoration: line-through;
 }
 
-/* ======================================================
-   GD & HR INTERVIEW PREPARATION
-====================================================== */
 .ip-gd-card, .ip-hr-card {
   background: var(--color-surface);
   border: 1px solid var(--color-outline-variant);
@@ -637,7 +605,6 @@ input,
   margin-bottom: 0.25rem;
 }
 
-/* Animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }

@@ -1,5 +1,4 @@
-// scripts/interviewPrep/buildAiMl.js
-// Generates aiMl.js (15 topics * 10 = 150 MCQs)
+
 const fs = require('fs');
 const path = require('path');
 
@@ -10,7 +9,7 @@ function q(id, topic, difficulty, question, options, correctAnswer, explanation)
 
 console.log('Generating AI & Machine Learning questions (15 topics * 10 = 150 MCQs)...');
 const aimlQuestions = [
-  // 1. AI vs ML vs Deep Learning Fundamentals
+
   q('aiml_fnd_1', 'AI vs ML vs Deep Learning', 'Easy',
     'What is the hierarchical relationship between AI, Machine Learning, and Deep Learning?',
     ['They are three completely unrelated disciplines', 'AI is the broad umbrella concept; Machine Learning is a subset of AI; Deep Learning is a specialized subset of Machine Learning using multi-layered neural networks', 'Deep Learning encompasses AI; AI is a subset of ML', 'Machine Learning is hardware; Deep Learning is software'], 1,
@@ -52,7 +51,6 @@ const aimlQuestions = [
     ['AI researchers must pay for lunch', 'No single machine learning algorithm is universally superior to all other algorithms across every conceivable problem; every algorithm makes inductive assumptions that excel on some datasets and fail on others', 'All ML models require cloud subscriptions', 'Unsupervised learning is always cheaper than supervised'], 1,
     'Wolpert and Macready proved: averaged across all possible data distributions, every classification algorithm has the same expected error rate. Algorithm success depends on how well its inductive biases align with the specific problem distribution.'),
 
-  // 2. Supervised Learning
   q('aiml_sl_1', 'Supervised Learning', 'Easy',
     'What is the fundamental difference between Regression and Classification in supervised learning?',
     ['Regression uses neural networks; classification uses trees', 'Regression predicts continuous numerical values (e.g. house prices); Classification predicts discrete categorical labels (e.g. spam or not spam)', 'Regression is unsupervised; classification is supervised', 'Classification cannot predict probabilities'], 1,
@@ -94,7 +92,6 @@ const aimlQuestions = [
     ['An error thrown when RAM runs out', 'Because each tree is trained on a bootstrap sample (~63.2% of data), the remaining ~36.8% unselected samples (OOB data) act as an internal validation set, providing an unbiased validation score without explicit cross-validation', 'A metric measuring leaf node depth', 'An error thrown when trees diverge'], 1,
     'Sampling with replacement leaves approximately (1 - 1/e) ≈ 36.8% of training samples out of each tree\'s dataset. Evaluating trees on their respective out-of-bag samples provides an accurate, built-in validation metric.'),
 
-  // 3. Unsupervised Learning
   q('aiml_ul_1', 'Unsupervised Learning', 'Easy',
     'What is the defining characteristic of Unsupervised Learning?',
     ['Algorithms are trained without computers', 'Algorithms are provided input data without any target labels or ground truth outcomes, discovering inherent patterns, groupings, or representations autonomously', 'Algorithms require continuous human intervention', 'Models only predict true or false'], 1,
@@ -136,7 +133,6 @@ const aimlQuestions = [
     ['t-SNE is faster than PCA on 10 million rows', 'PCA preserves only global linear variance; t-SNE is a non-linear probabilistic technique that preserves local pairwise neighborhoods, revealing intricate non-linear clusters and manifolds in 2D/3D', 't-SNE can be used for feature engineering in regression', 'PCA converts non-linear data to linear automatically'], 1,
     't-SNE converts Euclidean distances into conditional probabilities in high- and low-dimensional spaces, minimizing Kullback-Leibler divergence. It clusters similar points closely, making it state-of-the-art for visual exploratory analysis.'),
 
-  // 4. Reinforcement Learning Concepts
   q('aiml_rl_1', 'Reinforcement Learning', 'Easy',
     'What are the core components in the standard Reinforcement Learning framework?',
     ['Input, Hidden Layer, Output', 'Agent, Environment, State, Action, and Reward', 'Dataset, Testset, Hyperparameters', 'Optimizer, Loss, Activation'], 1,
@@ -178,7 +174,6 @@ const aimlQuestions = [
     ['Replacing Python with assembly language', 'Experience Replay (sampling random past transitions from a buffer to break temporal correlation) and a separate Target Network (updated periodically to stabilize Q-value targets)', 'Eliminating all activation functions', 'Using 1,000 GPUs simultaneously'], 1,
     'Standard Q-learning diverges with neural networks due to correlated samples and moving target values. DQN fixed this with: 1) Replay Buffer (decorrelates training data), and 2) Frozen Target Network (stabilizes Bellman targets).'),
 
-  // 5. Model Evaluation Metrics
   q('aiml_ev_1', 'Model Evaluation Metrics', 'Easy',
     'What are the four components of a Binary Classification Confusion Matrix?',
     ['Alpha, Beta, Gamma, Delta', 'True Positives (TP), False Positives (FP), True Negatives (TN), and False Negatives (FN)', 'Mean, Median, Mode, Variance', 'Precision, Recall, F1, Loss'], 1,
@@ -221,11 +216,10 @@ const aimlQuestions = [
     'In severe class imbalance (e.g. 1 positive in 10,000), huge TNs keep FPR tiny, producing an artificially optimistic ROC-AUC curve. The PR Curve ignores TNs, directly exposing precision drops on rare positives.')
 ];
 
-// Write first half (Topics 1-5 = 50 MCQs), then we will append remaining topics 6-15
 console.log(`Generated ${aimlQuestions.length} initial questions, adding topics 6-15...`);
 
 const aimlTopics6To15 = [
-  // 6. Overfitting, Underfitting & Bias-Variance Tradeoff
+
   q('aiml_bv_1', 'Bias-Variance & Overfitting', 'Easy',
     'What is "Overfitting" in machine learning?',
     ['When the training algorithm takes too long to run', 'When a model learns the training data and noise too closely, performing exceptionally well on training data but failing to generalize to unseen test data', 'When a model has too few parameters to capture patterns', 'When data points have missing values'], 1,
@@ -267,7 +261,6 @@ const aimlTopics6To15 = [
     ['Loss dropping twice in one epoch', 'As model capacity increases beyond the classical interpolation threshold (where training error reaches zero), test error surprisingly decreases again instead of worsening, defying traditional bias-variance intuition', 'A bug in gradient descent', 'When two GPUs train simultaneously'], 1,
     'Modern overparameterized deep networks exhibit Double Descent: test error peaks at the interpolation threshold (classical overfitting) but subsequently descends as capacity expands further, due to implicit regularization of gradient descent.'),
 
-  // 7. Regularization Techniques
   q('aiml_reg_1', 'Regularization Techniques', 'Easy',
     'What is the primary purpose of Regularization in machine learning?',
     ['To make algorithms run faster', 'To penalize model complexity and prevent overfitting by discouraging excessively large weight values', 'To clean null values in datasets', 'To convert regression to classification'], 1,
@@ -309,7 +302,6 @@ const aimlTopics6To15 = [
     ['It adds L1 penalty to weights', 'Because mini-batch statistics (mean and variance) fluctuate randomly between batches, this stochastic noise added to activations acts similarly to dropout, reducing overfitting', 'It eliminates all learning rates', 'It zeroes out small weights'], 1,
     'Batch Normalization computes mean and variance over stochastic mini-batches rather than the whole dataset. The small random noise introduced into hidden activations prevents extreme reliance on any single neuron.'),
 
-  // 8. Neural Networks Fundamentals
   q('aiml_nn_1', 'Neural Networks Fundamentals', 'Easy',
     'What was the historical "Perceptron" introduced by Frank Rosenblatt?',
     ['A digital camera', 'The simplest artificial neuron model: computes a linear combination of inputs with weights, adds a bias, and passes the sum through a step activation function', 'A multi-layer recurrent network', 'An analog computer monitor'], 1,
@@ -351,7 +343,6 @@ const aimlTopics6To15 = [
     ['Xavier is for GPUs; He is for CPUs', 'Xavier is designed for symmetric activations like Tanh/Sigmoid (variance = 2 / (n_in + n_out)); He initialization is specifically calibrated for non-linear ReLU activations (variance = 2 / n_in) to prevent exploding/vanishing signal variance', 'Xavier initializes weights to zero; He does not', 'They are exact synonyms'], 1,
     'Kaiming He showed that because ReLU zeroes out half of the activations on average, Xavier variance is too small, causing signal decay in deep ReLU networks. He initialization doubles the variance to `2 / n_in`.'),
 
-  // 9. Optimization Algorithms
   q('aiml_opt_1', 'Optimization Algorithms', 'Easy',
     'What is the role of an Optimizer in training machine learning and deep learning models?',
     ['To compile Python code to machine code', 'To iteratively adjust and update model weights and biases in the direction that minimizes the loss function', 'To clean corrupted rows in CSV files', 'To design the user interface'], 1,
@@ -394,7 +385,6 @@ const aimlTopics6To15 = [
     'In early training, weights are random and gradients are noisy. A large initial step can prematurely push weights into poor landscape regions. Warmup gives the adaptive optimizer time to calibrate statistics before taking large steps.')
 ];
 
-// Combine all 150 questions
 const finalAiMlList = [...aimlQuestions, ...aimlTopics6To15];
 
 const aimlContent = `// js/data/interviewPrep/aiMl.js

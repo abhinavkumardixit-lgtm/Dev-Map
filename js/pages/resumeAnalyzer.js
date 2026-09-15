@@ -1,22 +1,4 @@
-/**
- * MAD DEV — Evidence-Driven Resume Analyzer & Job Matching Engine
- * 
- * Features:
- * 1. Multi-page text extraction with client-side OCR fallback (Tesseract.js) for scanned PDFs.
- * 2. Strict document classification: rejects Invoices, Certificates, Marksheets, Research Papers, Offer Letters, and random text.
- * 3. Deterministic 0–100 Resume Confidence Score (< 60: REJECT, 60–75: UNCERTAIN/WARNING, > 75: PASS).
- * 4. Structured Resume Extraction with JSON schema and Evidence / Provenance mapping.
- * 5. Zero-hallucination validation pass (never infers skills, roles, metrics, or education without raw text evidence).
- * 6. Contact info isolation (phone numbers, PINs, and URLs never count as experience years).
- * 7. Evidence-based experience analysis with Student / Fresher intelligence (reweights projects & DSA).
- * 8. Internal consistency & duplicate detection (conflicting metrics, dates, and duplicate descriptions).
- * 9. Transparent, weighted ATS scoring and Job Description matching with clear factor breakdown.
- * 10. Specific, actionable improvement recommendations without fabricated metrics.
- */
 
-/* ============================================================
-   CONSTANTS & VOCABULARY DICTIONARIES
-   ============================================================ */
 const ANALYZER_STORAGE_KEY = 'resume_analysis';
 const MAX_FILE_SIZE_MB = 10;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
@@ -113,7 +95,6 @@ const SECTION_PATTERNS = {
   volunteer: /(?:^|\n)\s*(?:volunteer|volunteering|community\s*service|extracurricular|extracurricular\s*activities)(?:\s*[:\-–—|]|\s*$)/im
 };
 
-// Normalized Technical Skills Database
 const TECH_SKILLS_DB = {
   cs_core: [
     'object-oriented programming', 'oop', 'data structures & algorithms', 'data structures and algorithms',
@@ -182,9 +163,6 @@ const TECH_SKILLS_DB = {
   ]
 };
 
-/* ============================================================
-   JOB ROLES KNOWLEDGE BASE (14 Standard Tech Roles)
-   ============================================================ */
 const ROLE_PROFILES_DB = [
   {
     id: 'sde_intern',
@@ -398,9 +376,6 @@ const ROLE_PROFILES_DB = [
   }
 ];
 
-/* ============================================================
-   ANALYZER STATE
-   ============================================================ */
 let analyzerState = {
   file: null,
   fileName: '',
@@ -420,9 +395,6 @@ let analyzerState = {
   documentStructure: null
 };
 
-/* ============================================================
-   FILE VALIDATION
-   ============================================================ */
 function validateFile(file) {
   if (!file) return { valid: false, error: 'No file selected.' };
 
@@ -443,9 +415,6 @@ function validateFile(file) {
   return { valid: true };
 }
 
-/* ============================================================
-   TEXT EXTRACTION — PDF (PDF.js + Multi-Page + OCR Fallback)
-   ============================================================ */
 async function extractPDFText(file) {
   if (typeof pdfjsLib === 'undefined') {
     throw new Error('PDF.js library is not loaded. Please check your internet connection and refresh the page.');
@@ -473,7 +442,7 @@ async function extractPDFText(file) {
     if (content.items && content.items.length) {
       allPdfItems.push(...content.items);
     }
-    
+
     let lastY = null;
     let pageLines = [];
     let currentLine = [];
@@ -496,7 +465,6 @@ async function extractPDFText(file) {
       fullText += pageText + '\n\n';
     }
 
-    // Extract PDF hyperlink annotations (Requirement 14: visible text differs from hyperlink target)
     try {
       if (typeof page.getAnnotations === 'function') {
         const annotations = await page.getAnnotations();
@@ -512,17 +480,15 @@ async function extractPDFText(file) {
         }
       }
     } catch (annotErr) {
-      // Non-critical link extraction fallback
+
     }
   }
 
-  // Bug 3: Inspect PDF document structure directly before text flattening
   const pdfLayout = detectPDFMultiColumn(allPdfItems);
   analyzerState.documentStructure = pdfLayout;
 
   fullText = sanitizeExtractedText(fullText.trim());
 
-  // OCR Fallback for Scanned / Image-Based PDFs
   if (!fullText || fullText.length < 40) {
     if (typeof Tesseract !== 'undefined') {
       try {
@@ -556,9 +522,6 @@ async function extractPDFText(file) {
   return fullText;
 }
 
-/* ============================================================
-   TEXT EXTRACTION — DOCX (Mammoth.js)
-   ============================================================ */
 async function extractDOCXText(file) {
   if (typeof mammoth === 'undefined') {
     throw new Error('Mammoth.js library is not loaded. Please check your internet connection and refresh the page.');
@@ -572,7 +535,6 @@ async function extractDOCXText(file) {
     throw new Error('Unable to parse DOCX file. The file may be corrupted.');
   }
 
-  // Extract hyperlinks from Mammoth HTML (Requirement 14)
   try {
     if (typeof mammoth.convertToHtml === 'function') {
       const htmlResult = await mammoth.convertToHtml({ arrayBuffer });
@@ -596,10 +558,9 @@ async function extractDOCXText(file) {
       }
     }
   } catch (htmlErr) {
-    // Non-critical DOCX link extraction fallback
+
   }
 
-  // Bug 3: Inspect DOCX document structure directly for tables or multi-column sections
   const docxLayout = await detectDOCXStructure(arrayBuffer);
   analyzerState.documentStructure = docxLayout;
 
@@ -611,9 +572,6 @@ async function extractDOCXText(file) {
   return text;
 }
 
-/* ============================================================
-   TEXT EXTRACTION — TXT (Plain Text UTF-8)
-   ============================================================ */
 async function extractTXTText(file) {
   if (!file) {
     throw new Error('No file provided for text extraction.');
@@ -648,15 +606,11 @@ async function extractTXTText(file) {
   return text;
 }
 
-/* ============================================================
-   DOCUMENT STRUCTURE & LAYOUT DETECTION (Bug 3 Fix)
-   ============================================================ */
 function detectPDFMultiColumn(pageItems, viewportWidth = 600) {
   if (!pageItems || pageItems.length === 0) {
     return { isMultiColumn: false, hasTables: false, columnCount: 1, details: 'Single-column text layout' };
   }
 
-  // Group text items by vertical position (Y coordinate grouped within 4 points)
   const lineMap = new Map();
   pageItems.forEach(item => {
     if (!item.str || !item.str.trim()) return;
@@ -675,7 +629,7 @@ function detectPDFMultiColumn(pageItems, viewportWidth = 600) {
       const item1 = items[i];
       const item2 = items[i + 1];
       const gap = item2.x - (item1.x + item1.width);
-      // If two distinct substantial text blocks share the same vertical position with a significant gap >= 60 points
+
       if (gap >= 60 && item1.str.length >= 3 && item2.str.length >= 3) {
         multiColumnLineCount++;
         break;
@@ -713,7 +667,7 @@ async function detectDOCXStructure(arrayBuffer) {
       }
     }
   } catch (e) {
-    // Non-critical check
+
   }
 
   return {
@@ -728,12 +682,10 @@ async function detectDOCXStructure(arrayBuffer) {
 function detectDocumentLayoutFromText(text) {
   if (!text) return { isMultiColumn: false, hasTables: false, columnCount: 1, details: 'Single-column text layout' };
 
-  // 1. Explicit metadata or simulator tokens
   if (/\[layout:\s*(?:multi[-_\s]?column|two[-_\s]?column|table)\]/i.test(text)) {
     return { isMultiColumn: true, hasTables: true, columnCount: 2, details: 'Multi-column table layout detected in document structure' };
   }
 
-  // 2. Markdown / ASCII tables with row separators (|---|---| or | col1 | col2 |)
   const lines = text.split('\n');
   const tableBorderLines = lines.filter(l => /\|[\s-:]+\|[\s-:]+\|/.test(l));
   const multiCellLines = lines.filter(l => (l.match(/\|/g) || []).length >= 3);
@@ -741,7 +693,6 @@ function detectDocumentLayoutFromText(text) {
     return { isMultiColumn: true, hasTables: true, columnCount: 2, details: 'Table layout detected in document structure' };
   }
 
-  // 3. Tab or wide-column spacing on multiple non-header lines
   const tabSpacedLines = lines.filter(l => /\t{2,}|[ ]{8,}/.test(l) && !/^[•\-\*]/.test(l.trim()));
   if (tabSpacedLines.length >= 8) {
     return { isMultiColumn: true, hasTables: false, columnCount: 2, details: 'Multi-column layout detected with wide horizontal text separation' };
@@ -764,48 +715,34 @@ function detectDocumentLayout(source, options = {}) {
   return { isMultiColumn: false, hasTables: false, columnCount: 1, details: 'Single-column text layout' };
 }
 
-/* ============================================================
-   TEXT SANITIZATION & BOUNDARY NORMALIZATION
-   ============================================================ */
 function sanitizeExtractedText(raw) {
   if (!raw) return '';
   let text = raw;
 
-  // 1. Bug 1 Fix: Separate merged email and adjacent text (e.g. user@domain.comExperience or user@domain.com+91...)
-  // Only separate when preceded by an actual email address (@...) and followed immediately by capital letter or phone digits without whitespace
   text = text.replace(/(@[A-Za-z0-9.-]+\.(?:com|org|net|edu|gov|co|in|ai|dev|me|tech|app|xyz|io|info|biz|site|[a-z]{2,4}))([A-Z][a-z]+|\+\d|\d{10})/g, '$1 $2');
 
-  // 2. Separate merged URLs
   text = text.replace(/(linkedin\.com\/in\/[\w\-]+|github\.com\/[\w\-]+)([A-Z][a-z]+|\+\d)/g, '$1 $2');
 
-  // 3. Normalize delimiter boundaries: ensure space around pipes if tightly adjacent to alphanumeric
   text = text.replace(/([^\s|])\|([^\s|])/g, '$1 | $2');
 
-  // 4. Normalize bullet characters
   text = text.replace(/[\u2022\u2023\u25E6\u2043\u2219\u25AA\u25BA\u25B8]/g, '• ');
 
-  // 5. Normalize multiple spaces on the same line
   text = text.split('\n').map(line => line.replace(/[ \t]+/g, ' ').trim()).join('\n');
 
-  // 6. Remove excessive consecutive blank lines
   text = text.replace(/\n{3,}/g, '\n\n');
 
   return text.trim();
 }
 
-/* ============================================================
-   CONVERT BUILDER RESUME TO TEXT
-   ============================================================ */
 function convertBuilderToText(resume) {
   if (!resume) return '';
 
   const lines = [];
   const p = resume.personal || {};
 
-  // Contact
   if (p.name && p.name !== 'Your Name') lines.push(p.name);
   if (p.title) lines.push(p.title);
-  
+
   const contacts = [];
   if (p.location) contacts.push(p.location);
   if (p.phone) contacts.push(p.phone.startsWith('+') || /phone/i.test(p.phone) ? p.phone : `Phone: ${p.phone}`);
@@ -831,14 +768,12 @@ function convertBuilderToText(resume) {
   if (contacts.length) lines.push(contacts.join(' | '));
   lines.push('');
 
-  // Summary
   if (resume.summary) {
     lines.push('PROFESSIONAL SUMMARY');
     lines.push(resume.summary);
     lines.push('');
   }
 
-  // Skills
   const sk = resume.skills || {};
   const skillLines = [
     sk.languages ? `Languages: ${sk.languages}` : '',
@@ -853,7 +788,6 @@ function convertBuilderToText(resume) {
     lines.push('');
   }
 
-  // Experience
   const exp = resume.experience || [];
   if (exp.length) {
     lines.push('WORK EXPERIENCE');
@@ -869,7 +803,6 @@ function convertBuilderToText(resume) {
     });
   }
 
-  // Projects
   const prj = resume.projects || [];
   if (prj.length) {
     lines.push('PROJECTS');
@@ -885,7 +818,6 @@ function convertBuilderToText(resume) {
     });
   }
 
-  // Education
   const edu = resume.education || [];
   if (edu.length) {
     lines.push('EDUCATION');
@@ -898,7 +830,6 @@ function convertBuilderToText(resume) {
     });
   }
 
-  // Achievements
   const ach = resume.achievements || [];
   if (ach.length) {
     lines.push('ACHIEVEMENTS');
@@ -911,7 +842,6 @@ function convertBuilderToText(resume) {
     });
   }
 
-  // Certifications
   const crt = resume.certifications || [];
   if (crt.length) {
     lines.push('CERTIFICATIONS');
@@ -927,14 +857,6 @@ function convertBuilderToText(resume) {
   return lines.join('\n').trim();
 }
 
-/* ============================================================
-   1. RESUME DOCUMENT VALIDATION & CLASSIFIER
-   ============================================================ */
-
-/**
- * Classifies the document type and calculates a resumeConfidence score (0–100).
- * Prevents analyzing invoices, certificates, marksheets, research papers, offer letters, or random text.
- */
 function classifyDocument(text) {
   const textLower = text.toLowerCase();
   const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
@@ -949,7 +871,6 @@ function classifyDocument(text) {
     offer_letter: []
   };
 
-  // 1. Check Non-Resume Indicators
   const INVOICE_PATTERNS = [
     /\b(tax\s*invoice|commercial\s*invoice|proforma\s*invoice)\b/i,
     /\b(bill\s*to|ship\s*to|invoice\s*(?:no|number|#)|inv-\d+)\b/i,
@@ -1004,7 +925,6 @@ function classifyDocument(text) {
     if (m) nonResumeMatches.offer_letter.push(m[0]);
   });
 
-  // 2. Identify Positive Resume Signals
   const detectedSections = {};
   for (const [sec, pattern] of Object.entries(SECTION_PATTERNS)) {
     if (pattern.test(text)) {
@@ -1019,12 +939,10 @@ function classifyDocument(text) {
   const hasJobTitles = /\b(software\s*engineer|full\s*stack|frontend|backend|developer|intern|internship|analyst|data\s*scientist|designer|lead|specialist)\b/i.test(text);
   const hasProjectIndicators = /\b(github\.com|demo|project|developed|built|engineered|architected|implemented)\b/i.test(text);
 
-  // 3. Compute Resume Confidence Score (0–100)
   let confidence = 0;
   const detectedSignals = [];
   const missingSignals = [];
 
-  // Signal: Summary / Profile
   if (detectedSections.summary) {
     confidence += 15;
     detectedSignals.push('Professional Summary / Profile');
@@ -1032,7 +950,6 @@ function classifyDocument(text) {
     missingSignals.push('Professional Summary');
   }
 
-  // Signal: Education Section & Degree
   if (detectedSections.education || hasEducationDegree) {
     confidence += 15;
     detectedSignals.push('Education / Academic Background');
@@ -1040,7 +957,6 @@ function classifyDocument(text) {
     missingSignals.push('Education Section');
   }
 
-  // Signal: Experience / Internships
   if (detectedSections.experience || (hasJobTitles && hasDatesOrDurations)) {
     confidence += 20;
     detectedSignals.push('Work Experience / Internships');
@@ -1048,7 +964,6 @@ function classifyDocument(text) {
     missingSignals.push('Work Experience / Internships');
   }
 
-  // Signal: Technical Skills
   if (detectedSections.skills || skills.all.length >= 4) {
     confidence += 15;
     detectedSignals.push(`Technical Skills (${skills.all.length} detected)`);
@@ -1056,7 +971,6 @@ function classifyDocument(text) {
     missingSignals.push('Structured Technical Skills Section');
   }
 
-  // Signal: Projects
   if (detectedSections.projects || (hasProjectIndicators && skills.all.length >= 2)) {
     confidence += 15;
     detectedSignals.push('Technical Projects');
@@ -1064,25 +978,21 @@ function classifyDocument(text) {
     missingSignals.push('Projects Section');
   }
 
-  // Signal: Certifications / Achievements
   if (detectedSections.certifications || detectedSections.achievements) {
     confidence += 10;
     detectedSignals.push('Certifications / Achievements');
   }
 
-  // Signal: Professional Contact Details
   if (contactInfo.email && (contactInfo.phone || contactInfo.linkedin || contactInfo.github)) {
     confidence += 5;
     detectedSignals.push('Professional Contact Details');
   }
 
-  // Signal: Dates, Job Titles & Companies
   if (hasDatesOrDurations && hasJobTitles) {
     confidence += 5;
     detectedSignals.push('Employment Durations & Job Titles');
   }
 
-  // 4. Non-Resume Penalties & Detection
   let detectedType = 'resume';
   let nonResumeReason = '';
 
@@ -1112,10 +1022,8 @@ function classifyDocument(text) {
     confidence = Math.min(confidence, 25);
   }
 
-  // Bound confidence between 0 and 100
   confidence = Math.min(Math.max(Math.round(confidence), 0), 100);
 
-  // Status determination
   let status = 'CONFIDENT';
   let isResume = true;
   let statusMessage = '';
@@ -1147,26 +1055,20 @@ function classifyDocument(text) {
   };
 }
 
-/* ============================================================
-   2. SECTION HEADER DETECTION & SEGMENTATION
-   ============================================================ */
 function isSectionHeaderLine(line) {
   const clean = line.replace(/^[#*\-•\s]+/, '').trim();
   if (clean.length > 50 || clean.length < 3) return false;
-  
-  // Exclude inline attribute declarations
+
   if (/^(technologies|tech|tools|languages|frontend|backend|databases|github|demo|link|credential\s*id|coursework|skills|interests|responsibilities|phone|email|location|linkedin|leetcode):\s*\S+/i.test(clean)) {
     return false;
   }
-  // Exclude lines with 2 or more commas
+
   if ((clean.match(/,/g) || []).length >= 2) return false;
-  // Exclude lines containing email or 10-digit phone
+
   if (/@|\+?\d{10}/.test(clean)) return false;
 
-  // Sentences ending with periods are prose/bullets, not section headers
   if (/\.\s*$/.test(clean)) return false;
 
-  // Conversational sentence words indicate body text rather than a section title
   if (/\b(include|including|with|using|for|and|my|our|across|specializing|experienced|proven|proficient|skilled|worked|developed|built)\b/i.test(clean) && clean.split(/\s+/).length > 3) {
     return false;
   }
@@ -1174,13 +1076,6 @@ function isSectionHeaderLine(line) {
   return true;
 }
 
-/**
- * Parses resume text into discrete logical sections (summary, skills, experience, etc.)
- * based on header regex matching and line position tracking.
- * @param {string} text - The raw extracted resume plain text.
- * @returns {{ detected: Object, sectionContent: Object, lines: string[], sectionPositions: Array }} 
- *   An object containing flags for detected sections and their raw text chunks.
- */
 function parseResumeSections(text) {
   const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
   const detected = {};
@@ -1218,16 +1113,6 @@ function parseResumeSections(text) {
   return { detected, sectionContent, lines, sectionPositions };
 }
 
-/* ============================================================
-   3. DETERMINISTIC LINK & CONTACT PARSER
-   ============================================================ */
-
-/**
- * Normalizes detected URLs into canonical https:// URLs.
- * Strips enclosing brackets, trailing slashes, and trailing punctuation.
- * @param {string} rawUrl - Raw URL string
- * @returns {string|null} Normalized https:// URL or null
- */
 function normalizeUrl(rawUrl) {
   if (!rawUrl || typeof rawUrl !== 'string') return null;
   let url = rawUrl.trim();
@@ -1238,7 +1123,6 @@ function normalizeUrl(rawUrl) {
     url = 'https://github.com/' + url.replace(/^git@github\.com:/i, '');
   }
 
-  // Strip trailing .git
   url = url.replace(/\.git$/i, '');
 
   if (!/^https?:\/\//i.test(url)) {
@@ -1264,13 +1148,6 @@ function makeLinkObj(type, label, url, username = '') {
   };
 }
 
-/**
- * Country-aware phone number validation.
- * Checks whether the digit count matches the country's national standard (e.g. India +91 = 10 digits, US/Canada +1 = 10 digits).
- * @param {string} rawPhone - raw phone string
- * @param {string} locationText - optional location text to infer country if prefix omitted
- * @returns {{ isValid: boolean, reason: string|null, country: string, countryCode: string, expectedDigits: string, actualDigits: number, formatted: string }}
- */
 function validatePhoneNumber(rawPhone, locationText = '') {
   if (!rawPhone || typeof rawPhone !== 'string') {
     return {
@@ -1308,7 +1185,6 @@ function validatePhoneNumber(rawPhone, locationText = '') {
 
   const sortedRules = [...COUNTRY_RULES].sort((a, b) => b.code.length - a.code.length);
 
-  // Check explicit prefix
   for (const rule of sortedRules) {
     if (clean.startsWith('+' + rule.code) || clean.startsWith(rule.code + ' ') || clean.startsWith(rule.code + '-')) {
       matchedRule = rule;
@@ -1318,7 +1194,6 @@ function validatePhoneNumber(rawPhone, locationText = '') {
     }
   }
 
-  // If no prefix but starts with code and total length matches
   if (!matchedRule && digitsOnly.length > 10) {
     for (const rule of sortedRules) {
       if (digitsOnly.startsWith(rule.code)) {
@@ -1330,15 +1205,14 @@ function validatePhoneNumber(rawPhone, locationText = '') {
     }
   }
 
-  // Infer from location or default
   if (!matchedRule) {
     const locLower = (locationText || '').toLowerCase();
     if (/india|kanpur|delhi|mumbai|bangalore|bengaluru|hyderabad|pune|chennai|kolkata|noida|gurgaon|uttar pradesh|up\b/i.test(locLower) || /^[6-9]/.test(digitsOnly)) {
-      matchedRule = COUNTRY_RULES[0]; // India
+      matchedRule = COUNTRY_RULES[0];
       detectedCode = '+91';
       nationalDigits = digitsOnly;
     } else if (/united states|usa|us\b|canada|new york|california|san francisco|texas|seattle/i.test(locLower)) {
-      matchedRule = COUNTRY_RULES[1]; // US
+      matchedRule = COUNTRY_RULES[1];
       detectedCode = '+1';
       nationalDigits = digitsOnly;
     } else {
@@ -1390,13 +1264,6 @@ const _linkValidator = (function () {
   return null;
 })();
 
-/**
- * Validates a project live demo URL to detect valid deployments vs fake, placeholder, or broken links.
- * Incorporates deterministic syntax, SSRF guards, dummy subdomain & placeholder filters.
- * Returns both the 4-state classification ('verified'|'invalid'|'unverified'|'missing') and legacy status ('valid'|'fake_placeholder'|'local_network'|'incomplete_domain').
- * @param {string} rawUrl - URL string
- * @returns {{ isValid: boolean, isFake: boolean, state: string, status: string, reason: string, url: string, displayUrl: string }}
- */
 function validateProjectLiveUrl(rawUrl) {
   if (!rawUrl || typeof rawUrl !== 'string' || !rawUrl.trim()) {
     return { isValid: false, isFake: true, state: 'missing', status: 'missing', reason: 'No live demo link provided', url: '', displayUrl: '' };
@@ -1429,7 +1296,6 @@ function validateProjectLiveUrl(rawUrl) {
     };
   }
 
-  // Self-contained fallback when linkValidator is not yet loaded
   const clean = rawUrl.trim().replace(/^mailto:/i, '').replace(/^[<(\[]+|[.,;:)>\]|]+$/g, '');
   const normalized = normalizeUrl(clean);
 
@@ -1488,12 +1354,6 @@ function validateProjectLiveUrl(rawUrl) {
   return { isValid: true, isFake: false, state: 'unverified', status: 'valid', reason: 'Valid live deployment URL', url: normalized, displayUrl };
 }
 
-/**
- * Asynchronous live URL reachability verifier.
- * Calls linkValidator in Node.js, or backend /api/validate-url in browser.
- * @param {string} rawUrl
- * @returns {Promise<{ isValid: boolean, isFake: boolean, state: string, status: string, reason: string, url: string, displayUrl: string, httpStatus?: number }>}
- */
 async function validateProjectLiveUrlAsync(rawUrl) {
   const det = validateProjectLiveUrl(rawUrl);
   if (det.isFake || !det.isValid || det.status === 'missing') {
@@ -1502,7 +1362,6 @@ async function validateProjectLiveUrlAsync(rawUrl) {
 
   const lv = _linkValidator || (typeof window !== 'undefined' ? window.LinkValidator : null);
 
-  // 1. Direct Node.js verification
   if (lv && typeof lv.verifyLiveUrl === 'function' && typeof process !== 'undefined' && process.versions?.node) {
     try {
       const live = await lv.verifyLiveUrl(det.url);
@@ -1510,7 +1369,7 @@ async function validateProjectLiveUrlAsync(rawUrl) {
         ...det,
         isValid: live.isValid,
         isFake: live.isFake,
-        state: live.status, // 'verified', 'invalid', 'unverified'
+        state: live.status,
         status: live.status === 'verified' ? 'valid' : (live.isFake ? 'fake_placeholder' : 'valid'),
         reachable: live.reachable,
         httpStatus: live.httpStatus,
@@ -1518,11 +1377,10 @@ async function validateProjectLiveUrlAsync(rawUrl) {
         finalUrl: live.finalUrl
       };
     } catch (err) {
-      // Fallback to deterministic
+
     }
   }
 
-  // 2. Browser: ping local/backend /api/validate-url if available
   if (typeof fetch === 'function' && typeof window !== 'undefined') {
     try {
       const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
@@ -1557,20 +1415,13 @@ async function validateProjectLiveUrlAsync(rawUrl) {
         }
       }
     } catch (err) {
-      // Backend not running; keep unverified
+
     }
   }
 
   return det;
 }
 
-/**
- * Context-aware URL classifier for resume documents.
- * Integrates with LinkValidator.classifyUrlContext.
- * @param {string} rawUrl
- * @param {Object} [context]
- * @returns {'CERTIFICATION'|'PROJECT_GITHUB'|'PROJECT_LIVE_DEMO'|'PORTFOLIO'|'LINKEDIN'|'CODING_PROFILE'|'OTHER'}
- */
 function classifyResumeUrl(rawUrl, context = {}) {
   const lv = _linkValidator || (typeof window !== 'undefined' ? window.LinkValidator : null);
   if (lv && typeof lv.classifyUrlContext === 'function') {
@@ -1589,17 +1440,6 @@ function classifyResumeUrl(rawUrl, context = {}) {
   return 'OTHER';
 }
 
-/**
- * Validates a certificate URL in isolation.
- * Guarantees that a broken certificate URL NEVER shows 'Fake Project Link'
- * and only produces:
- * - 🟢 Certificate Link Valid (state: 'valid')
- * - 🟡 Could Not Verify (state: 'unverified')
- * - 🔴 Invalid Certificate Link (state: 'invalid')
- * @param {string} rawUrl
- * @param {Object} [options]
- * @returns {Object}
- */
 function validateCertLink(rawUrl, options = {}) {
   const lv = _linkValidator || (typeof window !== 'undefined' ? window.LinkValidator : null);
   if (lv && typeof lv.validateCertificateUrl === 'function') {
@@ -1642,15 +1482,6 @@ function validateCertLink(rawUrl, options = {}) {
   };
 }
 
-/**
- * Extracts GitHub repository, Live Demo, and Portfolio URLs from project lines separately.
- * Follows Requirement 1 & 13 priority:
- * 1. GitHub repository (must be owner/repo, not profile)
- * 2. Live Demo / Deployment (Vercel, Netlify, Render, Railway, GitHub Pages, custom domain, etc.)
- * 3. Portfolio / Personal site (separated from project demo)
- * @param {string[]|string} textLines - lines belonging to a project entry
- * @returns {{ githubUrl: string|null, demoUrl: string|null, portfolioUrl: string|null, demoValidation: Object|null }}
- */
 function extractProjectLinks(textLines) {
   const fullText = Array.isArray(textLines) ? textLines.join('\n') : String(textLines || '');
   const linesList = Array.isArray(textLines) ? textLines : fullText.split('\n');
@@ -1680,7 +1511,6 @@ function extractProjectLinks(textLines) {
     'orgs'
   ]);
 
-  // 1. GitHub Repo Link (Must be owner/repo, distinct from profile, and NOT a certificate)
   const ghRepoMatch = fullText.match(/(?:https?:\/\/)?(?:www\.)?github\.com\/([a-zA-Z0-9_\-\.]+)\/([a-zA-Z0-9_\-\.]+)/i);
   if (ghRepoMatch) {
     const user = ghRepoMatch[1].replace(/[.,;:)>\]|]+$/g, '');
@@ -1696,7 +1526,6 @@ function extractProjectLinks(textLines) {
     }
   }
 
-  // 2. Explicit Portfolio mention inside project (NOT certificate)
   const labeledPortfolioMatch = fullText.match(/(?:portfolio|personal\s*(?:website|site))\s*[:|–\-—]\s*(?:\[.*?\]\()?([^\s,;()|•<>]+)\)?/i);
   if (labeledPortfolioMatch) {
     const rawPort = labeledPortfolioMatch[1].trim().replace(/^[<(\[]+|[.,;:)>\]|]+$/g, '');
@@ -1713,7 +1542,6 @@ function extractProjectLinks(textLines) {
     }
   }
 
-  // 3. Explicit Labeled Demo pattern (Live Demo, Demo, Deployment, Hosted at, App, Web App, View Live)
   const labeledDemoRegex = /(?:live(?:\s*demo|\s*link)?|demo(?:\s*link)?|deployment|hosted(?:\s*at)?|web\s*app|view\s*live|deployed\s*at|app(?:\s*link)?)\s*[:|–\-—]\s*(?:\[.*?\]\()?([^\s,;()|•<>]+)\)?/i;
   const labeledMatch = fullText.match(labeledDemoRegex);
   if (labeledMatch) {
@@ -1731,7 +1559,6 @@ function extractProjectLinks(textLines) {
     }
   }
 
-  // 4. Markdown link format: [Live Demo](https://...) or [Demo](https://...) or [Deployment](https://...)
   if (!demoUrl) {
     const mdMatch = fullText.match(/\[(?:live(?:\s*demo)?|demo|view\s*live|deployment|app|hosted)\]\((https?:\/\/[^\s\)]+|[^\s\)]+)\)/i);
     if (mdMatch) {
@@ -1747,7 +1574,6 @@ function extractProjectLinks(textLines) {
     }
   }
 
-  // 5. Known deployment platform URLs (Vercel, Netlify, Render, Railway, Pages.dev, GitHub Pages, Firebase, etc.)
   if (!demoUrl) {
     const deployDomainMatch = fullText.match(/\bhttps?:\/\/[a-zA-Z0-9\-]+(?:\.[a-zA-Z0-9\-]+)*(?:\.(?:vercel\.app|netlify\.app|render\.com|railway\.app|up\.railway\.app|pages\.dev|github\.io|fly\.dev|herokuapp\.com|firebaseapp\.com|web\.app|surge\.sh|onrender\.com|amplifyapp\.com))(?:\/[^\s,;()|•<>]*)?\b/i) ||
       fullText.match(/\b([a-zA-Z0-9\-]{2,40}\.(?:vercel\.app|netlify\.app|pages\.dev|onrender\.com|render\.com|railway\.app|github\.io))\b(?:\/[^\s,;()|•<>]*)?/i);
@@ -1764,7 +1590,6 @@ function extractProjectLinks(textLines) {
     }
   }
 
-  // 6. Generic URLs: exclude profiles, email, recruiter domains, documentation domains, and CERTIFICATE URLs
   if (!demoUrl) {
     const allUrls = fullText.match(/\bhttps?:\/\/[^\s,;()|•<>"']+/gi) || [];
     for (const u of allUrls) {
@@ -1794,14 +1619,6 @@ function extractProjectLinks(textLines) {
   };
 }
 
-/**
- * Deterministic contact & developer profile link extraction layer executed BEFORE AI analysis.
- * Accurately detects: LinkedIn, GitHub, LeetCode, Codeforces, HackerRank, GeeksforGeeks,
- * CodeChef, Kaggle, HackerEarth, Dev.to, Stack Overflow, Behance, Dribbble, and Portfolio from entire resume.
- * Deduplicates multiple occurrences and never confuses profiles with repos or project demos.
- * @param {string} text - Raw resume text
- * @returns {Object} detected links collection
- */
 function extractDeterministicLinks(text) {
   if (!text || typeof text !== 'string') {
     return {
@@ -1854,7 +1671,6 @@ function extractDeterministicLinks(text) {
     'knight', 'guardian', 'rating', 'rank', 'daily', 'solution', 'solutions'
   ]);
 
-  // 1. LinkedIn (URL or labeled profile)
   const linkedinMatch = cleanText.match(/\b(?:https?:\/\/)?(?:www\.)?linkedin\.com\/(?:in|pub)\/([a-zA-Z0-9_\-\.%]+)/i) ||
     cleanText.match(/\blinkedin\.com\/in\/([a-zA-Z0-9_\-\.%]+)/i) ||
     cleanText.match(/(?:linkedin|linked-in|\bin\b)\s*[:|–\-\/]\s*(?:https?:\/\/)?(?:www\.)?(?:linkedin\.com\/(?:in\/)?)?([a-zA-Z0-9_\-\.]{3,50})/i);
@@ -1866,7 +1682,6 @@ function extractDeterministicLinks(text) {
     }
   }
 
-  // 2. GitHub (URL or labeled profile - ensure distinct from project repo)
   const headerEndIndex = cleanText.search(/\n\s*(?:WORK\s+EXPERIENCE|EXPERIENCE|EMPLOYMENT|PROJECTS|TECHNICAL\s+SKILLS|SKILLS|EDUCATION)\b/i);
   const headerSection = headerEndIndex !== -1 ? cleanText.slice(0, headerEndIndex) : cleanText.split('\n').slice(0, 15).join('\n');
 
@@ -1885,7 +1700,6 @@ function extractDeterministicLinks(text) {
     }
   }
 
-  // 3. LeetCode (URL or labeled profile)
   const leetcodeMatch = cleanText.match(/\b(?:https?:\/\/)?(?:www\.)?leetcode\.com\/(?:u\/)?([a-zA-Z0-9_\-\.]{2,40})/i) ||
     cleanText.match(/(?:leetcode|lc)\s*[:|–\-\/]\s*(?:https?:\/\/)?(?:www\.)?(?:leetcode\.com\/(?:u\/)?)?([a-zA-Z0-9_\-\.]{2,40})/i);
 
@@ -1896,7 +1710,6 @@ function extractDeterministicLinks(text) {
     }
   }
 
-  // 4. Codeforces (URL or labeled profile - Requirement 10)
   const cfMatch = cleanText.match(/\b(?:https?:\/\/)?(?:www\.)?codeforces\.com\/profile\/([a-zA-Z0-9_\-\.]{2,40})/i) ||
     cleanText.match(/(?:codeforces|cf)\s*[:|–\-\/]\s*(?:https?:\/\/)?(?:www\.)?(?:codeforces\.com\/(?:profile\/)?)?([a-zA-Z0-9_\-\.]{2,40})/i);
 
@@ -1907,7 +1720,6 @@ function extractDeterministicLinks(text) {
     }
   }
 
-  // 5. HackerRank (URL or labeled profile)
   const hackerrankMatch = cleanText.match(/\b(?:https?:\/\/)?(?:www\.)?hackerrank\.com\/(?:profile\/)?([a-zA-Z0-9_\-\.]{2,40})/i) ||
     cleanText.match(/(?:hackerrank|hr)\s*[:|–\-\/]\s*(?:https?:\/\/)?(?:www\.)?(?:hackerrank\.com\/(?:profile\/)?)?([a-zA-Z0-9_\-\.]{2,40})/i);
 
@@ -1918,7 +1730,6 @@ function extractDeterministicLinks(text) {
     }
   }
 
-  // 6. GeeksforGeeks (URL or labeled profile - Requirement 10)
   const gfgMatch = cleanText.match(/\b(?:https?:\/\/)?(?:www\.)?(?:auth\.)?geeksforgeeks\.org\/(?:user|profile)\/([a-zA-Z0-9_\-\.]{2,40})/i) ||
     cleanText.match(/(?:geeksforgeeks|gfg)\s*[:|–\-\/]\s*(?:https?:\/\/)?(?:www\.)?(?:geeksforgeeks\.org\/(?:user\/)?)?([a-zA-Z0-9_\-\.]{2,40})/i);
 
@@ -1929,7 +1740,6 @@ function extractDeterministicLinks(text) {
     }
   }
 
-  // 7. CodeChef (URL or labeled profile)
   const codechefMatch = cleanText.match(/\b(?:https?:\/\/)?(?:www\.)?codechef\.com\/(?:users\/)?([a-zA-Z0-9_\-\.]{2,40})/i) ||
     cleanText.match(/codechef\s*[:|–\-\/]\s*(?:https?:\/\/)?(?:www\.)?(?:codechef\.com\/(?:users\/)?)?([a-zA-Z0-9_\-\.]{2,40})/i);
 
@@ -1940,7 +1750,6 @@ function extractDeterministicLinks(text) {
     }
   }
 
-  // 8. Kaggle (URL or labeled profile)
   const kaggleMatch = cleanText.match(/\b(?:https?:\/\/)?(?:www\.)?kaggle\.com\/([a-zA-Z0-9_\-\.]{2,40})/i) ||
     cleanText.match(/kaggle\s*[:|–\-\/]\s*(?:https?:\/\/)?(?:www\.)?(?:kaggle\.com\/)?([a-zA-Z0-9_\-\.]{2,40})/i);
 
@@ -1951,7 +1760,6 @@ function extractDeterministicLinks(text) {
     }
   }
 
-  // 9. HackerEarth (URL or labeled profile - Requirement 10)
   const heMatch = cleanText.match(/\b(?:https?:\/\/)?(?:www\.)?hackerearth\.com\/@?([a-zA-Z0-9_\-\.]{2,40})/i) ||
     cleanText.match(/hackerearth\s*[:|–\-\/]\s*(?:https?:\/\/)?(?:www\.)?(?:hackerearth\.com\/@?)?([a-zA-Z0-9_\-\.]{2,40})/i);
 
@@ -1962,7 +1770,6 @@ function extractDeterministicLinks(text) {
     }
   }
 
-  // 10. Dev.to (URL or labeled profile - Requirement 10)
   const devtoMatch = cleanText.match(/\b(?:https?:\/\/)?(?:www\.)?dev\.to\/([a-zA-Z0-9_\-\.]{2,40})/i) ||
     cleanText.match(/dev\.to\s*[:|–\-\/]\s*(?:https?:\/\/)?(?:www\.)?(?:dev\.to\/)?([a-zA-Z0-9_\-\.]{2,40})/i);
 
@@ -1973,7 +1780,6 @@ function extractDeterministicLinks(text) {
     }
   }
 
-  // 11. Stack Overflow (URL or labeled profile - Requirement 10)
   const soMatch = cleanText.match(/\b(?:https?:\/\/)?(?:www\.)?stackoverflow\.com\/users\/\d+\/([a-zA-Z0-9_\-\.]{2,40})/i) ||
     cleanText.match(/(?:stackoverflow|stack-overflow|so)\s*[:|–\-\/]\s*(?:https?:\/\/)?(?:www\.)?(?:stackoverflow\.com\/users\/\d+\/)?([a-zA-Z0-9_\-\.]{2,40})/i);
 
@@ -1984,7 +1790,6 @@ function extractDeterministicLinks(text) {
     }
   }
 
-  // 12. Behance (URL or labeled profile)
   const behanceMatch = cleanText.match(/\b(?:https?:\/\/)?(?:www\.)?behance\.net\/([a-zA-Z0-9_\-\.]{2,40})/i);
   if (behanceMatch) {
     const user = (behanceMatch[1] || '').replace(/[.,;:)>\]|/]+$/g, '').trim();
@@ -1993,7 +1798,6 @@ function extractDeterministicLinks(text) {
     }
   }
 
-  // 13. Dribbble (URL or labeled profile)
   const dribbbleMatch = cleanText.match(/\b(?:https?:\/\/)?(?:www\.)?dribbble\.com\/([a-zA-Z0-9_\-\.]{2,40})/i);
   if (dribbbleMatch) {
     const user = (dribbbleMatch[1] || '').replace(/[.,;:)>\]|/]+$/g, '').trim();
@@ -2002,7 +1806,6 @@ function extractDeterministicLinks(text) {
     }
   }
 
-  // 14. Portfolio / Personal Website (Requirement 8: scanned from ENTIRE resume)
   const portfolioKeywordsRegex = /(?:portfolio|personal\s*website|developer\s*portfolio|my\s*website|my\s*portfolio|personal\s*site|website|personal\s*profile)\s*[:|–\-]\s*(https?:\/\/[^\s,;()|•]+|[a-zA-Z0-9\-]+(?:\.[a-zA-Z0-9\-]+)+(?:\/[^\s,;()|•]*)?)/i;
   const labeledPortfolioMatch = cleanText.match(portfolioKeywordsRegex);
   if (labeledPortfolioMatch) {
@@ -2026,7 +1829,6 @@ function extractDeterministicLinks(text) {
     }
   }
 
-  // 15. Collect other plain-text developer URLs (Deduplicated)
   const allUrls = cleanText.match(/\bhttps?:\/\/[^\s,;()|•<>"']+/gi) || [];
   const knownUrls = new Set([
     links.linkedin?.url,
@@ -2059,18 +1861,6 @@ function extractDeterministicLinks(text) {
   return links;
 }
 
-/**
- * Builds a reliable, deterministic intermediate resume object conforming to Part 2 schema.
- * Keeps links separate from normal resume text.
- * @param {string} text - authoritatively extracted resume text
- * @param {Object} parsedSections - output of parseResumeSections
- * @param {Object} contactInfo - output of extractContactInfo
- * @param {Object} skillsData - output of extractSkills
- * @param {string} candidateName - candidate's name
- * @param {string} careerStage - detected career stage
- * @param {Object} extra - additional deterministic parsed sections (experience, projects, etc.)
- * @returns {Object} intermediate structured resume object
- */
 function buildIntermediateResumeJSON(text, parsedSections, contactInfo, skillsData, candidateName = 'Candidate', careerStage = 'Fresher', extra = {}) {
   const contactDetails = contactInfo?.details || {};
   const links = contactInfo?.links || extractDeterministicLinks(text);
@@ -2111,7 +1901,6 @@ function buildIntermediateResumeJSON(text, parsedSections, contactInfo, skillsDa
     links.other.forEach(l => addLinkItem(l));
   }
 
-  // Attach properties to array for backwards compatibility
   linkList.linkedin = links?.linkedin || null;
   linkList.github = links?.github || null;
   linkList.portfolio = links?.portfolio || null;
@@ -2175,12 +1964,6 @@ function buildIntermediateResumeJSON(text, parsedSections, contactInfo, skillsDa
   };
 }
 
-/**
- * Extracts candidate personal details (name, email, phone, location, LinkedIn, GitHub, portfolio).
- * Isolates contact patterns so numerical values (e.g. phone digits or postal codes) are never confused with years of experience.
- * @param {string} text - Raw resume plain text.
- * @returns {{ name: boolean, email: boolean, phone: boolean, linkedin: boolean, github: boolean, portfolio: boolean, leetcode: boolean, location: boolean, score: number, details: Object, links: Object }}
- */
 function extractContactInfo(text) {
   const result = {
     name: false,
@@ -2216,7 +1999,6 @@ function extractContactInfo(text) {
   const lines = cleanText.split('\n').map(l => l.trim()).filter(Boolean);
   const headerLines = lines.slice(0, 14);
 
-  // 1. Email Extraction (Bug 1 & Bug 5 Fix)
   const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-zA-Z]{2,}\b/i;
   const emailMatch = cleanText.match(emailRegex) || (text || '').match(emailRegex);
   if (emailMatch) {
@@ -2224,19 +2006,18 @@ function extractContactInfo(text) {
     result.email = true;
     result.details.email = email;
     result.evidence.email = { source: 'Header / Contact', snippet: email, confidence: 0.99 };
-    
+
     const emailLower = email.toLowerCase();
     const isStandardDomain = /@(gmail|outlook|hotmail|yahoo|icloud|proton|protonmail|live|zoho|[\w\-]+\.(edu|ac\.\w{2}|org|io|dev|tech|co|in))\b/i.test(emailLower);
-    
-    // Bug 5: Casual email soft heuristic
+
     const localPart = emailLower.split('@')[0] || '';
     const cleanLocalWords = localPart.replace(/[.+_-]/g, ' ');
     const CASUAL_SLANG_WORDS = /\b(cool|dude|gamer|guy|killer|beast|boss|badboy|swag|ninja|sexy|hot|lover|rocker|hacker|crazy|funky|cute|shadow|prince|princess|angel|devil)\b/i;
     const hasCasualSlang = CASUAL_SLANG_WORDS.test(cleanLocalWords);
-    
+
     const digitRuns = localPart.match(/\d+/g) || [];
     const hasExcessiveDigits = digitRuns.some(d => d.length >= 4 && !(parseInt(d) >= 1970 && parseInt(d) <= 2035));
-    
+
     const isCasual = hasCasualSlang || hasExcessiveDigits;
     result.isCasualEmail = isCasual;
     result.isProfessionalEmail = isStandardDomain && !/test|fake|spam|temp/i.test(emailLower) && !isCasual;
@@ -2247,7 +2028,6 @@ function extractContactInfo(text) {
     }
   }
 
-  // 2. Phone Extraction (Strictly isolated from dates or experience numbers)
   const phonePatterns = [
     /(?:phone|mobile|mob|cell|tel|contact|call|ph|p|m|t)\s*[:|–\-.]\s*(\+?\d{1,4}[-\s.]?(?:\(?\d{2,5}\)?[-\s.]?)?\d{2,5}[-\s.]?\d{2,5}(?:[-\s.]?\d{2,5})?)/i,
     /(?:^|[^\d\w+])((?:\+?1[\s.-]?)?(?:\(\d{3}\)|\d{3})[\s.-]?\d{3}[\s.-]?\d{4})(?:[^\d\w]|$)/m,
@@ -2264,7 +2044,7 @@ function extractContactInfo(text) {
       const rawMatch = pMatch[1] || pMatch[0];
       const matchedStr = rawMatch.replace(/^(?:phone|mobile|mob|cell|tel|contact|call|ph|p|m|t)\s*[:|–\-.]\s*/i, '').trim();
       const digitsOnly = matchedStr.replace(/\D/g, '');
-      
+
       if (digitsOnly.length === 12 && digitsOnly.startsWith('91')) {
         result.phone = true;
         result.details.phone = matchedStr.replace(/^[^\d+(]+|[^\d)]+$/g, '').trim();
@@ -2286,7 +2066,6 @@ function extractContactInfo(text) {
     }
   }
 
-  // 3. Deterministic Developer Links Extraction (Part 1 & 2)
   const extractedLinks = extractDeterministicLinks(text);
   result.links = extractedLinks;
 
@@ -2346,7 +2125,6 @@ function extractContactInfo(text) {
 
   result.details.links = extractedLinks;
 
-  // 4. Location
   const NON_LOCATION_WORDS = [
     'ai', 'ml', 'generative', 'engineer', 'developer', 'software', 'full', 'stack',
     'science', 'technology', 'university', 'college', 'school', 'intern', 'lead',
@@ -2393,7 +2171,6 @@ function extractContactInfo(text) {
     }
   }
 
-  // 7. Name
   for (const line of headerLines) {
     const tokens = line.split(/[|•·,]/).map(t => t.trim()).filter(Boolean);
     const candidate = tokens[0] || line;
@@ -2415,8 +2192,7 @@ function extractContactInfo(text) {
   }
 
   result.quality = Boolean(result.name && result.email && result.phone && result.isProfessionalEmail !== false);
-  
-  // Calculate Contact Confidence (0–100%)
+
   let conf = 0;
   if (result.name) conf += 25;
   if (result.email) conf += 35;
@@ -2425,7 +2201,6 @@ function extractContactInfo(text) {
   if (result.location) conf += 5;
   result.confidence = Math.min(conf, 100);
 
-  // Evidence-based Contact Score (Strictly max 3 points - cannot inflate resume)
   let contactPts = 0;
   if (result.name) contactPts += 0.5;
   if (result.email) contactPts += 1.0;
@@ -2437,9 +2212,6 @@ function extractContactInfo(text) {
   return result;
 }
 
-/* ============================================================
-   4. SKILLS EXTRACTION — EXACT MATCH & EVIDENCE MAPPING
-   ============================================================ */
 function matchSkillExact(skillKey, textLower, originalText) {
   if (skillKey === 'c++') {
     return /(?:^|[^a-zA-Z0-9_#+])c\+\+(?:$|[^a-zA-Z0-9_#+])/i.test(textLower);
@@ -2450,7 +2222,7 @@ function matchSkillExact(skillKey, textLower, originalText) {
   if (skillKey === 'c') {
     const hasStandaloneC = /(?:^|[^a-zA-Z0-9_#+])c(?:$|[^a-zA-Z0-9_#+])/i.test(textLower);
     if (!hasStandaloneC) return false;
-    
+
     const strippedCPPandCS = textLower.replace(/c\+\+/g, ' ').replace(/c#/g, ' ').replace(/objective-c/g, ' ');
     const stillHasStandaloneC = /(?:^|[^a-zA-Z0-9_#+])c(?:$|[^a-zA-Z0-9_#+])/i.test(strippedCPPandCS);
     if (!stillHasStandaloneC) return false;
@@ -2475,14 +2247,6 @@ function matchSkillExact(skillKey, textLower, originalText) {
   return regex.test(textLower);
 }
 
-/**
- * Extracts and canonicalizes technical & soft skills from resume text.
- * Performs cross-section evidence verification to determine if a declared skill is
- * genuinely supported in project descriptions or work experience bullets.
- * @param {string} text - The raw extracted resume plain text.
- * @param {Object|null} parsedSections - Pre-parsed section boundaries and text chunks.
- * @returns {{ categorized: Object, all: string[], softSkills: string[], evidenceMap: Object }}
- */
 function extractSkills(text, parsedSections = null) {
   const textLower = text.toLowerCase();
   const categorized = {};
@@ -2525,7 +2289,6 @@ function extractSkills(text, parsedSections = null) {
           categorized[category].push(displayName);
           allFound.push(displayName);
 
-          // Provenance determination
           let source = 'General Resume Body';
           let confidence = 0.85;
           let isEvidencedInProjectOrExp = false;
@@ -2573,9 +2336,6 @@ function extractSkills(text, parsedSections = null) {
   };
 }
 
-/* ============================================================
-   5. PROFESSIONAL SUMMARY ANALYSIS
-   ============================================================ */
 function analyzeProfessionalSummary(text, parsedSections, skills) {
   const summaryText = (parsedSections?.sectionContent?.summary || '').trim();
   const hasSection = Boolean(parsedSections?.detected?.summary && summaryText.length >= 15);
@@ -2602,7 +2362,6 @@ function analyzeProfessionalSummary(text, parsedSections, skills) {
   const rolePattern = /\b(software\s*engineer|web\s*developer|full\s*stack|frontend|backend|data\s*scientist|data\s*analyst|devops\s*engineer|cloud\s*architect|cloud\s*engineer|software\s*developer|ai\s*developer|ai\s*engineer|ml\s*engineer|systems\s*engineer|qa\s*engineer|mobile\s*developer|data\s*engineer|security\s*engineer|solutions\s*architect|tech\s*lead|engineering\s*lead(?:er)?|developer|engineer(?:ing)?|architect|programmer|lead(?:er)?)\b/i;
   const hasTargetRole = rolePattern.test(summaryText);
 
-  // Directly scan full summary text for technical skills (Bug 6 Fix: full paragraph scope)
   const directSummarySkills = extractSkills(summaryText).all;
   const allSkills = [...new Set([...(skills?.all || []), ...directSummarySkills])];
 
@@ -2617,7 +2376,7 @@ function analyzeProfessionalSummary(text, parsedSections, skills) {
 
   const isConciseAndProfessional = wordCount >= 15 && wordCount <= 90 && clichésFound.length === 0 && !isGenericStudentFluff;
 
-  let score = 2; // base existence
+  let score = 2;
   if (hasTargetRole) score += 2;
   if (hasTechKeywords) score += 2;
   if (isConciseAndProfessional) score += 2;
@@ -2643,9 +2402,6 @@ function analyzeProfessionalSummary(text, parsedSections, skills) {
   };
 }
 
-/* ============================================================
-   6. EVIDENCE-BASED EXPERIENCE & INTERNSHIP ANALYSIS
-   ============================================================ */
 function analyzeExperience(text, sectionContent) {
   const secContent = sectionContent?.sectionContent || sectionContent || {};
   const expText = (secContent.experience || '').trim();
@@ -2720,7 +2476,7 @@ function analyzeExperience(text, sectionContent) {
   let score = 0;
   if (jobTitles.length > 0 || allBullets.length > 0) {
     if (isOnlyInternship) {
-      score = 6; // base internship (6–12/15)
+      score = 6;
       if (companies.length > 0 || /\b(company|inc|pvt|ltd|organization|startup|corp|innovations)\b/i.test(expText)) score += 2;
       if (hasDates) score += 2;
       if (techInExp.length >= 2) score += 1.5;
@@ -2782,14 +2538,10 @@ function analyzeExperience(text, sectionContent) {
   };
 }
 
-/* ============================================================
-   7. PROJECTS ANALYSIS & SUBSTANCE EVALUATION
-   ============================================================ */
 function isTechStackOrLinksLine(line) {
   const trimmed = line.trim();
   if (!trimmed) return false;
 
-  // 1. Pure links line (e.g. "github.com/user/repo | live-demo.com" or "https://github.com/...")
   const strippedLinks = trimmed
     .replace(/(?:https?:\/\/)?(?:www\.)?[a-zA-Z0-9_\-\.]+\.(?:com|org|net|io|app|dev|me|tech|site|vercel\.app|netlify\.app|github\.io)[^\s|•,]*/gi, '')
     .replace(/github\.com\/[^\s|•,]*/gi, '')
@@ -2798,16 +2550,13 @@ function isTechStackOrLinksLine(line) {
     .trim();
 
   if (strippedLinks.length === 0) {
-    return true; // Line is purely links and delimiters
+    return true;
   }
 
-  // 2. Explicit tech stack prefix
   if (/^(?:tech(?:nologies|\s*stack)?|tools|environment|built\s*with|stack|languages?)\s*[:\-–—]?\s*/i.test(trimmed)) {
     return true;
   }
 
-  // 3. Comma- or delimiter-separated list of >= 2 recognized skills
-  // Strip URLs first so that 'GitHub' in github.com/user/repo is not detected as a standalone skill token
   const lineWithoutUrls = trimmed
     .replace(/(?:https?:\/\/)?(?:www\.)?[a-zA-Z0-9_\-\.]+\.(?:com|org|net|io|app|dev|me|tech|site|vercel\.app|netlify\.app)[^\s|•,]*/gi, '')
     .replace(/github\.com\/[^\s|•,]*/gi, '');
@@ -2837,10 +2586,8 @@ function isProjectHeaderLine(line) {
   if (!trimmed) return false;
   if (/^[•\-\*►▸▪]/.test(trimmed)) return false;
 
-  // Bug 2 Fix: A line matching tech stack or links should NEVER start a new project block
   if (isTechStackOrLinksLine(trimmed)) return false;
 
-  // Certificates and credentials must NEVER be treated as projects
   if (/\b(certificate|certification|certified|credential|coursework|courses?|licenses?|diploma|training\s*completion)\b/i.test(trimmed)) {
     return false;
   }
@@ -2857,7 +2604,6 @@ function isProjectHeaderLine(line) {
     return false;
   }
 
-  // Support em-dash (—), en-dash (–), spaced hyphens ( - ), and delimiters
   if (trimmed.length < 150 && (trimmed.includes('|') || trimmed.includes('–') || trimmed.includes('—') || trimmed.includes(' - ') || /github\.com|demo|\.app|\.io|\.dev/i.test(trimmed))) {
     if (/\b(certificate|certification|certified|credential|coursera|udemy|credly|nptel|simplilearn)\b/i.test(trimmed)) {
       return false;
@@ -2913,7 +2659,7 @@ function analyzeProjects(text, sectionContent) {
   ];
 
   lines.forEach(line => {
-    // Prevent section spillover (e.g. Certifications section following Projects)
+
     if (isSectionHeaderLine(line)) {
       const isOtherSection = Object.entries(SECTION_PATTERNS).some(([secKey, regex]) => {
         return secKey !== 'projects' && regex.test(line);
@@ -2928,7 +2674,7 @@ function analyzeProjects(text, sectionContent) {
     }
 
     if (isTechStackOrLinksLine(line)) {
-      // Continuation of current project if active
+
       if (currentProject) {
         currentProject.textLines.push(line);
         if (extractSkills(line).all.length > 0) currentProject.hasTech = true;
@@ -3037,7 +2783,7 @@ function evaluateProjectSubstance(proj, depthKeywords) {
 
   let projectScore = depthScore + techDepthScore + verbScore + bonusScore;
   if (wordCount < 15 && matchedDepthKeywords.length === 0) {
-    // Basic project: 3–5/20
+
     projectScore = Math.min(Math.max(projectScore + 2.0, 3.0), 5.0);
   }
 
@@ -3062,9 +2808,6 @@ function evaluateProjectSubstance(proj, depthKeywords) {
   };
 }
 
-/* ============================================================
-   8. EDUCATION ANALYSIS
-   ============================================================ */
 function analyzeEducation(text, parsedSections) {
   const eduText = (parsedSections?.sectionContent?.education || '').trim();
   const hasSection = Boolean(parsedSections?.detected?.education);
@@ -3091,7 +2834,7 @@ function analyzeEducation(text, parsedSections) {
   const gpaMatch = searchScope.match(/\b(cgpa|gpa|percentage|grade|honors|\d\.\d{1,2}\/\d|\d{2}%)\b/i);
   const hasAcademicDetails = Boolean(gpaMatch);
 
-  let score = 2; // base presence
+  let score = 2;
   if (csOrEngDegree) score += 3;
   else if (hasDegree) score += 2;
 
@@ -3117,9 +2860,6 @@ function analyzeEducation(text, parsedSections) {
   };
 }
 
-/* ============================================================
-   9. CERTIFICATIONS & ACHIEVEMENTS ANALYSIS
-   ============================================================ */
 function analyzeCertifications(text, parsedSections) {
   const certText = (parsedSections?.sectionContent?.certifications || '').trim();
   const hasSection = Boolean(parsedSections?.detected?.certifications && certText.length >= 10);
@@ -3147,7 +2887,6 @@ function analyzeCertifications(text, parsedSections) {
   const lines = certText.split('\n').map(l => l.trim()).filter(Boolean);
   const certLower = certText.toLowerCase();
 
-  // Bug 4 Fix: Lightweight configurable tier system
   const tier1List = CERTIFICATION_TIERS.tier1 || [];
   const tier2List = CERTIFICATION_TIERS.tier2 || [];
 
@@ -3166,7 +2905,6 @@ function analyzeCertifications(text, parsedSections) {
 
   const hasDatesOrIds = /\b(20\d{2}|credential|id:|license|\.org|\.com|verify)\b/i.test(certLower);
 
-  // Parse individual certificate items with links and validation
   const certItems = [];
   let currentItem = null;
 
@@ -3193,7 +2931,6 @@ function analyzeCertifications(text, parsedSections) {
     const fullText = item.textLines.join(' ');
     let provider = '';
 
-    // 1. Check URL hostname against CERTIFICATE_PROVIDERS
     if (item.url) {
       try {
         const parsed = new URL(item.url);
@@ -3211,7 +2948,6 @@ function analyzeCertifications(text, parsedSections) {
       } catch (e) {}
     }
 
-    // 2. Check text against known issuers / providers if provider not found
     if (!provider) {
       for (const kp of KNOWN_PROVIDERS) {
         if (kp.match.test(fullText)) {
@@ -3286,7 +3022,7 @@ function analyzeCertifications(text, parsedSections) {
   if (isPurelyGeneric) {
     score = 1;
   } else {
-    // Tiered weighting: Tier 1 high weight (+1.5), Tier 2 lower weight (+0.5)
+
     if (hasTier1) {
       score += 1.5;
     } else if (hasTier2) {
@@ -3324,10 +3060,8 @@ function analyzeAchievements(text, parsedSections) {
   const achText = (parsedSections?.sectionContent?.achievements || '').trim();
   const hasSection = Boolean(parsedSections?.detected?.achievements && achText.length >= 10);
 
-  // Also check general text if achievements mentioned in summary or body
   const searchScope = (achText ? achText + '\n' + text : text).toLowerCase();
 
-  // 1. Check LeetCode / DSA Problem counts
   const problemMatch = searchScope.match(/\b(\d+)\+?\s*(?:(?:data\s*structures(?:\s*&|\s*and)?\s*algorithms|dsa|coding|algo|leetcode|algorithm)\s*(?:\([^)]*\)\s*)?)?(?:problems|questions|challenges|leetcode)\b/i) ||
     searchScope.match(/\b(\d+)\+?\s*(?:[a-zA-Z&()]+\s+){0,5}(?:problems|questions|challenges|leetcode)\b/i);
   const problemCount = problemMatch ? parseInt(problemMatch[1]) : 0;
@@ -3339,11 +3073,9 @@ function analyzeAchievements(text, parsedSections) {
   else if (problemCount >= 50) dsaScore = 2.0;
   else if (problemCount >= 20) dsaScore = 1.0;
 
-  // 2. Consistency Streak
   const streakMatch = searchScope.match(/\b(\d+)\+?\s*(?:day|days)\s*(?:coding\s*)?(?:consistency\s*)?streak\b/i);
   const streakScore = streakMatch ? 2.5 : 0;
 
-  // 3. Contest Rank / Hackathon
   const contestMatch = searchScope.match(/\b(hackathon|finalist|winner|runner\s*up|rank\s*#?\d+|contest\s*rating|top\s*\d+%|gold\s*medal|codeforces|codechef)\b/i);
   const contestScore = contestMatch ? 2.5 : 0;
 
@@ -3374,9 +3106,6 @@ function analyzeAchievements(text, parsedSections) {
   };
 }
 
-/* ============================================================
-   10. CONTENT QUALITY ANALYSIS
-   ============================================================ */
 function analyzeContentQuality(text, experienceAnalysis, projectsAnalysis) {
   const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
   const words = text.toLowerCase().split(/\s+/).filter(Boolean);
@@ -3402,21 +3131,17 @@ function analyzeContentQuality(text, experienceAnalysis, projectsAnalysis) {
 
   let score = 0;
 
-  // Action Verbs (up to 2.5 pts)
   const actionRatio = allBullets.length > 0 ? (actionVerbCount / allBullets.length) : 0;
   if (actionRatio >= 0.5 || actionVerbCount >= 4) score += 2.5;
   else if (actionRatio >= 0.25 || actionVerbCount >= 2) score += 1.5;
   else if (actionVerbCount >= 1) score += 1.0;
 
-  // Quantifiable Metrics (up to 2.5 pts)
   if (metricsCount >= 3) score += 2.5;
   else if (metricsCount >= 1) score += 1.5;
 
-  // Vague Phrases Penalty (up to 1.0 pt)
   if (vagueFound.length === 0) score += 1.0;
   else if (vagueFound.length === 1) score += 0.5;
 
-  // First-Person Pronouns Penalty (up to 1.0 pt)
   if (firstPersonCount <= 1) score += 1.0;
   else if (firstPersonCount <= 3) score += 0.5;
 
@@ -3460,14 +3185,10 @@ function analyzeContentQuality(text, experienceAnalysis, projectsAnalysis) {
   };
 }
 
-/* ============================================================
-   11. ATS COMPATIBILITY ANALYSIS
-   ============================================================ */
 function analyzeATSFormatting(text, parsedSections, documentStructure = null) {
   const checks = [];
   let formatScore = 0;
 
-  // 1. Standard Section Headers (up to 2.5 pts)
   const detectedCount = Object.keys(parsedSections?.detected || {}).length;
   const hasStandardHeaders = detectedCount >= 4;
   if (hasStandardHeaders) formatScore += 2.5;
@@ -3479,7 +3200,6 @@ function analyzeATSFormatting(text, parsedSections, documentStructure = null) {
     detail: hasStandardHeaders ? `${detectedCount} recognizable standard sections found` : `Only ${detectedCount} standard section headings found`
   });
 
-  // 2. Clean Text Extraction & Flow (up to 1.5 pts)
   const garbledPatterns = (text.match(/[^\x00-\x7F]{3,}/g) || []).length;
   const cleanFlow = garbledPatterns < 3;
   if (cleanFlow) formatScore += 1.5;
@@ -3490,7 +3210,6 @@ function analyzeATSFormatting(text, parsedSections, documentStructure = null) {
     detail: cleanFlow ? 'Text extracted cleanly without character encoding issues' : 'Some non-standard encoding detected — ATS parsers may misread text'
   });
 
-  // 3. Layout & Reading Flow (Bug 3 Fix: operates on document structure, not flattened text)
   const docStruct = documentStructure || analyzerState?.documentStructure || detectDocumentLayoutFromText(text);
   const isMultiColumnLayout = Boolean(docStruct?.isMultiColumn || docStruct?.hasTables);
   const isCleanSingleColumn = !isMultiColumnLayout;
@@ -3511,7 +3230,6 @@ function analyzeATSFormatting(text, parsedSections, documentStructure = null) {
     });
   }
 
-  // 4. No Excessive Decorative Characters (up to 1.5 pts)
   const specialChars = (text.match(/[★☆◆◇▶▷♦♣♠♥●○◎□■△▽☐☑✓✗✘✔✕✖⬡⬢⬣]/g) || []).length;
   const noDecorative = specialChars < 4;
   if (noDecorative) formatScore += 1.5;
@@ -3522,7 +3240,6 @@ function analyzeATSFormatting(text, parsedSections, documentStructure = null) {
     detail: noDecorative ? 'Clean formatting without unparseable symbols' : `${specialChars} decorative symbols detected — ATS may reject these`
   });
 
-  // 5. Contact Info Placement
   const headerChunk = text.substring(0, 450);
   const hasContactTop = /@/.test(headerChunk) || /\d{3}/.test(headerChunk);
 
@@ -3532,7 +3249,6 @@ function analyzeATSFormatting(text, parsedSections, documentStructure = null) {
     detail: hasContactTop ? 'Contact details detected near the top of the resume' : 'Contact info not found in the initial header region'
   });
 
-  // 6. Text Accessibility
   const isSelectable = text.length >= 80;
   checks.push({
     label: 'Text is searchable and selectable',
@@ -3549,16 +3265,12 @@ function analyzeATSFormatting(text, parsedSections, documentStructure = null) {
   };
 }
 
-/* ============================================================
-   12. INTERNAL CONSISTENCY & DUPLICATE DETECTION
-   ============================================================ */
 function checkInternalConsistency(text, structuredData, parsedSections) {
   const contradictions = [];
   const duplicates = [];
 
   const textLower = text.toLowerCase();
 
-  // 1. Check Problem Solving / DSA Number Mismatches
   const problemNumbers = [...textLower.matchAll(/(\d+)\+?\s*(?:dsa|problems|leetcode|questions|challenges|algo\s*problems)/gi)].map(m => parseInt(m[1]));
   if (problemNumbers.length >= 2) {
     const uniqueNums = [...new Set(problemNumbers)];
@@ -3567,7 +3279,6 @@ function checkInternalConsistency(text, structuredData, parsedSections) {
     }
   }
 
-  // 2. Check Years of Experience Discrepancy
   const summaryYearsMatch = (parsedSections?.sectionContent?.summary || '').match(/(\d+)\+?\s*years?(?:\s*of)?\s*(?:experience|work)/i);
   if (summaryYearsMatch) {
     const claimedYears = parseInt(summaryYearsMatch[1]);
@@ -3577,7 +3288,6 @@ function checkInternalConsistency(text, structuredData, parsedSections) {
     }
   }
 
-  // 3. Duplicate Project Descriptions
   const projText = (parsedSections?.sectionContent?.projects || '');
   const projLines = projText.split('\n').map(l => l.trim()).filter(l => l.length >= 35);
   const seenLines = new Set();
@@ -3590,7 +3300,6 @@ function checkInternalConsistency(text, structuredData, parsedSections) {
     }
   });
 
-  // 4. Repeated Skills Spammed
   const skillsText = (parsedSections?.sectionContent?.skills || '').toLowerCase();
   const skillTokens = skillsText.split(/[,|\n•]/).map(s => s.trim()).filter(s => s.length >= 2);
   const tokenCounts = {};
@@ -3609,46 +3318,15 @@ function checkInternalConsistency(text, structuredData, parsedSections) {
   };
 }
 
-/* ============================================================
-   13. TOTAL ATS SCORING ENGINE (Weighted Evidence-Based 100-Point Model)
-   ============================================================ */
-/**
- * Calculates the comprehensive 0–100 ATS resume score across 10 deterministic categories:
- * - Professional Summary (8 pts)
- * - Technical Skills (15 pts)
- * - Technical Projects (20 pts)
- * - Work / Internship Experience (15 pts) [with Fresher Compensation]
- * - Education (10 pts)
- * - Achievements & DSA (10 pts)
- * - Certifications (5 pts)
- * - ATS & Formatting (7 pts)
- * - Contact Information (3 pts)
- * - Content Quality & Action Verbs (7 pts)
- *
- * @param {string} text - Raw resume text.
- * @param {Object} contactInfo - Extracted contact fields & score.
- * @param {Object} summaryAnalysis - Professional summary evaluation.
- * @param {Object} skills - Extracted skills & evidence verification map.
- * @param {Object} experienceAnalysis - Experience bullet metrics & role seniority.
- * @param {Object} projectsAnalysis - Project complexity & count.
- * @param {Object} educationAnalysis - Degree, institution, and graduation timeline.
- * @param {Object} certificationsAnalysis - Industry certifications detected.
- * @param {Object} achievementsAnalysis - Hackathons, competitive ranks, awards.
- * @param {Object} contentQuality - Action verb ratio and quantifiable metrics count.
- * @param {Object} formattingAnalysis - Formatting and readability evaluation.
- * @param {Object|null} jdMatchResult - Optional target job match analysis.
- * @returns {{ overall: number, breakdown: Object<string, { score: number, max: number, label: string }> }}
- */
 function calculateATSScore(
   text, contactInfo, summaryAnalysis, skills,
   experienceAnalysis, projectsAnalysis, educationAnalysis,
   certificationsAnalysis, achievementsAnalysis, contentQuality, formattingAnalysis,
   jdMatchResult
 ) {
-  // 1. Professional Summary (8 pts)
+
   const summaryPts = Math.min(summaryAnalysis?.score || 0, 8);
 
-  // 2. Technical Skills (15 pts) - Scaled proportionally to verified matches
   const totalTechSkills = skills?.all?.length || 0;
   const categoriesCovered = Object.values(skills?.categorized || {}).filter(arr => arr.length > 0).length;
   const evidencedSkills = Object.values(skills?.evidenceMap || {}).filter(e => e.isEvidencedInProjectOrExp).length;
@@ -3675,12 +3353,10 @@ function calculateATSScore(
   }
   skillsPts = Math.min(Math.max(Math.round(skillsPts), 0), 15);
 
-  // 3. Technical Projects (20 pts)
   let projectsPts = Math.min(projectsAnalysis?.score || 0, 20);
 
-  // 4. Professional / Internship Experience (15 pts)
   let experiencePts = Math.min(experienceAnalysis?.score || 0, 15);
-  // Student compensation: project experience partially compensates for limited employment
+
   if (experienceAnalysis?.isFresher || experienceAnalysis?.isOnlyInternship) {
     if (projectsPts >= 14) {
       if (experienceAnalysis?.isOnlyInternship) {
@@ -3692,22 +3368,16 @@ function calculateATSScore(
     }
   }
 
-  // 5. Education (10 pts)
   const educationPts = Math.min(educationAnalysis?.score || 0, 10);
 
-  // 6. Achievements / DSA (10 pts)
   const achievementsPts = Math.min(achievementsAnalysis?.score || 0, 10);
 
-  // 7. Certifications (5 pts)
   const certificationsPts = Math.min(certificationsAnalysis?.score || 0, 5);
 
-  // 8. ATS & Structure (7 pts)
   const formattingPts = Math.min(formattingAnalysis?.score || 0, 7);
 
-  // 9. Contact Information (3 pts)
   const contactPts = Math.min(contactInfo?.score != null ? contactInfo.score : (contactInfo?.quality ? 3 : 2), 3);
 
-  // 10. Content Quality & Impact (7 pts)
   const contentQualityPts = Math.min(contentQuality?.score || 0, 7);
 
   const breakdown = {
@@ -3729,9 +3399,6 @@ function calculateATSScore(
   return { overall, breakdown };
 }
 
-/* ============================================================
-   13.5 SCORING VALIDATION PASS (Zero-Hallucination & Consistency Audit)
-   ============================================================ */
 function validateScoringEvidence(breakdown, rawText, structuredData) {
   const validationResults = {
     isValid: true,
@@ -3741,7 +3408,6 @@ function validateScoringEvidence(breakdown, rawText, structuredData) {
 
   const textLower = (rawText || '').toLowerCase();
 
-  // 1. Are all scored sections actually present?
   for (const [key, section] of Object.entries(breakdown)) {
     if (section.score > 0) {
       validationResults.checks.push({
@@ -3751,7 +3417,6 @@ function validateScoringEvidence(breakdown, rawText, structuredData) {
     }
   }
 
-  // 2. Does each score have evidence?
   const totalSkills = structuredData?.skills?.all?.length ||
     structuredData?.skills?.other?.length ||
     (structuredData?.skills ? Object.values(structuredData.skills).flat().length : 0);
@@ -3766,39 +3431,17 @@ function validateScoringEvidence(breakdown, rawText, structuredData) {
     validationResults.adjustments.push('Reset projects score to 0 due to zero evidence.');
   }
 
-  // 3. Are duplicate sections being counted twice? (Isolated projects vs experience)
-
-  // 4. Is contact information being overweighted?
   if (breakdown.contact && breakdown.contact.score > 3) {
     breakdown.contact.score = 3;
     validationResults.adjustments.push('Capped contact score to 3 points maximum.');
   }
 
-  // 5. Is lack of professional experience being penalized too heavily for students?
-  // (Covered by student project compensation)
-
-  // 6. Are projects receiving enough weight?
-  // (Max 20 points allocated)
-
-  // 7. Are achievements being recognized?
-  // (LeetCode/DSA problems and streaks recognized up to 10 points)
-
-  // 8. Are certifications being recognized?
-  // (Recognized issuers up to 5 points)
-
-  // 9. Is summary quality being recognized?
-  // (Targeted summary up to 8 points)
-
-  // 10. Is score consistent with extracted resume data?
   const recalculatedTotal = Object.values(breakdown).reduce((sum, item) => sum + item.score, 0);
   validationResults.overallScore = Math.min(Math.max(Math.round(recalculatedTotal), 0), 100);
 
   return validationResults;
 }
 
-/* ============================================================
-   SCORE INTERPRETATION
-   ============================================================ */
 function getScoreInterpretation(score) {
   if (score >= 95) return { label: 'Excellent', color: '#059669', desc: 'Outstanding resume! Exceptional depth, metrics, structure, and keyword density.' };
   if (score >= 85) return { label: 'Very Good', color: '#10b981', desc: 'Very strong resume. Highly optimized with strong action verbs, technical depth, and clear impact.' };
@@ -3808,9 +3451,6 @@ function getScoreInterpretation(score) {
   return { label: 'Poor', color: 'var(--color-error)', desc: 'Significant improvements needed. Resume lacks technical depth, measurable impact, or essential sections.' };
 }
 
-/* ============================================================
-   14. STRUCTURED RESUME PROFILE BUILDER & SENIORITY DETECTION
-   ============================================================ */
 function buildStructuredResumeProfile(resumeData) {
   const {
     resumeText = '', contactInfo = {}, skills = {}, summaryAnalysis = {},
@@ -3833,11 +3473,6 @@ function buildStructuredResumeProfile(resumeData) {
   const github = ciDetails.github || null;
   const linkedin = ciDetails.linkedin || null;
 
-  // Detect Candidate Level (Student / Fresher / Junior / Mid / Senior)
-  // Fix: Trust experienceAnalysis (reads actual job titles + dates) over raw-text regexes.
-  // Raw year/degree matching (e.g. "bachelor", "2026") is intentionally removed because
-  // it incorrectly labels interns and experienced candidates with a graduation year as
-  // "Student / Fresher" even when analyzeExperience() detected real job titles.
   const isStudentOrFresher = experienceAnalysis.isFresher ||
     (!experienceAnalysis.hasExperience && !experienceAnalysis.isOnlyInternship);
 
@@ -3898,45 +3533,35 @@ function buildStructuredResumeProfile(resumeData) {
   };
 }
 
-/* ============================================================
-   15. JOB DESCRIPTION PARSER & MATCHING ENGINE (CANONICAL)
-   ============================================================ */
 const CANONICAL_TECH_MAP = {
-  // React
+
   'react': 'React',
   'react.js': 'React',
   'reactjs': 'React',
 
-  // Next.js
   'next.js': 'Next.js',
   'nextjs': 'Next.js',
   'next': 'Next.js',
 
-  // Vue
   'vue': 'Vue',
   'vue.js': 'Vue',
   'vuejs': 'Vue',
 
-  // Angular
   'angular': 'Angular',
   'angular.js': 'Angular',
   'angularjs': 'Angular',
 
-  // Node.js
   'node.js': 'Node.js',
   'nodejs': 'Node.js',
   'node': 'Node.js',
 
-  // Express
   'express': 'Express',
   'express.js': 'Express',
 
-  // Tailwind CSS
   'tailwind': 'Tailwind CSS',
   'tailwind css': 'Tailwind CSS',
   'tailwindcss': 'Tailwind CSS',
 
-  // JavaScript
   'javascript': 'JavaScript',
   'javascript es6': 'JavaScript',
   'es6 javascript': 'JavaScript',
@@ -3945,54 +3570,44 @@ const CANONICAL_TECH_MAP = {
   'es6': 'JavaScript',
   'js': 'JavaScript',
 
-  // TypeScript
   'typescript': 'TypeScript',
   'ts': 'TypeScript',
 
-  // Git & GitHub
   'git': 'Git',
   'github': 'GitHub',
 
-  // REST APIs
   'rest api': 'REST APIs',
   'rest apis': 'REST APIs',
   'restful api': 'REST APIs',
   'restful apis': 'REST APIs',
   'rest': 'REST APIs',
 
-  // HTML & CSS
   'html': 'HTML5',
   'html5': 'HTML5',
   'css': 'CSS3',
   'css3': 'CSS3',
 
-  // Responsive Design
   'responsive web design': 'Responsive Design',
   'responsive design': 'Responsive Design',
   'responsive': 'Responsive Design',
 
-  // DOM Manipulation
   'dom manipulation': 'DOM Manipulation',
   'dom': 'DOM Manipulation',
 
-  // Performance Optimization
   'frontend performance optimization': 'Performance Optimization',
   'performance optimization': 'Performance Optimization',
   'web performance': 'Performance Optimization',
 
-  // AI & APIs
   'ai apis': 'AI APIs',
   'ai api': 'AI APIs',
   'generative ai': 'Generative AI',
   'genai': 'Generative AI',
   'gen ai': 'Generative AI',
 
-  // Personal Web Projects
   'personal web projects': 'Personal Web Projects',
   'personal projects': 'Personal Web Projects',
   'web projects': 'Personal Web Projects',
 
-  // Core CS / DSA
   'data structures & algorithms': 'Data Structures & Algorithms',
   'data structures and algorithms': 'Data Structures & Algorithms',
   'data structures': 'Data Structures',
@@ -4003,7 +3618,6 @@ const CANONICAL_TECH_MAP = {
   'object oriented programming': 'OOP',
   'system design': 'System Design',
 
-  // Databases
   'sql': 'SQL',
   'postgresql': 'PostgreSQL',
   'postgres': 'PostgreSQL',
@@ -4012,7 +3626,6 @@ const CANONICAL_TECH_MAP = {
   'mongo': 'MongoDB',
   'redis': 'Redis',
 
-  // Cloud & DevOps
   'aws': 'AWS',
   'amazon web services': 'AWS',
   'gcp': 'Google Cloud',
@@ -4025,7 +3638,6 @@ const CANONICAL_TECH_MAP = {
   'cicd': 'CI/CD',
   'vercel': 'Vercel',
 
-  // Languages
   'python': 'Python',
   'java': 'Java',
   'c++': 'C++',
@@ -4048,18 +3660,15 @@ function parseJobDescription(jdText) {
   if (!jdText || jdText.trim().length < 20) return null;
   const jdLower = jdText.toLowerCase();
 
-  // Title
   let title = 'Software Engineer';
   const titleMatch = jdText.match(/(?:job title|role|position|title):\s*([^\n\r,]+)/i) ||
                      jdText.match(/\b(Senior\s+[A-Za-z\s/]+|Junior\s+[A-Za-z\s/]+|Lead\s+[A-Za-z\s/]+|[A-Za-z\s/]+\b(?:Developer|Engineer|Architect|Analyst|Scientist|Specialist|Intern))\b/i);
   if (titleMatch) title = titleMatch[1].trim();
 
-  // Company
   let company = 'Not specified';
   const companyMatch = jdText.match(/(?:company|organization|at)\s*[:]\s*([^\n\r,]+)/i);
   if (companyMatch) company = companyMatch[1].trim();
 
-  // Experience requirement
   let minYears = 0;
   let maxYears = 0;
   let expText = 'Entry Level / Fresher';
@@ -4078,14 +3687,12 @@ function parseJobDescription(jdText) {
     }
   }
 
-  // Extract explicit sections from JD
   const reqMatch = jdLower.match(/(?:requirements|must\s*have|required\s*qualifications|what\s*you\s*need|core\s*skills)[:\s]+([^]+?)(?:preferred|nice\s*to\s*have|bonus|plus|what\s*we\s*offer|responsibilities|benefits|$)/i);
   const prefMatch = jdLower.match(/(?:preferred|nice\s*to\s*have|bonus|plus|good\s*to\s*have|desired)[:\s]+([^]+?)(?:responsibilities|benefits|what\s*we\s*offer|requirements|$)/i);
 
   const reqChunk = reqMatch ? reqMatch[1] : '';
   const prefChunk = prefMatch ? prefMatch[1] : '';
 
-  // Match all synonyms sorted by descending length
   const sortedSynonyms = Object.keys(CANONICAL_TECH_MAP).sort((a, b) => b.length - a.length);
 
   const rawReq = [];
@@ -4109,10 +3716,6 @@ function parseJobDescription(jdText) {
     }
   }
 
-  // Deduplicate and resolve priority
-  // Rule 1: Skills under Requirements MUST remain REQUIRED
-  // Rule 2: If a skill appears in both Required and Preferred, Required takes priority (removed from Preferred)
-  // Rule 3: Deduplicate canonical skills in both sets
   const duplicateSkillsRemoved = [];
   const requiredSet = new Set();
   const requiredSkills = [];
@@ -4140,7 +3743,6 @@ function parseJobDescription(jdText) {
     }
   }
 
-  // Fallback if no explicit sections detected
   if (requiredSkills.length === 0 && preferredSkills.length === 0) {
     for (const item of generalFound) {
       if (!requiredSet.has(item.canonical) && !preferredSet.has(item.canonical)) {
@@ -4155,7 +3757,6 @@ function parseJobDescription(jdText) {
     }
   }
 
-  // Extract structured JD details
   const requiredExperience = [];
   if (minYears > 0) requiredExperience.push(`${expText} relevant technical experience`);
   const preferredExperience = [];
@@ -4220,7 +3821,6 @@ function matchJobProfileWithResume(resumeProfile, jobProfile) {
     return false;
   }
 
-  // 1. Required Skills Match (30%)
   const matchedRequired = [];
   const missingRequired = [];
   (jobProfile.requiredSkills || []).forEach(s => {
@@ -4235,7 +3835,6 @@ function matchJobProfileWithResume(resumeProfile, jobProfile) {
     reqScore = matchedRequired.length > 0 ? 30 : 20;
   }
 
-  // 2. Preferred Skills Match (10%)
   const matchedPreferred = [];
   const missingPreferred = [];
   (jobProfile.preferredSkills || []).forEach(s => {
@@ -4250,7 +3849,6 @@ function matchJobProfileWithResume(resumeProfile, jobProfile) {
     prefScore = 10;
   }
 
-  // 3. Experience Match (20%)
   const candYears = resumeProfile.isFresher ? 0 : 2;
   const reqMinYears = jobProfile.minExperienceYears || 0;
   let expScore = 20;
@@ -4278,14 +3876,11 @@ function matchJobProfileWithResume(resumeProfile, jobProfile) {
     expScore = 20;
   }
 
-  // 4. Project Relevance (20%)
   const projCount = (resumeProfile.projects || []).length;
   let projScore = projCount > 0 ? Math.min(projCount * 6 + 6, 20) : 0;
 
-  // 5. Education Match (10%)
   let eduScore = 10;
 
-  // 6. Keywords/Domain Match (10%)
   const totalKeywords = (jobProfile.keywords || []).length;
   const matchedKeywords = (jobProfile.keywords || []).filter(kw => hasSkill(kw)).length;
   let keywordScore = totalKeywords > 0 ? Math.min(Math.round((matchedKeywords / totalKeywords) * 10), 10) : 5;
@@ -4309,7 +3904,6 @@ function matchJobProfileWithResume(resumeProfile, jobProfile) {
     missingRequirementsDisplay.required.push(`${jobProfile.experienceRequired} professional experience`);
   }
 
-  // Eligibility Status
   let eligibility = '';
   let eligibilityClass = '';
   let eligibilityColor = '';
@@ -4411,7 +4005,6 @@ function matchJobProfileWithResume(resumeProfile, jobProfile) {
     whyYouMatch.push(`Practical project implementation aligned with ${jobProfile.domain}`);
   }
 
-  // Debug object containing exact fields requested
   const debug = {
     requiredSkills: [...jobProfile.requiredSkills],
     preferredSkills: [...jobProfile.preferredSkills],
@@ -4531,9 +4124,6 @@ function analyzeJobDescriptionMatch(resumeData, jdText) {
   };
 }
 
-/* ============================================================
-   16. SPECIFIC IMPROVEMENT SUGGESTIONS GENERATOR
-   ============================================================ */
 function generateSuggestions(
   contactInfo, parsedSections, summaryAnalysis, skills,
   experienceAnalysis, projectsAnalysis, educationAnalysis,
@@ -4620,8 +4210,7 @@ function generateSuggestions(
     }
 
     const projList = Array.isArray(projectsAnalysis.details) ? projectsAnalysis.details : [];
-    
-    // Confirmed Fake/Invalid live demo links (Requirement 7 & 19)
+
     const fakeDemoProjects = projList.filter(p => p.demoValidation?.isFake || p.demoValidation?.state === 'invalid');
     fakeDemoProjects.forEach(p => {
       suggestions.push({
@@ -4632,7 +4221,6 @@ function generateSuggestions(
       });
     });
 
-    // Unverified live demo links (Requirement 7: softer guidance, NOT falsely marked as fake)
     const unverifiedDemoProjects = projList.filter(p => p.demoUrl && !p.demoValidation?.isFake && p.demoValidation?.state === 'unverified');
     unverifiedDemoProjects.forEach(p => {
       suggestions.push({
@@ -4672,9 +4260,6 @@ function generateSuggestions(
   return suggestions;
 }
 
-/* ============================================================
-   MASTER RESUME ANALYZER PROMPT & AI INPUT PIPELINE
-   ============================================================ */
 const MASTER_RESUME_ANALYZER_SYSTEM_PROMPT = `============================================================
 MASTER RESUME ANALYZER — GOOGLE-LEVEL ATS + RECRUITER ENGINE
 ============================================================
@@ -5748,12 +5333,6 @@ You must:
 END OF MASTER RESUME ANALYZER PROMPT
 ============================================================`;
 
-/**
- * Validates extracted resume text before invoking analysis or calling the AI.
- * Ensures the document contains sufficient readable content, preventing empty inputs and fake 0-score evaluations.
- * @param {string} text - Raw extracted text
- * @returns {{ valid: boolean, error?: string, text?: string, length?: number }}
- */
 function validateResumeInput(text) {
   if (!text || typeof text !== 'string') {
     return {
@@ -5785,13 +5364,6 @@ function validateResumeInput(text) {
   };
 }
 
-/**
- * Constructs the Master AI Prompt embedding non-empty resume text within [RESUME_INPUT] delimiters.
- * Never allows empty text within [RESUME_INPUT].
- * @param {string} resumeText - Validated resume text
- * @param {string|null} jdText - Optional job description text
- * @returns {string} Fully structured AI prompt
- */
 function constructMasterAiPrompt(resumeText, jdText = null) {
   const validation = validateResumeInput(resumeText);
   if (!validation.valid) {
@@ -5819,11 +5391,6 @@ function constructMasterAiPrompt(resumeText, jdText = null) {
   return prompt;
 }
 
-/**
- * Extracts and verifies the resume text from an AI prompt payload.
- * @param {string} prompt - Prompt containing [RESUME_INPUT] ... [/RESUME_INPUT]
- * @returns {string|null} Extracted resume text or null if missing
- */
 function extractResumeInputFromPrompt(prompt) {
   if (!prompt || typeof prompt !== 'string') return null;
   const matches = [...prompt.matchAll(/(?:^|\n)\s*\[RESUME_INPUT\]\s*\n([\s\S]*?)\n\s*\[\/RESUME_INPUT\]/gi)];
@@ -5834,11 +5401,6 @@ function extractResumeInputFromPrompt(prompt) {
   return fallback ? fallback[1].trim() : null;
 }
 
-/**
- * Parses and sanitizes an AI JSON response payload.
- * @param {string} jsonString - Raw AI response string
- * @returns {Object} Parsed JSON object
- */
 function parseAiResponse(jsonString) {
   if (!jsonString || typeof jsonString !== 'string') {
     throw new Error('AI response is empty.');
@@ -5857,15 +5419,6 @@ function parseAiResponse(jsonString) {
   return parsed;
 }
 
-/**
- * Dynamically detects role recommendations based on verified skills, projects, and career stage.
- * Never uses static hardcoded role cards.
- * @param {Object} skillsData - Normalized skills data
- * @param {Array} projectsDetails - Extracted project details
- * @param {Array} experienceDetails - Extracted experience details
- * @param {string} careerStage - Detected career stage
- * @returns {{ bestFit: Object, topRecommendations: Array, primaryRole: string, alternativeRoles: Array }}
- */
 function detectDynamicRoles(skillsData, projectsDetails, experienceDetails, careerStage) {
   const allSkillsLower = (skillsData.all || []).map(s => s.toLowerCase());
   const projectText = (projectsDetails || []).map(p => `${p.name || ''} ${(p.technologies || []).join(' ')} ${p.description || ''} ${(p.bullets || []).join(' ')}`).join(' ').toLowerCase();
@@ -6038,7 +5591,6 @@ function detectDynamicRoles(skillsData, projectsDetails, experienceDetails, care
       if (combinedContext.includes(dm)) domainPoints += 3;
     });
 
-    // Skip roles with zero evidence in the resume
     if (matchedReq.length === 0 && domainPoints === 0 && matchedPref.length === 0) {
       return;
     }
@@ -6124,14 +5676,6 @@ function detectDynamicRoles(skillsData, projectsDetails, experienceDetails, care
   };
 }
 
-/**
- * Master AI Evaluation Engine conforming strictly to the 34-section Google-Level ATS rubric.
- * Executes deep semantic analysis, career-stage detection, and evidence-backed scoring (0-100).
- * Never hallucinates data and outputs the exact Section 30 JSON schema.
- * @param {string} resumeText - Authoritative extracted resume text
- * @param {string|null} jdText - Optional job description text
- * @returns {Object} Validated Section 30 JSON object
- */
 function executeMasterAiEvaluation(resumeText, jdText = null) {
   if (!resumeText || typeof resumeText !== 'string' || resumeText.trim().length < 30) {
     return {
@@ -6142,7 +5686,6 @@ function executeMasterAiEvaluation(resumeText, jdText = null) {
   const cleanText = resumeText.trim();
   const textLower = cleanText.toLowerCase();
 
-  // 1. Parsing & Extraction via verified modular analyzers
   const parsedSections = parseResumeSections(cleanText);
   const contactInfo = extractContactInfo(cleanText);
   const skillsData = extractSkills(cleanText, parsedSections);
@@ -6155,7 +5698,6 @@ function executeMasterAiEvaluation(resumeText, jdText = null) {
   const contentQuality = analyzeContentQuality(cleanText, experienceAnalysis, projectsAnalysis);
   const formattingAnalysis = analyzeATSFormatting(cleanText, parsedSections, null);
 
-  // 2. Candidate Information
   const candidateName = (contactInfo.details && contactInfo.details.name && contactInfo.details.name !== 'Candidate' && contactInfo.details.name !== 'Your Name')
     ? contactInfo.details.name
     : (cleanText.split('\n').map(l => l.trim()).filter(l => l.length > 2 && !l.toLowerCase().includes('resume') && !l.toLowerCase().includes('curriculum'))[0] || 'Candidate');
@@ -6170,7 +5712,6 @@ function executeMasterAiEvaluation(resumeText, jdText = null) {
     location: contactInfo.details?.location || null
   };
 
-  // 3. Career Stage Detection (Section 1)
   const gradMatch = cleanText.match(/\b(202[4-9]|203[0-9])\b/);
   const isEnrolled = gradMatch !== null || textLower.includes('pursuing') || textLower.includes('enrolled');
   const isStudentProgram = /\b(b\.?tech|btech|bachelor|undergraduate|fresher|intern|student|b\.?e\b|b\.?s\b|m\.?tech|mca)\b/i.test(cleanText);
@@ -6201,9 +5742,7 @@ function executeMasterAiEvaluation(resumeText, jdText = null) {
     careerStageConfidence = 85;
     careerStageEvidence.push(`Identified professional employment history of approximately ${declaredYears} year(s).`);
   } else if ((isEnrolled || isStudentProgram) && declaredYears < 1 && !isSeniorTitle && !experienceAnalysis.hasExperience) {
-    // Only classify as Student if no professional experience contradicts it.
-    // A resume can mention "bachelor" or graduation year 2026 and still be a Junior/Mid-level
-    // engineer if they have declared years of experience or senior job titles.
+
     careerStage = 'Student';
     careerStageConfidence = 94;
     if (gradMatch) {
@@ -6221,15 +5760,14 @@ function executeMasterAiEvaluation(resumeText, jdText = null) {
     careerStageEvidence.push('Entry-level technical profile based on foundational skills and practical project evidence.');
   }
 
-  // 4. Skills Normalization into 14 Categories (Section 6 & 7)
   const allDetectedSkills = skillsData.all || [];
   const categorized = skillsData.categorized || {};
-  
+
   const verifiedSkills = [];
   const listedOnlySkills = [];
 
   allDetectedSkills.forEach(skill => {
-    const isEvidenced = Object.values(skillsData.evidenceMap || {}).some(e => 
+    const isEvidenced = Object.values(skillsData.evidenceMap || {}).some(e =>
       e.skill?.toLowerCase() === skill.toLowerCase() && e.isEvidencedInProjectOrExp
     ) || (cleanText.includes(skill) && (textLower.indexOf(skill.toLowerCase()) !== textLower.lastIndexOf(skill.toLowerCase())));
 
@@ -6258,8 +5796,6 @@ function executeMasterAiEvaluation(resumeText, jdText = null) {
     listedOnlySkills: [...new Set(listedOnlySkills)]
   };
 
-  // 5. Section Scoring (0 - 100 Calibrated)
-  // Contact Score
   let contactScore = 40;
   if (contact.name) contactScore += 15;
   if (contact.email) contactScore += 15;
@@ -6270,14 +5806,12 @@ function executeMasterAiEvaluation(resumeText, jdText = null) {
   if (contact.portfolio || contactInfo.details?.leetcode) contactScore += 5;
   contactScore = Math.min(contactScore, 100);
 
-  // Technical Skills Score
   const totalSkills = allDetectedSkills.length;
   const verifiedCount = verifiedSkills.length;
   let technicalSkillsScore = Math.min(Math.round((totalSkills * 3.5) + (verifiedCount * 3.0) + (Object.keys(categorized).length * 4)), 100);
   if (totalSkills >= 12 && verifiedCount >= 6) technicalSkillsScore = Math.max(technicalSkillsScore, 88);
   if (totalSkills <= 3) technicalSkillsScore = Math.min(technicalSkillsScore, 40);
 
-  // Projects Score
   const projCount = projectsAnalysis.count || 0;
   let projectsScore = 0;
   if (projCount === 0) {
@@ -6294,13 +5828,12 @@ function executeMasterAiEvaluation(resumeText, jdText = null) {
   }
   projectsScore = Math.min(Math.max(projectsScore, 0), 100);
 
-  // Experience Score
   let experienceScore = 0;
   const expBullets = experienceAnalysis.bulletPointsCount || 0;
   const hasExpEvidence = Boolean(experienceAnalysis.hasExperience && expBullets > 0);
 
   if (!hasExpEvidence) {
-    // Zero work experience evidence or zero bullets: experience score is strictly 0
+
     experienceScore = 0;
   } else if (careerStage === 'Student' || careerStage === 'Fresher' || careerStage === 'Intern') {
     experienceScore = 82;
@@ -6312,14 +5845,12 @@ function executeMasterAiEvaluation(resumeText, jdText = null) {
   }
   experienceScore = Math.min(Math.max(experienceScore, 0), 100);
 
-  // Education Score
   let educationScore = 40;
   if (educationAnalysis.hasDegree) educationScore += 35;
   if (cleanText.match(/cgpa:\s*([89]\.\d|10)|gpa:\s*(?:3\.[5-9]|4\.0)/i)) educationScore += 15;
   if (cleanText.match(/(?:computer science|information technology|engineering|ai & ml|artificial intelligence)/i)) educationScore += 10;
   educationScore = Math.min(Math.max(educationScore, 0), 100);
 
-  // Certifications Score
   const hasRecognizedCert = /\b(aws\s*certified|google\s*(?:cloud|data|cybersecurity)|microsoft\s*certified|azure|meta\s*front-end|certified\s*kubernetes|ckad|cka|oracle\s*certified|cisco\s*certified|ccna|solutions\s*architect|pmi|pmp)\b/i.test(cleanText);
   let certificationsScore = 0;
   if (certificationsAnalysis.tier1Count >= 2) certificationsScore = 92;
@@ -6327,34 +5858,27 @@ function executeMasterAiEvaluation(resumeText, jdText = null) {
   else if (certificationsAnalysis.count > 0) certificationsScore = 70;
   else certificationsScore = 0;
 
-  // Achievements Score
   let achievementsScore = 0;
   if (achievementsAnalysis.leetCodeCount >= 100 || cleanText.match(/\b\d{2,3}\+\s*(?:leetcode|problems|dsa)/i)) achievementsScore = 88;
   if (cleanText.match(/hackathon|finalist|winner|rank|scholarship/i)) achievementsScore = Math.max(achievementsScore + 6, 85);
   achievementsScore = Math.min(Math.max(achievementsScore, 0), 100);
 
-  // ATS Compatibility Score
   let atsScore = 80;
   if (parsedSections.detected?.length >= 5) atsScore += 8;
   if (formattingAnalysis.score >= 6) atsScore += 6;
   atsScore = Math.min(Math.max(atsScore, 50), 98);
 
-  // Content Quality Score
   let contentQualityScore = 75;
   if (contentQuality.quantifiedRatio >= 0.3) contentQualityScore += 12;
   if (contentQuality.vagueFound.length === 0) contentQualityScore += 8;
   contentQualityScore = Math.min(Math.max(contentQualityScore, 35), 96);
 
-  // Summary Score
   let summaryScore = summaryAnalysis.exists ? Math.min(Math.round((summaryAnalysis.score / 8) * 100), 100) : 0;
   if (summaryAnalysis.exists && summaryScore < 60) summaryScore = 75;
 
-  // Overall Resume Score (Stage-Aware Calibration)
   let overallResumeScore = 0;
   if (!hasExpEvidence) {
-    // Fresher / Student or candidate with no prior experience:
-    // Do NOT penalize for lack of experience! Experience weight is 0%.
-    // Redistribute weight across Projects (30%), Skills (25%), ATS (20%), Education (15%), Achievements (5%), Content Quality (5%)
+
     overallResumeScore = Math.round(
       projectsScore * 0.30 +
       technicalSkillsScore * 0.25 +
@@ -6385,10 +5909,8 @@ function executeMasterAiEvaluation(resumeText, jdText = null) {
   }
   overallResumeScore = Math.min(Math.max(overallResumeScore, 10), 99);
 
-  // 6. Dynamic Roles (Section 29)
   const dynamicRoles = detectDynamicRoles(skillsData, projectsAnalysis.details, experienceAnalysis.details, careerStage);
 
-  // 7. Job Match (Section 17, 31, 33)
   let jobMatchResult = null;
   if (jdText && typeof jdText === 'string' && jdText.trim().length > 20 && jdText.trim() !== 'NOT_PROVIDED') {
     const jdAnalysis = analyzeJobDescriptionMatch({ resumeText: cleanText, skills: skillsData }, jdText);
@@ -6421,7 +5943,6 @@ function executeMasterAiEvaluation(resumeText, jdText = null) {
     };
   }
 
-  // 8. Strengths, Improvements, Missing Info, Red Flags
   const strengths = [];
   if (projectsScore >= 80) strengths.push('Strong technical project showcase demonstrating end-to-end implementation and architecture.');
   if (technicalSkillsScore >= 80) strengths.push('Broad and verified technical skill coverage across frontend, backend, databases, and cloud.');
@@ -6613,13 +6134,6 @@ function executeMasterAiEvaluation(resumeText, jdText = null) {
   };
 }
 
-/**
- * Requests AI analysis using Gemini API when available, falling back to the built-in Master Evaluator Engine.
- * Single authoritative source of truth.
- * @param {string} resumeText - Validated resume text
- * @param {string|null} jdText - Optional job description
- * @returns {Promise<{ aiJson: Object, prompt: string, apiConfirmation: string, resumeLength: number }>}
- */
 async function requestAiResumeAnalysis(resumeText, jdText = null) {
   const prompt = constructMasterAiPrompt(resumeText, jdText);
   const cleanInput = extractResumeInputFromPrompt(prompt);
@@ -6689,19 +6203,10 @@ async function requestAiResumeAnalysis(resumeText, jdText = null) {
   };
 }
 
-/**
- * Prepares and executes the Master AI Resume Analysis.
- * @param {string} resumeText - Validated resume text
- * @param {string|null} jdText - Optional job description
- * @returns {Promise<{ aiJson: Object, prompt: string, apiConfirmation: string, resumeLength: number }>}
- */
 async function executeAiResumeAnalysis(resumeText, jdText = null) {
   return await requestAiResumeAnalysis(resumeText, jdText);
 }
 
-/* ============================================================
-   17. MAIN ANALYSIS ORCHESTRATOR (AI-First Pipeline)
-   ============================================================ */
 async function runRealAnalysis(fromBuilder = false, fileOverride = null) {
   const resultsArea = document.getElementById('analyzer-results-area');
   const loadingEl = document.getElementById('analyzer-loading');
@@ -6717,7 +6222,6 @@ async function runRealAnalysis(fromBuilder = false, fileOverride = null) {
   try {
     let resumeText = '';
 
-    // Step 1: Extract Text
     if (fromBuilder) {
       if (typeof syncStateFromForm === 'function') {
         syncStateFromForm();
@@ -6731,7 +6235,7 @@ async function runRealAnalysis(fromBuilder = false, fileOverride = null) {
         throw new Error('No saved resume found. Create or save a resume in Resume Builder first.');
       }
       const p = currentResume.personal || {};
-      const hasContent = p.name || p.email || p.phone || p.linkedin || p.github || currentResume.summary || 
+      const hasContent = p.name || p.email || p.phone || p.linkedin || p.github || currentResume.summary ||
         (currentResume.experience && currentResume.experience.length > 0) ||
         (currentResume.projects && currentResume.projects.length > 0) ||
         (currentResume.skills && (currentResume.skills.languages || currentResume.skills.frontend || currentResume.skills.backend));
@@ -6767,7 +6271,6 @@ async function runRealAnalysis(fromBuilder = false, fileOverride = null) {
       }
     }
 
-    // Step 1.5: Pre-Analysis Validation Guard
     const inputValidation = validateResumeInput(resumeText);
     if (!inputValidation.valid) {
       if (loadingEl) loadingEl.style.display = 'none';
@@ -6779,9 +6282,6 @@ async function runRealAnalysis(fromBuilder = false, fileOverride = null) {
       return;
     }
 
-    // Step 1.6: Send actual resume text to AI analyzer.
-    // Architecture: File upload → text extraction → AI analysis → JSON → UI render.
-    // The AI is the sole authoritative source for scoring, career stage, skills, and projects.
     const jdTextarea = document.getElementById('jd-textarea-enhanced-input');
     const existingJD = jdTextarea?.value?.trim() || analyzerState.jdText || null;
     analyzerState.resumeText = resumeText;
@@ -6789,8 +6289,6 @@ async function runRealAnalysis(fromBuilder = false, fileOverride = null) {
     const { aiJson, prompt, apiConfirmation } = await requestAiResumeAnalysis(resumeText, existingJD);
     analyzerState.aiPrompt = prompt;
 
-
-    // Step 2: Document Classification
     const classification = classifyDocument(resumeText);
     analyzerState.classification = classification;
 
@@ -6811,14 +6309,12 @@ async function runRealAnalysis(fromBuilder = false, fileOverride = null) {
       return;
     }
 
-    // Step 3: Parse sections & Anchor Ground Truth Facts (Part 3)
     const parsedSections = parseResumeSections(resumeText);
     analyzerState.parsedData = parsedSections;
 
     const deterministicContact = extractContactInfo(resumeText);
     const deterministicLinks = deterministicContact.links || extractDeterministicLinks(resumeText);
 
-    // If analyzing from builder, currentResume.personal is the authoritative ground truth for contact profiles
     if (fromBuilder && typeof currentResume !== 'undefined' && currentResume?.personal) {
       const p = currentResume.personal;
       if (p.github && p.github.trim()) {
@@ -6839,7 +6335,7 @@ async function runRealAnalysis(fromBuilder = false, fileOverride = null) {
           deterministicContact.details.links.github = deterministicLinks.github;
         }
       } else {
-        // User explicitly left GitHub blank in builder
+
         deterministicContact.github = false;
         deterministicContact.details.github = null;
         if (deterministicContact.links) deterministicContact.links.github = null;
@@ -6881,19 +6377,16 @@ async function runRealAnalysis(fromBuilder = false, fileOverride = null) {
     const deterministicFmt = analyzeATSFormatting(resumeText, parsedSections, null);
     const deterministicCq = analyzeContentQuality(resumeText, deterministicExp, deterministicProj);
 
-    // Consistency check using actual uploaded resume text
     const consistency = checkInternalConsistency(
       resumeText,
       { experienceAnalysis: { isFresher: aiJson.experience?.isFresher } },
       parsedSections
     );
 
-    // Step 4: Map AI JSON into the single authoritative analysisResult
     const aiScores = aiJson.scores || {};
     const candidateObj = aiJson.candidate || {};
     const careerStage = candidateObj.careerStage || 'Fresher';
 
-    // Ground truth candidate facts (Part 3: AI cannot delete or hallucinate facts)
     const candidateName = deterministicContact.details?.name || candidateObj.name || 'Candidate';
     const candidateEmail = deterministicContact.details?.email || candidateObj.email || null;
     const candidatePhone = deterministicContact.details?.phone || candidateObj.phone || null;
@@ -6937,7 +6430,6 @@ async function runRealAnalysis(fromBuilder = false, fileOverride = null) {
       ? Boolean(aiJson.experience.isFresher)
       : (careerStage === 'Student' || careerStage === 'Fresher' || careerStage === 'Intern');
 
-    // Calculate Controlled 8 Score Pillars (Part 4 & 9)
     const atsScore = aiScores.atsScore ?? 85;
     const contentQualityScore = aiScores.contentQualityScore ?? 80;
     const technicalSkillsScore = aiScores.technicalSkillsScore ?? 85;
@@ -6985,7 +6477,6 @@ async function runRealAnalysis(fromBuilder = false, fileOverride = null) {
       }
     };
 
-    // Intermediate Structured Resume Object (Part 2)
     const intermediateResume = buildIntermediateResumeJSON(
       resumeText,
       parsedSections,
@@ -7021,7 +6512,6 @@ async function runRealAnalysis(fromBuilder = false, fileOverride = null) {
     };
     analyzerState.structuredResume = structuredResume;
 
-    // Rich analysis objects mapping for robust UI rendering
     const detectedSections = { ...(parsedSections?.detected || {}) };
     if (allSkills.length > 0) detectedSections.skills = true;
     if (expEntries.length > 0 || hasExp) detectedSections.experience = true;
@@ -7222,7 +6712,6 @@ async function runRealAnalysis(fromBuilder = false, fileOverride = null) {
       desc: imp
     }));
 
-    // Inject deterministic critical checks (phone length & fake project links)
     if (deterministicContact?.phoneValidation && !deterministicContact.phoneValidation.isValid) {
       suggestions.unshift({
         priority: 'high',
@@ -7336,7 +6825,6 @@ async function runRealAnalysis(fromBuilder = false, fileOverride = null) {
       resumeAnalysis
     };
 
-    // Section 21: Required Debug Output
     console.log('==============================================');
     console.log('DEVPLOT RESUME ANALYZER DEBUG');
     console.log('==============================================');
@@ -7413,9 +6901,6 @@ async function runRealAnalysis(fromBuilder = false, fileOverride = null) {
   }
 }
 
-/* ============================================================
-   18. REJECTION STATE RENDERER
-   ============================================================ */
 function renderRejectionState(classification, fileName, fileSize) {
   const area = document.getElementById('analyzer-results-area');
   if (!area) return;
@@ -7491,9 +6976,6 @@ function renderRejectionState(classification, fileName, fileSize) {
   }
 }
 
-/* ============================================================
-   19. RESULT RENDERER (Structured Dashboard Architecture)
-   ============================================================ */
 function renderAllResults(result) {
   const area = document.getElementById('analyzer-results-area');
   if (!area) return;
@@ -7653,7 +7135,7 @@ function renderAllResults(result) {
         <span class="badge badge-neutral" style="font-size:10px;padding:2px 6px;">Real Job Match</span>
       </div>
       <p class="jd-instructions">Paste any complete Job Description below to evaluate your compatibility, skill gaps, and application readiness.</p>
-      
+
       <div class="jd-matcher-container">
         <div class="jd-matcher-input-area">
           <textarea id="jd-textarea-enhanced-input" class="jd-textarea-enhanced" placeholder="Paste the complete job description here (including requirements, responsibilities, and qualifications)...">${escHtml(analyzerState.jdText || '')}</textarea>
@@ -7672,7 +7154,6 @@ function renderAllResults(result) {
     ${renderResumeAiAssistant(result)}
   `;
 
-  // Animate score ring and progress bars
   setTimeout(() => {
     const ring = document.getElementById('hero-score-ring');
     if (ring) {
@@ -7691,21 +7172,19 @@ function renderAllResults(result) {
     });
   }, 150);
 
-  // Initialize interactive controls
   initPillarDetailsToggles(area);
   initResumeAiAssistant(result, area);
   verifyGitHubProfileLive(result, area);
   verifyLeetCodeProfileLive(result, area);
   verifyProjectLinksLive(result, area);
 
-  // Bind handlers
   const reanalyzeBtn = document.getElementById('btn-reanalyze-real');
   if (reanalyzeBtn) {
     reanalyzeBtn.addEventListener('click', async () => {
       try {
         reanalyzeBtn.disabled = true;
         reanalyzeBtn.innerHTML = `<span class="material-symbols-outlined text-[14px] animate-spin">progress_activity</span> Re-analyzing...`;
-        
+
         if (analyzerState.fromBuilder) {
           await runRealAnalysis(true);
         } else if (analyzerState.file) {
@@ -7731,9 +7210,6 @@ function renderAllResults(result) {
   }
 }
 
-/* ============================================================
-   EIGHT SCORE PILLARS RENDERER (Part 5)
-   ============================================================ */
 function renderEightScorePillars(result) {
   const scores = result.scores || {};
   const bd = scores.breakdown || {};
@@ -7747,7 +7223,6 @@ function renderEightScorePillars(result) {
   const certs = result.certificationsAnalysis || {};
   const ach = result.achievementsAnalysis || {};
 
-  // 1. Impact & Metrics (15)
   const metricsCount = cq.metricsCount || 0;
   const actionVerbCount = cq.actionVerbCount || 0;
   let impactScore = bd.contentQuality?.score !== undefined
@@ -7762,10 +7237,9 @@ function renderEightScorePillars(result) {
     { type: metricsCount < 3 ? 'rec' : 'gain', text: metricsCount < 3 ? 'Add more quantified results (e.g., "reduced latency by 35%", "scaled to 50k RPS").' : 'Strong evidence of measurable business or technical outcomes.' }
   ];
 
-  // 2. Experience Quality (15)
   const isFresher = Boolean(exp.isFresher);
   let expScore = exp.score !== undefined ? exp.score : (bd.experience?.score ?? 0);
-  if (isFresher) expScore = 15; // Penalty waived for fresher/student profiles
+  if (isFresher) expScore = 15;
   const expStatus = isFresher ? 'Student/Fresher' : (expScore >= 12 ? 'Strong Track Record' : (expScore >= 8 ? 'Moderate' : 'Limited'));
   const expClass = expScore >= 12 ? 'status-pass' : (expScore >= 8 ? 'status-warn' : 'status-missing');
   const expReasons = isFresher ? [
@@ -7777,7 +7251,6 @@ function renderEightScorePillars(result) {
     { type: (exp.weakVerbCount || 0) > 0 ? 'rec' : 'gain', text: (exp.weakVerbCount || 0) > 0 ? `${exp.weakVerbCount} bullet(s) use weak verbs (e.g. "Worked on", "Helped").` : 'All experience bullets use decisive action verbs.' }
   ];
 
-  // 3. Project Depth (20)
   const projScore = proj.score !== undefined ? proj.score : (bd.projects?.score ?? 15);
   const projStatus = projScore >= 16 ? 'Advanced Systems' : (projScore >= 12 ? 'Solid Portfolio' : 'Needs Depth');
   const projClass = projScore >= 16 ? 'status-pass' : (projScore >= 12 ? 'status-warn' : 'status-missing');
@@ -7787,7 +7260,6 @@ function renderEightScorePillars(result) {
     { type: proj.hasDemoLinks ? 'gain' : 'rec', text: proj.hasDemoLinks ? 'Verified live deployment / demo link(s) detected.' : 'Include live deployed demo links (e.g. Vercel, Netlify, Render, AWS).' }
   ];
 
-  // 4. Technical Skills Match (15)
   const skillsScore = bd.keywords?.score !== undefined ? bd.keywords.score : Math.min(15, Math.round(((scores.technicalSkillsScore || 75) / 100) * 15));
   const skillsStatus = skillsScore >= 12 ? 'Industry-Aligned' : (skillsScore >= 9 ? 'Moderate' : 'Needs Diversity');
   const skillsClass = skillsScore >= 12 ? 'status-pass' : (skillsScore >= 9 ? 'status-warn' : 'status-missing');
@@ -7797,7 +7269,6 @@ function renderEightScorePillars(result) {
     { type: allSkills.length < 8 ? 'rec' : 'gain', text: allSkills.length < 8 ? 'Add specific in-demand tools, databases, or cloud services to broaden keyword reach.' : 'Strong keyword coverage for modern developer roles.' }
   ];
 
-  // 5. Resume Structure & Formatting (10)
   const formatScore = bd.formatting?.score !== undefined
     ? Math.min(10, Math.round((bd.formatting.score / (bd.formatting.max || 7)) * 10))
     : Math.min(10, Math.round(((scores.atsScore || 80) / 100) * 10));
@@ -7809,7 +7280,6 @@ function renderEightScorePillars(result) {
     { type: 'rec', text: 'Avoid tables, graphics, multi-column sidebars, or unusual fonts to maximize ATS compatibility.' }
   ];
 
-  // 6. Professional Summary (8)
   const summaryScore = bd.summary?.score !== undefined ? bd.summary.score : (result.summaryAnalysis?.exists ? 6 : 2);
   const summaryStatus = summaryScore >= 6 ? 'Clear & Targeted' : (result.summaryAnalysis?.exists ? 'Generic' : 'Missing');
   const summaryClass = summaryScore >= 6 ? 'status-pass' : (result.summaryAnalysis?.exists ? 'status-warn' : 'status-missing');
@@ -7818,7 +7288,6 @@ function renderEightScorePillars(result) {
     { type: result.summaryAnalysis?.hasTechKeywords ? 'gain' : 'rec', text: result.summaryAnalysis?.hasTechKeywords ? 'Contains relevant technical keywords and target role.' : 'Summary lacks concrete technical keywords or target role statement.' }
   ];
 
-  // 7. Contact & Professional Links (5)
   const links = result.structuredResume?.links || ci.details?.links || ci.links || [];
   const linkList = Array.isArray(links) ? links : Object.values(links);
   let contactScore = 0;
@@ -7836,7 +7305,6 @@ function renderEightScorePillars(result) {
     { type: linkList.some(l => l.type === 'github') ? 'gain' : 'rec', text: linkList.some(l => l.type === 'github') ? 'GitHub profile detected and verified.' : 'GitHub profile missing — essential for software engineering roles.' }
   ];
 
-  // 8. Education & Credentials (12)
   const eduScoreRaw = bd.education?.score ?? 8;
   const certScoreRaw = bd.certifications?.score ?? 0;
   const achScoreRaw = bd.achievements?.score ?? 0;
@@ -7908,9 +7376,6 @@ function renderEightScorePillars(result) {
   `;
 }
 
-/* ============================================================
-   DEDICATED CONTACT & LINKS CARD RENDERER (Part 6)
-   ============================================================ */
 function renderContactAndLinksCard(result) {
   const ci = result.contactInfo || {};
   const details = ci.details || {};
@@ -7923,7 +7388,6 @@ function renderContactAndLinksCard(result) {
   const location = cand.location || struct.location || ci.location || details.location || '';
   const phoneValidation = ci.phoneValidation || validatePhoneNumber(phone, location);
 
-  // Collect links from structuredResume or contactInfo
   let linksList = [];
   if (Array.isArray(struct.links) && struct.links.length > 0) {
     linksList = struct.links;
@@ -7932,7 +7396,7 @@ function renderContactAndLinksCard(result) {
   } else if (Array.isArray(ci.links) && ci.links.length > 0) {
     linksList = ci.links;
   } else {
-    // If it's a map
+
     const map = details.links || ci.links || {};
     linksList = Object.keys(map).map(k => {
       const v = map[k];
@@ -7958,14 +7422,12 @@ function renderContactAndLinksCard(result) {
     }).filter(Boolean);
   }
 
-  // Ensure every item in linksList has a valid type and label
   linksList = linksList.map(l => ({
     ...l,
     type: String(l.type || l.platform || l.label || 'link').toLowerCase(),
     label: l.label || (l.type ? (l.type.charAt(0).toUpperCase() + l.type.slice(1)) : 'Link')
   }));
 
-  // Also check direct top-level fields for fallback
   const knownTypes = new Set(linksList.map(l => (l.type || '').toLowerCase()).filter(Boolean));
   if (!knownTypes.has('linkedin') && (ci.linkedin || details.linkedin)) {
     linksList.push({ type: 'linkedin', label: 'LinkedIn', url: normalizeUrl(ci.linkedin || details.linkedin), username: '', isClickable: true });
@@ -7984,7 +7446,6 @@ function renderContactAndLinksCard(result) {
     knownTypes.add('leetcode');
   }
 
-  // Strictly filter to allowed profile types: LinkedIn, GitHub, LeetCode, and Portfolio (only if present)
   const allowedProfileTypes = new Set(['linkedin', 'github', 'leetcode', 'portfolio']);
   linksList = linksList.filter(l => allowedProfileTypes.has(l.type));
 
@@ -8200,16 +7661,6 @@ function renderContactAndLinksCard(result) {
   `;
 }
 
-/* ============================================================
-   LIVE GITHUB PROFILE VERIFIER (GitHub Public API)
-   ============================================================ */
-/**
- * Live verification for GitHub profile via public GitHub API.
- * Calls https://api.github.com/users/{username} to verify existence and fetch public stats.
- * Updates badge to Live Verified or Account Not Found (404) with clear feedback.
- * @param {Object} result - Analysis result object
- * @param {HTMLElement} [container] - Container element containing the rendered cards
- */
 async function verifyGitHubProfileLive(result, container = (typeof document !== 'undefined' ? document : null)) {
   if (!container || typeof container.querySelector !== 'function') return;
 
@@ -8334,15 +7785,6 @@ async function verifyGitHubProfileLive(result, container = (typeof document !== 
   }
 }
 
-/* ============================================================
-   LIVE LEETCODE PROFILE VERIFIER (Public LeetCode API)
-   ============================================================ */
-/**
- * Live verification for LeetCode profile via public API.
- * Calls https://alfa-leetcode-api.onrender.com/userProfile/{username} to verify existence and fetch problems solved.
- * @param {Object} result - Analysis result object
- * @param {HTMLElement} [container] - Container element containing the rendered cards
- */
 async function verifyLeetCodeProfileLive(result, container = (typeof document !== 'undefined' ? document : null)) {
   if (!container || typeof container.querySelector !== 'function') return;
 
@@ -8465,21 +7907,11 @@ async function verifyLeetCodeProfileLive(result, container = (typeof document !=
   }
 }
 
-/* ============================================================
-   LIVE PROJECT LINKS VERIFIER (GitHub Repos & Live Demos)
-   ============================================================ */
-/**
- * Asynchronously verifies project GitHub repositories and live demo links.
- * Updates DOM badges in real-time.
- * @param {Object} result - Resume analysis result
- * @param {HTMLElement} [container] - DOM container
- */
 async function verifyProjectLinksLive(result, container = (typeof document !== 'undefined' ? document : null)) {
   if (!container || typeof container.querySelectorAll !== 'function') return;
 
   const lv = _linkValidator || (typeof window !== 'undefined' ? window.LinkValidator : null);
 
-  // 1. Verify Project GitHub Repos
   const ghBadges = container.querySelectorAll('[id^="proj-gh-badge-"]');
   for (const badge of ghBadges) {
     const rawRepo = badge.dataset.repo;
@@ -8529,11 +7961,10 @@ async function verifyProjectLinksLive(result, container = (typeof document !== '
         }
       }
     } catch (err) {
-      // Keep current state
+
     }
   }
 
-  // 2. Verify Project Demo URLs
   const demoBadges = container.querySelectorAll('[id^="proj-demo-badge-"]');
   for (const badge of demoBadges) {
     const rawUrl = badge.dataset.url;
@@ -8547,7 +7978,6 @@ async function verifyProjectLinksLive(result, container = (typeof document !== '
           badge.title = `Verified live deployment: ${live.url || rawUrl} (HTTP ${live.httpStatus || 200})`;
           badge.innerHTML = `<span class="material-symbols-outlined text-[12px]">check_circle</span> <span>🟢 Live Demo (Verified)</span>`;
 
-          // If this is the first project demo and there was no portfolio, update showcase item
           const showcaseItem = container.querySelector('#contact-showcase-item');
           if (showcaseItem && showcaseItem.classList.contains('missing')) {
             showcaseItem.className = 'contact-link-item detected verified-success';
@@ -8598,14 +8028,11 @@ async function verifyProjectLinksLive(result, container = (typeof document !== '
         }
       }
     } catch (e) {
-      // Keep current state
+
     }
   }
 }
 
-/* ============================================================
-   SECTION-BY-SECTION ANALYSIS CARDS RENDERER (Parts 7 & 8)
-   ============================================================ */
 function renderSectionAnalysisCards(result) {
   const bd = result.scores?.breakdown || {};
   const formattingChecks = Array.isArray(result.formattingChecks) ? result.formattingChecks : [];
@@ -8747,9 +8174,6 @@ function renderSectionAnalysisCards(result) {
   `;
 }
 
-/* ============================================================
-   SECONDARY AI ASSISTANT RENDERER & INTERACTION (Part 11)
-   ============================================================ */
 function renderResumeAiAssistant(result) {
   const candidateName = result.candidate?.name || 'there';
   const overallScore = result.scores?.overall || 0;
@@ -8998,7 +8422,6 @@ function initResumeAiAssistant(result, area) {
     messagesContainer.appendChild(bubble);
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
-    // Bind any inline key toggle button inside messages
     const inlineKeyBtn = bubble.querySelector('.btn-inline-key-open');
     if (inlineKeyBtn && keyDrawer) {
       inlineKeyBtn.addEventListener('click', () => {
@@ -9011,17 +8434,17 @@ function initResumeAiAssistant(result, area) {
   const formatAiMarkdown = (raw) => {
     if (!raw) return '';
     let html = escHtml(raw);
-    // Bold: **text**
+
     html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    // Italic: *text*
+
     html = html.replace(/(^|[^\*])\*([^\*]+)\*([^\*]|$)/g, '$1<em>$2</em>$3');
-    // Inline code: `code`
+
     html = html.replace(/`([^`]+)`/g, '<code style="background:var(--color-surface-container-high);padding:0.1rem 0.35rem;border-radius:3px;font-size:0.75rem;">$1</code>');
-    // Bullet points: lines starting with * or -
+
     html = html.replace(/^[*-]\s+(.+)$/gm, '• $1');
-    // Numbered lists: lines starting with 1. 2.
+
     html = html.replace(/^(\d+\.)\s+(.+)$/gm, '<strong>$1</strong> $2');
-    // Line breaks
+
     html = html.replace(/\n\n/g, '<br/><br/>');
     html = html.replace(/\n/g, '<br/>');
     return html;
@@ -9077,7 +8500,7 @@ function initResumeAiAssistant(result, area) {
     const apiKey = getStoredGeminiKey();
 
     if (!apiKey) {
-      // Offline / Local Coach mode
+
       setTimeout(() => {
         const answer = generateLocalAnswer(q);
         const tipNotice = `
@@ -9091,7 +8514,6 @@ function initResumeAiAssistant(result, area) {
       return;
     }
 
-    // Live Google Gemini 1.5 Flash Mode
     const loadingId = 'ai-loading-' + Date.now();
     const loadingBubble = document.createElement('div');
     loadingBubble.id = loadingId;
@@ -9166,7 +8588,6 @@ COACHING GUIDELINES:
         }
       }
 
-      // API returned error status
       const errJson = await response.json().catch(() => ({}));
       const errMsg = errJson?.error?.message || `HTTP ${response.status}`;
       console.warn('[Resume AI Chat] Gemini API error:', errMsg);
@@ -9205,9 +8626,6 @@ COACHING GUIDELINES:
   });
 }
 
-/* ============================================================
-   SUB-RENDERERS
-   ============================================================ */
 function renderBestFitRole(bestFit) {
   if (!bestFit) return '';
   const roleScore = bestFit.roleFitScore || bestFit.matchScore || 0;
@@ -9243,7 +8661,7 @@ function renderBestFitRole(bestFit) {
           <div class="best-fit-score-label" style="color:${bestFit.matchColor || 'var(--color-primary)'};">Estimated Role Fit</div>
         </div>
       </div>
-      
+
       <div class="section-group-label" style="margin-bottom:0.5rem;">Why this is your strongest estimated role fit:</div>
       <div class="best-fit-reasons-list">
         ${whyMatch.map(r => `
@@ -9976,9 +9394,6 @@ function renderEduAndCredentials(edu, certs, ach, ps) {
   `;
 }
 
-/* ============================================================
-   PERSISTENCE & RESTORATION
-   ============================================================ */
 function saveAnalysisResult(result) {
   try {
     if (typeof Storage !== 'undefined') {
@@ -10013,7 +9428,6 @@ function restoreSavedAnalysis() {
   const saved = loadAnalysisResult();
   if (!saved || !saved.scores) return;
 
-  // Invalidate cache if saved under old 5-pt education or old contact schema
   if (saved.scores?.breakdown?.contact?.max !== 3 || saved.scores?.breakdown?.education?.max !== 10) {
     clearAnalysisResult();
     return;
@@ -10038,9 +9452,6 @@ function restoreSavedAnalysis() {
   }
 }
 
-/* ============================================================
-   CONTROLS INITIALIZATION
-   ============================================================ */
 let analyzerControlsInitialized = false;
 
 function initRealAnalyzerControls() {
@@ -10101,11 +9512,6 @@ function initRealAnalyzerControls() {
     });
   }
 
-  // Auto-restore disabled: showing a cached result from a previous session
-  // before the user uploads a new file causes state leakage and misleads
-  // the user into thinking the old analysis is for a new upload.
-  // Analysis is only displayed after a fresh upload triggers runRealAnalysis().
-  // restoreSavedAnalysis();
 }
 
 function handleRealFileSelected(file) {
@@ -10115,10 +9521,6 @@ function handleRealFileSelected(file) {
     return;
   }
 
-  // HARD STATE WIPE: Clear ALL previous resume data before analyzing new file.
-  // This prevents any stale name / skills / scores / projects from leaking
-  // into the new analysis. clearAnalysisResult() resets both analyzerState
-  // and the localStorage cache in one call.
   clearAnalysisResult();
 
   const strip = document.getElementById('file-preview-strip');
@@ -10134,8 +9536,6 @@ function handleRealFileSelected(file) {
   if (metaEl) metaEl.textContent = `${sizeStr} · ${type}`;
   if (strip) strip.style.display = 'flex';
 
-  // Re-populate state with new file metadata only (all old analysis fields
-  // were reset by clearAnalysisResult above)
   analyzerState.file = file;
   analyzerState.fileName = file.name;
   analyzerState.fileSize = sizeStr;
@@ -10161,9 +9561,6 @@ function resetAnalyzerState() {
   clearAnalysisResult();
 }
 
-/* ============================================================
-   HELPERS
-   ============================================================ */
 function formatCategoryName(key) {
   const names = {
     cs_core: 'CS Fundamentals & Architecture',
@@ -10204,7 +9601,6 @@ function timeAgo(dateString) {
   return `${days}d ago`;
 }
 
-// Attach global functions to window
 if (typeof window !== 'undefined') {
   window.initRealAnalyzerControls = initRealAnalyzerControls;
   window.runRealAnalysis = runRealAnalysis;
@@ -10262,7 +9658,6 @@ if (typeof window !== 'undefined') {
   window.verifyProjectLinksLive = verifyProjectLinksLive;
 }
 
-// Auto-initialize
 if (typeof document !== 'undefined') {
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
@@ -10273,7 +9668,6 @@ if (typeof document !== 'undefined') {
   }
 }
 
-// Node.js module exports for automated testing
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     classifyDocument,

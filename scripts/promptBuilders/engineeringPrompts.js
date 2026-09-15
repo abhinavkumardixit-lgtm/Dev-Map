@@ -1,7 +1,4 @@
-/**
- * Engineering Prompts Collection (12 Prompts)
- * Covers Code Review, Refactoring, Clean Code, SOLID, Security Review, Testing, and Technical Debt.
- */
+
 module.exports = [
   {
     id: 'eng-senior-pr-review',

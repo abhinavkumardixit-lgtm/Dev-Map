@@ -1,7 +1,3 @@
-/**
- * MAD DEV — Quantitative Aptitude Question Bank
- * 200 authentic placement MCQs across 20 topics with step-by-step mathematical explanations.
- */
 
 (function () {
   'use strict';
@@ -3038,13 +3034,11 @@
 ]
   };
 
-  // Expose to Browser
   if (typeof window !== 'undefined') {
     window.interviewPrepData = window.interviewPrepData || {};
     window.interviewPrepData['aptitude'] = aptitudeData;
   }
 
-  // Expose to CommonJS / Node.js
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = aptitudeData;
   }

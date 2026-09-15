@@ -1,8 +1,4 @@
-/**
- * MAD DEV - Utility Functions
- */
 
-// Toast Notification Manager
 function showToast(message, type = 'info') {
   let container = document.getElementById('toast-container');
   if (!container) {
@@ -15,7 +11,7 @@ function showToast(message, type = 'info') {
   toast.className = `toast toast-${type}`;
 
   const iconName = type === 'success' ? 'check_circle' : type === 'error' ? 'error' : 'info';
-  
+
   toast.innerHTML = `
     <span class="material-symbols-outlined toast-icon text-lg">${iconName}</span>
     <span class="flex-1">${message}</span>
@@ -23,12 +19,10 @@ function showToast(message, type = 'info') {
 
   container.appendChild(toast);
 
-  // Trigger animation
   requestAnimationFrame(() => {
     toast.classList.add('show');
   });
 
-  // Auto-dismiss after 3.5s
   setTimeout(() => {
     toast.classList.remove('show');
     setTimeout(() => {
@@ -39,7 +33,6 @@ function showToast(message, type = 'info') {
   }, 3500);
 }
 
-// Copy to Clipboard Helper
 async function copyToClipboard(text, successMessage = 'Copied to clipboard!') {
   try {
     if (navigator.clipboard && window.isSecureContext) {
@@ -65,12 +58,11 @@ async function copyToClipboard(text, successMessage = 'Copied to clipboard!') {
   }
 }
 
-// Format relative date
 function timeAgo(dateString) {
   const date = new Date(dateString);
   const now = new Date();
   const seconds = Math.floor((now - date) / 1000);
-  
+
   if (seconds < 60) return 'Just now';
   const minutes = Math.floor(seconds / 60);
   if (minutes < 60) return `${minutes}m ago`;
@@ -81,7 +73,6 @@ function timeAgo(dateString) {
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
-// Local Storage Helper with JSON parse/stringify
 const Storage = {
   get(key, defaultValue = null) {
     try {
@@ -104,11 +95,6 @@ const Storage = {
   }
 };
 
-/**
- * Escapes unsafe HTML characters to prevent XSS injection in dynamic DOM rendering.
- * @param {string} str - Raw string possibly containing <, >, &, ", '.
- * @returns {string} Sanitized string safe to inject into innerHTML.
- */
 function escapeHtml(str) {
   if (!str) return '';
   const div = document.createElement('div');
@@ -116,11 +102,6 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
-/**
- * Capitalizes the first character of a string.
- * @param {string} str - Input string.
- * @returns {string} Capitalized string.
- */
 function capitalize(str) {
   return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
 }

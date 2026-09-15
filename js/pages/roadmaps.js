@@ -1,21 +1,13 @@
-/**
- * MAD DEV — Career Roadmaps Controller
- * Manages intentional career commitment flow, multi-level sequential dependency locking,
- * route protection, locked topic previews, deliberate pause/change-career settings,
- * and node-based progress tracking.
- */
 
 (function () {
   'use strict';
 
-  // Fallback / direct progression engine lookup
   const engine = (typeof window !== 'undefined' && window.careerProgressionEngine)
     ? window.careerProgressionEngine
     : (typeof require === 'function' ? require('../core/careerProgressionEngine.js') : null);
 
   const STORAGE_KEY = 'career_roadmaps_progress';
 
-  // Controller state
   let currentRoleId = null;
   let activeCategory = 'all';
   let searchQuery = '';
@@ -23,7 +15,6 @@
   let selectedProgress = 'all';
   let selectedSkillNode = null;
 
-  // Wizard state for Career Commitment modal
   let wizardRole = null;
   let wizardStep = 1;
   let wizardAnswers = {
@@ -76,9 +67,6 @@
     }
   }
 
-  /**
-   * Helper: Escapes HTML strings
-   */
   function escHtml(str) {
     if (!str) return '';
     return String(str)
@@ -89,11 +77,6 @@
       .replace(/'/g, '&#039;');
   }
 
-  /**
-   * Resolves real-time status of every node in a roadmap based on dependencies.
-   * Returns a map where values are 'completed' | 'in-progress' | 'available' | 'locked'.
-   * Fully backwards compatible with existing test assertions.
-   */
   function resolveRoadmapNodeStatuses(roleId, roadmap) {
     const state = getProgressState();
     if (engine && typeof engine.resolveSequentialNodeStatuses === 'function') {
@@ -132,9 +115,6 @@
     return nodeStatusMap;
   }
 
-  /**
-   * Calculates progress percentage and counts for a role
-   */
   function calculateRoleProgress(role) {
     const allRoadmaps = getAllCareerRoadmaps();
     const roadmap = allRoadmaps ? allRoadmaps[role.roadmapId] : null;
@@ -155,9 +135,6 @@
     return { percent, completed, total };
   }
 
-  /**
-   * Finds next recommended skill for a role
-   */
   function findNextRecommendedSkill(roadmap, nodeStatusMap) {
     for (const level of roadmap.levels) {
       for (const skill of level.skills) {
@@ -180,17 +157,12 @@
     return null;
   }
 
-  /**
-   * Toggles skill node status (completed, in-progress, or available/reset).
-   * Validates actions against the progression engine to block unauthorized skipping.
-   */
   function setSkillStatus(roleId, skillId, newStatus) {
     const state = getProgressState();
     const allRoadmaps = getAllCareerRoadmaps();
     const role = (getAllCareerRoles()).find(r => r.id === roleId);
     const roadmap = role ? allRoadmaps[role.roadmapId] : null;
 
-    // Validate action via progression engine
     if (engine && typeof engine.validateSkillAction === 'function') {
       const validation = engine.validateSkillAction(roleId, skillId, newStatus, state, roadmap);
       if (!validation.valid) {
@@ -224,7 +196,6 @@
     state[roleId].completed = Array.from(completed);
     state[roleId].inProgress = Array.from(inProgress);
 
-    // Check if 100% complete
     if (roadmap) {
       let totalSkills = 0;
       roadmap.levels.forEach(l => totalSkills += (l.skills || []).length);
@@ -250,9 +221,6 @@
     return true;
   }
 
-  /**
-   * Toggles job-ready checklist item
-   */
   function toggleChecklistItem(roleId, itemId, checked) {
     const state = getProgressState();
     if (!state[roleId]) {
@@ -269,10 +237,6 @@
     state[roleId].checklist = Array.from(checklist);
     saveProgressState(state);
   }
-
-  // =========================================================================
-  // VIEW RENDERING: CATALOG
-  // =========================================================================
 
   function renderCatalog() {
     const catalogContainer = document.getElementById('roadmaps-catalog-view');
@@ -451,7 +415,7 @@
                 ${roleProg.percent}% Complete
               </span>
             </div>
-            
+
             <div class="role-progress-bar-bg mb-3">
               <div class="role-progress-bar-fill ${isCardPaused ? 'bg-amber-500' : isCardCompleted ? 'bg-emerald-500' : ''}" style="width: ${roleProg.percent}%;"></div>
             </div>
@@ -493,12 +457,11 @@
       `;
     }).join('');
 
-    // Bind card action buttons
     bindCatalogCardListeners();
   }
 
   function bindCatalogCardListeners() {
-    // 1. Available Career -> Open Commitment Modal
+
     document.querySelectorAll('.btn-start-career-flow').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -507,7 +470,6 @@
       });
     });
 
-    // 2. Locked Career -> Open Informative Locked Modal
     document.querySelectorAll('.btn-open-locked-card').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -527,10 +489,6 @@
       }
     });
   }
-
-  // =========================================================================
-  // VIEW RENDERING: LOCKED CAREER SCREEN (ROUTE PROTECTION)
-  // =========================================================================
 
   function renderCareerLockedScreen(targetRole, activeRole, activeProg) {
     const detailContainer = document.getElementById('roadmaps-detail-view');
@@ -599,10 +557,6 @@
     }
   }
 
-  // =========================================================================
-  // VIEW RENDERING: ROADMAP DETAIL
-  // =========================================================================
-
   function renderRoadmapDetail(roleId) {
     const catalogContainer = document.getElementById('roadmaps-catalog-view');
     const detailContainer = document.getElementById('roadmaps-detail-view');
@@ -618,7 +572,6 @@
     const state = getProgressState();
     const activeCareerId = state.activeCareer;
 
-    // ROUTE PROTECTION: If user tries to open a locked career via URL hash
     if (activeCareerId && activeCareerId !== roleId && state.activeCareerStatus !== 'completed') {
       const activeRole = (getAllCareerRoles()).find(r => r.id === activeCareerId);
       const activeProg = activeRole ? calculateRoleProgress(activeRole) : { percent: 0, completed: 0, total: 0 };
@@ -643,7 +596,6 @@
       return;
     }
 
-    // Resolve node statuses and detailed prerequisite data
     const detailedNodeMap = engine && typeof engine.resolveSequentialNodeStatuses === 'function'
       ? engine.resolveSequentialNodeStatuses(role.id, roadmap, state)
       : {};
@@ -884,7 +836,7 @@
                         <span class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
                           ${escHtml(skill.category)}
                         </span>
-                        
+
                         <div class="flex items-center gap-1.5">
                           <span class="text-[10px] font-semibold px-2 py-0.5 rounded ${importanceClass}">
                             ${skill.importance}
@@ -1169,10 +1121,10 @@
                       return `
                         <div class="flex items-start justify-between gap-2">
                           <label class="flex items-start gap-2.5 cursor-pointer flex-1 group">
-                            <input 
-                              type="checkbox" 
-                              class="mt-0.5 rounded text-indigo-600 border-slate-300 dark:border-slate-600 dark:bg-slate-700 focus:ring-indigo-500 checklist-checkbox shrink-0" 
-                              data-item-id="${itemId}" 
+                            <input
+                              type="checkbox"
+                              class="mt-0.5 rounded text-indigo-600 border-slate-300 dark:border-slate-600 dark:bg-slate-700 focus:ring-indigo-500 checklist-checkbox shrink-0"
+                              data-item-id="${itemId}"
                               ${isChecked ? 'checked' : ''}
                             />
                             <span class="text-xs text-slate-700 dark:text-slate-300 leading-snug group-hover:text-slate-900 dark:group-hover:text-white transition-colors ${isChecked ? 'line-through text-slate-400 dark:text-slate-500' : ''}">
@@ -1198,7 +1150,7 @@
   }
 
   function bindDetailEventListeners(role, roadmap, nodeStatusMap, detailedNodeMap, roleProg) {
-    // 1. Skill card click -> Open Skill Modal (supports both active learning & locked previews)
+
     document.querySelectorAll('.btn-inspect-skill').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -1207,7 +1159,6 @@
       });
     });
 
-    // 2. Checklist checkboxes
     document.querySelectorAll('.checklist-checkbox').forEach(box => {
       box.addEventListener('change', () => {
         const itemId = box.getAttribute('data-item-id');
@@ -1232,7 +1183,6 @@
       });
     });
 
-    // 3. Roadmap Settings Menu toggle
     const settingsToggleBtn = document.getElementById('btn-roadmap-settings-toggle');
     const settingsMenu = document.getElementById('roadmap-settings-dropdown-menu');
     if (settingsToggleBtn && settingsMenu) {
@@ -1246,7 +1196,6 @@
       });
     }
 
-    // 4. Pause / Resume from Menu or Banner
     const pauseMenuBtn = document.getElementById('btn-menu-pause');
     if (pauseMenuBtn) {
       pauseMenuBtn.addEventListener('click', () => {
@@ -1274,7 +1223,6 @@
       });
     }
 
-    // 5. Change Career Modal trigger
     const changeCareerBtn = document.getElementById('btn-menu-change-career');
     if (changeCareerBtn) {
       changeCareerBtn.addEventListener('click', () => {
@@ -1282,7 +1230,6 @@
       });
     }
 
-    // 6. Reset Progress trigger
     const resetProgressBtn = document.getElementById('btn-menu-reset-progress');
     if (resetProgressBtn) {
       resetProgressBtn.addEventListener('click', () => {
@@ -1294,10 +1241,6 @@
       });
     }
   }
-
-  // =========================================================================
-  // SKILL DETAIL MODAL (Supports Active Learning & Locked Previews)
-  // =========================================================================
 
   function openSkillModal(role, roadmap, skillId, nodeStatusMap, detailedNodeMap = {}) {
     let targetSkill = null;
@@ -1556,7 +1499,6 @@
       }
     }
 
-    // Go to Prerequisite button in locked preview
     modalContent.querySelectorAll('.btn-jump-to-prereq').forEach(jumpBtn => {
       jumpBtn.addEventListener('click', () => {
         const prereqId = jumpBtn.getAttribute('data-prereq-id');
@@ -1572,10 +1514,6 @@
     if (modalBackdrop) modalBackdrop.classList.remove('active');
     selectedSkillNode = null;
   }
-
-  // =========================================================================
-  // CAREER COMMITMENT MODAL FLOW (3 STEPS)
-  // =========================================================================
 
   function openCommitmentModal(roleId) {
     const role = (getAllCareerRoles()).find(r => r.id === roleId);
@@ -1610,7 +1548,7 @@
     let contentHtml = '';
 
     if (wizardStep === 1) {
-      // Step 1: Role Overview & What You Will Learn
+
       contentHtml = `
         <div class="step-indicator-bar">
           <div class="step-indicator-dot active">1. Understand Path</div>
@@ -1677,7 +1615,7 @@
         </div>
       `;
     } else if (wizardStep === 2) {
-      // Step 2: 3 Short Commitment Questions
+
       contentHtml = `
         <div class="step-indicator-bar">
           <div class="step-indicator-dot completed">✓ Understand Path</div>
@@ -1763,7 +1701,7 @@
         </div>
       `;
     } else if (wizardStep === 3) {
-      // Step 3: Final Confirmation
+
       contentHtml = `
         <div class="step-indicator-bar">
           <div class="step-indicator-dot completed">✓ Understand Path</div>
@@ -1843,7 +1781,6 @@
       });
     }
 
-    // Step 2 Question Choice Selection
     document.querySelectorAll('.choice-card-option').forEach(card => {
       card.addEventListener('click', () => {
         const type = card.getAttribute('data-type');
@@ -1853,7 +1790,6 @@
 
         wizardAnswers[type] = val;
 
-        // Re-render choices in step 2
         document.querySelectorAll(`.choice-card-option[data-type="${type}"]`).forEach(c => {
           c.classList.remove('selected');
         });
@@ -1877,7 +1813,6 @@
       });
     }
 
-    // Final Start Roadmap Action
     const startRoadmapBtn = document.getElementById('btn-wizard-start-roadmap');
     if (startRoadmapBtn) {
       startRoadmapBtn.addEventListener('click', () => {
@@ -1900,10 +1835,6 @@
       });
     }
   }
-
-  // =========================================================================
-  // LOCKED CAREER MODAL (When clicking a locked card in the catalog)
-  // =========================================================================
 
   function openLockedCareerModal(targetRoleId) {
     const modalBackdrop = document.getElementById('career-locked-modal');
@@ -1964,10 +1895,6 @@
       });
     }
   }
-
-  // =========================================================================
-  // DELIBERATE CHANGE CAREER MODAL
-  // =========================================================================
 
   function openChangeCareerModal(currentRole, currentProgress) {
     const modalBackdrop = document.getElementById('career-change-modal');
@@ -2076,10 +2003,6 @@
     }
   }
 
-  // =========================================================================
-  // ROUTING & CONTROLLER INITIALIZATION
-  // =========================================================================
-
   function handleRoute() {
     const hash = window.location.hash || '';
     const match = hash.match(/#role=([a-zA-Z0-9_\-]+)/);
@@ -2134,7 +2057,6 @@
       });
     }
 
-    // Modal backdrop clicks to dismiss
     ['skill-detail-modal', 'career-commitment-modal', 'career-locked-modal', 'career-change-modal'].forEach(id => {
       const el = document.getElementById(id);
       if (el) {

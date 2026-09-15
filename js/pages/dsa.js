@@ -1,13 +1,7 @@
-/**
- * MAD DEV - DSA Roadmap Controller
- * Handles progress tracking, smart search engine, multi-level filtering,
- * local storage synchronization, live statistics, and interactive problem rendering.
- */
 
 (function () {
   'use strict';
 
-  // State
   let progress = {};
   let patternStats = {};
   let reviews = {};
@@ -19,24 +13,18 @@
     quality: 'all'
   };
 
-  // DOM Elements cache
   let dom = {};
 
-  /**
-   * Initializes the DSA Roadmap page
-   */
   function init() {
-    // Verify dataset availability
+
     if (!window.dsaRoadmap || !Array.isArray(window.dsaRoadmap)) {
       console.error('DSA Roadmap data not found. Please ensure dsaData.js is loaded.');
       return;
     }
 
-    // Load progress, reviews, and roadmap evaluations from Storage
     progress = Storage.get('dsa_progress', {}) || {};
     reviews = Storage.get('dsa_reviews', {}) || {};
 
-    // Cache elements
     dom = {
       totalSolvedCount: document.getElementById('dsa-total-solved-count'),
       totalRemainingCount: document.getElementById('dsa-total-remaining-count'),
@@ -73,20 +61,15 @@
       btnClearFilters: document.getElementById('dsa-btn-clear-filters')
     };
 
-    // Initial renders
     renderSidebarNav();
     updateProgressUI();
     renderQuestions();
     handleResponsiveLayout();
 
-    // Attach event listeners
     attachEventListeners();
     setupScrollSpy();
   }
 
-  /**
-   * Computes overall statistics from roadmap data and current progress
-   */
   function computeStats() {
     let total = 0;
     let solved = 0;
@@ -123,9 +106,6 @@
     };
   }
 
-  /**
-   * Computes statistics for a specific category
-   */
   function computeCategoryStats(cat) {
     let total = 0;
     let solved = 0;
@@ -141,9 +121,6 @@
     return { total, solved };
   }
 
-  /**
-   * Updates all progress counters and progress bars in real time
-   */
   function updateProgressUI() {
     const stats = computeStats();
 
@@ -160,7 +137,6 @@
       dom.pctBadge.textContent = `${stats.pct}%`;
     }
 
-    // Difficulty breakdown
     ['Easy', 'Medium', 'Hard'].forEach(diff => {
       const diffKey = diff.toLowerCase();
       const countEl = dom[`${diffKey}Count`];
@@ -176,7 +152,6 @@
       }
     });
 
-    // Update honesty breakdown counts
     let countSelf = 0;
     let countHelp30 = 0;
     let countHelp50 = 0;
@@ -201,7 +176,6 @@
     if (dom.statHelp50) dom.statHelp50.textContent = countHelp50;
     if (dom.statCross) dom.statCross.textContent = countCross;
 
-    // Update sidebar counts
     window.dsaRoadmap.forEach(cat => {
       const countBadge = document.getElementById(`nav-count-${cat.id}`);
       if (countBadge) {
@@ -222,9 +196,6 @@
     });
   }
 
-  /**
-   * Renders the sidebar navigation index for the 16 roadmap categories
-   */
   function renderSidebarNav() {
     if (!dom.sidebarNavList) return;
 
@@ -244,7 +215,6 @@
       `;
     }).join('');
 
-    // Smooth scrolling on click
     dom.sidebarNavList.querySelectorAll('.dsa-nav-item').forEach(link => {
       link.addEventListener('click', (e) => {
         e.preventDefault();
@@ -252,7 +222,7 @@
         const targetEl = document.getElementById(targetId);
         if (targetEl) {
           targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          // Update active link styling
+
           dom.sidebarNavList.querySelectorAll('.dsa-nav-item').forEach(el => el.classList.remove('is-active'));
           link.classList.add('is-active');
         }
@@ -260,9 +230,6 @@
     });
   }
 
-  /**
-   * Highlights matching search tokens in text for a Pro Searcher experience
-   */
   function highlightMatch(text, searchStr) {
     if (!searchStr || !searchStr.trim()) return escapeHtml(text);
     const cleanQuery = searchStr.trim().replace(/^#+/, '').trim();
@@ -286,9 +253,6 @@
     }
   }
 
-  /**
-   * Filters and renders question categories and rows with Smart Search matching
-   */
   function renderQuestions() {
     if (!dom.questionsContainer) return;
 
@@ -303,14 +267,12 @@
       const catIndexStr = String(catIdx + 1).padStart(2, '0');
       const catName = cat.name || cat.title || 'Category';
 
-      // Filter patterns and questions
       const matchingPatterns = cat.patterns.map(pat => {
         const matchingQuestions = pat.questions.filter(q => {
           const lcNum = q.leetcodeNumber || q.number || '';
           const dsName = q.pattern || catName;
           const patName = q.subPattern || pat.name || '';
 
-          // Multi-token Smart Search filter
           if (cleanTokens.length > 0) {
             const searchableStr = `${q.title} #${lcNum} ${lcNum} ${patName} ${dsName} ${catName} ${q.difficulty}`.toLowerCase();
             const matchesAllTokens = cleanTokens.every(token => searchableStr.includes(token));
@@ -319,14 +281,12 @@
             }
           }
 
-          // Difficulty filter
           if (filterState.difficulty !== 'all') {
             if (q.difficulty.toLowerCase() !== filterState.difficulty.toLowerCase()) {
               return false;
             }
           }
 
-          // Status filter
           const roadmapEvaluations = Storage.get('dsa_roadmap_evaluations', {}) || {};
           const ev = roadmapEvaluations[q.id];
           const isSolved = !!progress[q.id] || !!ev;
@@ -335,7 +295,6 @@
           if (filterState.status === 'unsolved' && isSolved) return false;
           if (filterState.status === 'review' && !isReviewed) return false;
 
-          // Solve Quality filter (Self, 30% Help, 50% Help, Copied)
           if (filterState.quality !== 'all') {
             if (filterState.quality === 'self' && !(ev === 'self' || (!ev && isSolved))) return false;
             if (filterState.quality === 'help30' && !(ev === 'help30' || ev === 'help')) return false;
@@ -355,7 +314,6 @@
         };
       }).filter(pat => pat.visibleQuestions.length > 0);
 
-      // If no patterns have matching questions, skip this category
       if (matchingPatterns.length === 0) {
         return '';
       }
@@ -375,7 +333,6 @@
           const patName = q.subPattern || pat.name || 'General';
           const titleHtml = highlightMatch(q.title, filterState.search);
 
-          // Checkbox Box Custom Styling & Exact Modal Evaluation Icon (NO LOCKS ON ROADMAP)
           let boxCustomClass = 'pl-eval-box';
           let boxIconHtml = '';
           let evalPillHtml = '';
@@ -522,7 +479,6 @@
 
     dom.questionsContainer.innerHTML = categoriesHtml;
 
-    // Update results counter badge
     if (dom.resultsBadge) {
       const stats = computeStats();
       const totalRoadmapQuestions = stats.total || 260;
@@ -542,7 +498,6 @@
       }
     }
 
-    // Show/hide empty state
     if (visibleCategoriesCount === 0) {
       if (dom.emptyState) dom.emptyState.classList.remove('hidden');
       if (dom.questionsContainer) dom.questionsContainer.classList.add('hidden');
@@ -552,17 +507,13 @@
     }
   }
 
-  /**
-   * Attaches interactive event listeners
-   */
   function attachEventListeners() {
-    // 1. Delegated click on questions container to open Problem Detail or Honesty Evaluation
+
     if (dom.questionsContainer) {
       dom.questionsContainer.addEventListener('click', (e) => {
-        // Direct LeetCode external solve link should open target="_blank"
+
         if (e.target.closest('.dsa-btn-leetcode')) return;
 
-        // Honesty evaluation modal trigger
         const evalTrigger = e.target.closest('.dsa-trigger-eval');
         if (evalTrigger) {
           e.preventDefault();
@@ -579,7 +530,6 @@
           return;
         }
 
-        // Question explanation trigger (ONLY when clicking dedicated Explain button)
         const explainTrigger = e.target.closest('.dsa-btn-explain, [data-open-explain]');
         if (explainTrigger) {
           e.preventDefault();
@@ -593,7 +543,6 @@
         }
       });
 
-      // Backward-compatible change listener if an input checkbox is used
       dom.questionsContainer.addEventListener('change', (e) => {
         const checkbox = e.target.closest('.dsa-checkbox-input');
         if (!checkbox) return;
@@ -619,7 +568,6 @@
       });
     }
 
-    // Helper: update clear icon & kbd shortcut visibility
     function updateSearchControls() {
       const hasText = filterState.search.trim().length > 0;
       if (dom.searchClearBtn) {
@@ -630,7 +578,6 @@
       }
     }
 
-    // Helper: sync quick filter chips active state
     function syncQuickChips() {
       if (!dom.quickChips) return;
       const currentQuery = filterState.search.trim().toLowerCase();
@@ -644,7 +591,6 @@
       });
     }
 
-    // Helper: clear search
     function clearSearch() {
       if (dom.searchInput) {
         dom.searchInput.value = '';
@@ -655,7 +601,6 @@
       renderQuestions();
     }
 
-    // 2. Search input filtering
     if (dom.searchInput) {
       dom.searchInput.addEventListener('input', (e) => {
         filterState.search = e.target.value;
@@ -665,7 +610,6 @@
       });
     }
 
-    // Clear search button
     if (dom.searchClearBtn) {
       dom.searchClearBtn.addEventListener('click', () => {
         clearSearch();
@@ -673,7 +617,6 @@
       });
     }
 
-    // 3. Quick filter suggestion chips
     if (dom.quickChips) {
       dom.quickChips.forEach(chip => {
         chip.addEventListener('click', () => {
@@ -694,9 +637,8 @@
       });
     }
 
-    // 4. Global Keyboard Shortcuts (Ctrl+K, Cmd+K, /, Esc)
     document.addEventListener('keydown', (e) => {
-      // Ctrl+K or Cmd+K
+
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
         if (dom.searchInput) {
@@ -715,7 +657,6 @@
       }
     });
 
-    // 5. Difficulty Segment Filter
     if (dom.diffSegments) {
       dom.diffSegments.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -727,7 +668,6 @@
       });
     }
 
-    // 6. Status Segment Filter
     if (dom.statusSegments) {
       dom.statusSegments.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -739,7 +679,6 @@
       });
     }
 
-    // 6b. Solve Quality filter chips
     function updateQualityChipsUI() {
       [
         { el: dom.chipSelf, quality: 'self' },
@@ -772,7 +711,6 @@
       }
     });
 
-    // 7. Clear Filters button in empty state
     if (dom.btnClearFilters) {
       dom.btnClearFilters.addEventListener('click', () => {
         filterState.search = '';
@@ -803,7 +741,6 @@
       });
     }
 
-    // 8. Reset Progress Modal Controls
     if (dom.resetBtn && dom.resetModal) {
       dom.resetBtn.addEventListener('click', () => {
         dom.resetModal.classList.remove('hidden');
@@ -818,7 +755,6 @@
       });
     }
 
-    // Close modal if clicked outside modal content
     if (dom.resetModal) {
       dom.resetModal.addEventListener('click', (e) => {
         if (e.target === dom.resetModal) {
@@ -828,7 +764,6 @@
       });
     }
 
-    // Confirm Reset
     if (dom.confirmResetBtn && dom.resetModal) {
       dom.confirmResetBtn.addEventListener('click', () => {
         Storage.remove('dsa_progress');
@@ -848,7 +783,6 @@
       });
     }
 
-    // 9. Roadmap progress sync listeners
     window.addEventListener('dsaRoadmapProgressSync', () => {
       progress = Storage.get('dsa_progress', {}) || {};
       reviews = Storage.get('dsa_reviews', {}) || {};
@@ -858,7 +792,7 @@
 
     window.addEventListener('dsaProgressSync', (e) => {
       if (e.detail && (e.detail.source === 'patternLearning' || e.detail.source === 'patternReset')) {
-        // Pattern Learning changes must NEVER affect DSA Roadmap!
+
         return;
       }
       if (e.detail && e.detail.source === 'roadmap') return;
@@ -874,16 +808,13 @@
       renderQuestions();
     });
 
-    // 10. Review status sync listener
     window.addEventListener('dsaReviewSync', () => {
       reviews = Storage.get('dsa_reviews', {}) || {};
       renderQuestions();
     });
 
-    // 11. Viewport detection and responsive layout listener
     window.addEventListener('resize', handleResponsiveLayout);
 
-    // 12. Category slider navigation arrows (Prev/Next)
     const navPrevBtn = document.getElementById('dsa-nav-prev');
     const navNextBtn = document.getElementById('dsa-nav-next');
     if (navPrevBtn && dom.sidebarNavList) {
@@ -897,12 +828,11 @@
       });
     }
 
-    // 13. Floating Jump-to-Section Up Button (Appears only when reaching this section)
     const scrollToSectionBtn = document.getElementById('dsa-scroll-to-section-btn');
     if (scrollToSectionBtn) {
       function updateScrollBtn() {
         const roadmapView = document.getElementById('dsa-roadmap-view');
-        // Arrow button is only for Roadmap category options; never show in Pattern Learning
+
         if (!roadmapView || roadmapView.classList.contains('hidden') || roadmapView.offsetParent === null) {
           scrollToSectionBtn.classList.remove('is-visible');
           return;
@@ -911,7 +841,7 @@
         const workspace = document.querySelector('.dsa-workspace');
         if (!workspace) return;
         const rect = workspace.getBoundingClientRect();
-        // Appears only when the user scrolls down to reach this category options section
+
         if (rect.top <= 120) {
           scrollToSectionBtn.classList.add('is-visible');
         } else {
@@ -936,10 +866,6 @@
     }
   }
 
-  /**
-   * Detects current viewport width on initial render and window resize,
-   * ensuring the responsive horizontal category/pattern slider is properly initialized.
-   */
   function handleResponsiveLayout() {
     const isMobileOrTablet = window.innerWidth <= 1099;
     if (dom.sidebarNavList) {
@@ -951,9 +877,6 @@
     }
   }
 
-  /**
-   * Sets up ScrollSpy to highlight the active category in the sidebar nav
-   */
   function setupScrollSpy() {
     if (!('IntersectionObserver' in window)) return;
 
@@ -965,7 +888,7 @@
           navItems.forEach(item => {
             if (item.dataset.categoryId === categoryId) {
               item.classList.add('is-active');
-              // When in responsive slider mode, scroll active category item smoothly into center
+
               if (dom.sidebarNavList && window.innerWidth <= 1099) {
                 item.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
               }
@@ -981,13 +904,11 @@
       threshold: 0
     });
 
-    // Observe all category cards
     document.querySelectorAll('.dsa-category-card').forEach(card => {
       observer.observe(card);
     });
   }
 
-  // Run on DOM ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {

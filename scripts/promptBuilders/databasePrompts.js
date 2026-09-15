@@ -1,7 +1,4 @@
-/**
- * Database Prompts Collection (12 Prompts)
- * Covers SQL, PostgreSQL, MongoDB, Indexing, Transactions, Normalization, and Architecture.
- */
+
 module.exports = [
   {
     id: 'db-explain-analyze-optimizer',

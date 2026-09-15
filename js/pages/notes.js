@@ -1,14 +1,7 @@
-/**
- * MAD DEV - Developer Notes Module
- * Full Roadmap Knowledge Base Controller with Multi-Category Filter,
- * Interview Tagging, Multi-Field Search, Tag System & Persistence.
- */
 
-// Fallback seed notes if notesData.js is loaded asynchronously
 const fallbackNotes = typeof DEFAULT_NOTES !== 'undefined' ? DEFAULT_NOTES : [];
 const fallbackCategories = typeof NOTE_CATEGORIES !== 'undefined' ? NOTE_CATEGORIES : [];
 
-// Initialize notes with intelligent migration and seed merging
 let notes = initializeNotes();
 let currentCategory = 'All';
 let filterInterviewOnly = false;
@@ -23,9 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
   renderNotes();
 });
 
-/**
- * Loads notes from storage, migrates legacy schemas, and merges starter knowledge base.
- */
 function initializeNotes() {
   const rawNotes = Storage.get('dev_notes', null);
   const seedList = typeof DEFAULT_NOTES !== 'undefined' ? DEFAULT_NOTES : [];
@@ -35,13 +25,12 @@ function initializeNotes() {
     return [...seedList];
   }
 
-  // Migrate legacy notes schema
   const existingIds = new Set();
   const migrated = rawNotes.map(n => {
     existingIds.add(n.id);
     let cat = n.category;
     if (!cat && n.tag) {
-      // Map legacy tag names to standardized category names
+
       switch (n.tag.toUpperCase()) {
         case 'DSA': cat = 'DSA & Problem Solving'; break;
         case 'WEBDEV': cat = 'Web Development'; break;
@@ -50,7 +39,6 @@ function initializeNotes() {
       }
     }
 
-    // Ensure tags is an array
     let tags = n.tags;
     if (!tags) {
       tags = n.tag ? [n.tag.toLowerCase()] : [];
@@ -69,7 +57,6 @@ function initializeNotes() {
     };
   });
 
-  // Merge in any missing starter knowledge base notes so user gets full 27-category coverage
   seedList.forEach(seed => {
     if (!existingIds.has(seed.id)) {
       migrated.push(seed);
@@ -80,9 +67,6 @@ function initializeNotes() {
   return migrated;
 }
 
-/**
- * Initializes category UI elements: horizontal chips, dropdown jump selector, and modal categories.
- */
 function initCategoryUI() {
   const scrollContainer = document.getElementById('category-scroll-tabs');
   const jumpDropdown = document.getElementById('category-dropdown-select');
@@ -90,7 +74,7 @@ function initCategoryUI() {
   const categories = typeof NOTE_CATEGORIES !== 'undefined' ? NOTE_CATEGORIES : fallbackCategories;
 
   if (scrollContainer) {
-    // Generate category filter pills
+
     const pillsHtml = [
       `<button class="filter-tab note-filter-tab active" data-category="All">All Notes</button>`
     ];
@@ -120,7 +104,7 @@ function initCategoryUI() {
   }
 
   if (modalCategorySelect) {
-    const modalOptions = categories.map(cat => 
+    const modalOptions = categories.map(cat =>
       `<option value="${escapeHtml(cat.name)}">${escapeHtml(cat.name)}</option>`
     );
     modalCategorySelect.innerHTML = modalOptions.join('');
@@ -130,33 +114,26 @@ function initCategoryUI() {
   }
 }
 
-/**
- * Updates the datalist in the modal based on selected category.
- */
 function updateModalSubcategories(categoryName) {
   const datalist = document.getElementById('modal-subcategory-datalist');
   if (!datalist) return;
 
-  const subcats = typeof getSubcategoriesForCategory === 'function' 
+  const subcats = typeof getSubcategoriesForCategory === 'function'
     ? getSubcategoriesForCategory(categoryName)
     : ['General'];
 
   datalist.innerHTML = subcats.map(sub => `<option value="${escapeHtml(sub)}"></option>`).join('');
 }
 
-/**
- * Filters notes based on category, interview flag, and multi-field search query.
- */
 function getFilteredNotes() {
   const q = searchQuery.toLowerCase().trim();
 
   return notes.filter(n => {
-    // Category filtering
+
     if (currentCategory !== 'All') {
       const noteCat = (n.category || n.tag || '').toLowerCase();
       const targetCat = currentCategory.toLowerCase();
-      
-      // Match full name or short name
+
       let matchesCategory = noteCat === targetCat;
       if (!matchesCategory && typeof getCategoryByName === 'function') {
         const catObj = getCategoryByName(currentCategory);
@@ -167,12 +144,10 @@ function getFilteredNotes() {
       if (!matchesCategory) return false;
     }
 
-    // Interview Important filter
     if (filterInterviewOnly && !n.isInterviewImportant) {
       return false;
     }
 
-    // Multi-field search
     if (q) {
       const terms = q.split(/\s+/).filter(Boolean);
       const tagsStr = Array.isArray(n.tags) ? n.tags.join(' ') : (n.tags || '');
@@ -188,9 +163,6 @@ function getFilteredNotes() {
   });
 }
 
-/**
- * Renders notes in the responsive grid.
- */
 function renderNotes() {
   const container = document.getElementById('notes-grid');
   if (!container) return;
@@ -213,17 +185,15 @@ function renderNotes() {
   }
 
   container.innerHTML = filtered.map(note => {
-    const catClass = typeof getCategoryColorClass === 'function' 
-      ? getCategoryColorClass(note.category) 
+    const catClass = typeof getCategoryColorClass === 'function'
+      ? getCategoryColorClass(note.category)
       : 'tag-general';
     const shortCat = typeof getCategoryShortName === 'function'
       ? getCategoryShortName(note.category)
       : (note.category || 'Note');
 
-    // Clean preview snippet
     const preview = cleanTextPreview(note.content, 140);
 
-    // Tags rendering
     const tagsList = Array.isArray(note.tags) ? note.tags : (note.tags ? note.tags.split(',') : []);
     const tagsHtml = tagsList.length > 0 ? `
       <div class="note-tags-container">
@@ -234,7 +204,6 @@ function renderNotes() {
       </div>
     ` : '';
 
-    // Interview Important badge
     const interviewBadge = note.isInterviewImportant ? `
       <span class="badge-interview" title="Frequently asked in technical interviews">
         <span class="material-symbols-outlined text-[13px] text-amber-500">star</span>
@@ -242,7 +211,6 @@ function renderNotes() {
       </span>
     ` : '';
 
-    // Difficulty badge
     const diffBadge = note.difficulty ? `
       <span class="difficulty-badge difficulty-${note.difficulty.toLowerCase()}">${escapeHtml(note.difficulty)}</span>
     ` : '';
@@ -296,26 +264,20 @@ function renderNotes() {
   }).join('');
 }
 
-/**
- * Generates a clean text preview from markdown/technical content.
- */
 function cleanTextPreview(content, maxLength = 140) {
   if (!content) return '';
   const clean = content
-    .replace(/^#+\s+/gm, '') // remove markdown headings
-    .replace(/```[\s\S]*?```/g, '[Code Snippet]') // summarize code blocks
-    .replace(/`([^`]+)`/g, '$1') // inline code
-    .replace(/\*\*([^*]+)\*\*/g, '$1') // bold
-    .replace(/\*([^*]+)\*/g, '$1') // italic
-    .replace(/\n+/g, ' ') // single line
+    .replace(/^#+\s+/gm, '')
+    .replace(/```[\s\S]*?```/g, '[Code Snippet]')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/\*\*([^*]+)\*\*/g, '$1')
+    .replace(/\*([^*]+)\*/g, '$1')
+    .replace(/\n+/g, ' ')
     .trim();
 
   return clean.length > maxLength ? clean.substring(0, maxLength) + '...' : clean;
 }
 
-/**
- * Initializes filter tabs, dropdown jump selector, and interview button.
- */
 function initNoteFilters() {
   const scrollContainer = document.getElementById('category-scroll-tabs');
   if (scrollContainer) {
@@ -338,13 +300,9 @@ function initNoteFilters() {
   }
 }
 
-/**
- * Selects a category, syncs tabs, dropdown, and re-renders.
- */
 function selectCategory(catName) {
   currentCategory = catName;
 
-  // Sync scroll tabs
   const tabs = document.querySelectorAll('.note-filter-tab');
   tabs.forEach(t => {
     const tabCat = t.getAttribute('data-category');
@@ -356,7 +314,6 @@ function selectCategory(catName) {
     }
   });
 
-  // Sync dropdown selector
   const jumpDropdown = document.getElementById('category-dropdown-select');
   if (jumpDropdown && jumpDropdown.value !== catName) {
     jumpDropdown.value = catName;
@@ -365,9 +322,6 @@ function selectCategory(catName) {
   renderNotes();
 }
 
-/**
- * Multi-field fast search.
- */
 function initNoteSearch() {
   const searchInput = document.getElementById('notes-search-input');
   if (searchInput) {
@@ -378,9 +332,6 @@ function initNoteSearch() {
   }
 }
 
-/**
- * Filters by clicked tag.
- */
 window.filterByTag = function(tag) {
   const searchInput = document.getElementById('notes-search-input');
   if (searchInput) {
@@ -392,9 +343,6 @@ window.filterByTag = function(tag) {
   }
 };
 
-/**
- * Modal management (Create / Edit / View).
- */
 function initNoteModal() {
   const modal = document.getElementById('note-modal');
   const createBtn = document.getElementById('btn-create-note');
@@ -425,9 +373,6 @@ function initNoteModal() {
   }
 }
 
-/**
- * Opens Create Note modal with fresh defaults.
- */
 window.openCreateModal = function() {
   editingNoteId = null;
   document.getElementById('modal-title-text').textContent = 'Create New Note';
@@ -450,9 +395,6 @@ window.openCreateModal = function() {
   if (modal) modal.classList.add('open');
 };
 
-/**
- * Saves note (Create or Update).
- */
 function saveNoteFromModal() {
   const title = document.getElementById('modal-note-title').value.trim();
   const category = document.getElementById('modal-note-category').value;
@@ -469,14 +411,13 @@ function saveNoteFromModal() {
     return;
   }
 
-  // Parse tags into array
   const tags = rawTags
     .split(',')
     .map(t => t.trim().replace(/^#/, '').toLowerCase())
     .filter(Boolean);
 
   if (editingNoteId) {
-    // Edit existing note
+
     const idx = notes.findIndex(n => n.id === editingNoteId);
     if (idx !== -1) {
       notes[idx] = {
@@ -494,7 +435,7 @@ function saveNoteFromModal() {
       showToast('Note updated successfully!', 'success');
     }
   } else {
-    // Create new note
+
     const newNote = {
       id: 'n_' + Date.now(),
       title,
@@ -517,9 +458,6 @@ function saveNoteFromModal() {
   renderNotes();
 }
 
-/**
- * Opens note in modal for viewing and editing.
- */
 window.editNote = function(id) {
   const note = notes.find(n => n.id === id);
   if (!note) return;
@@ -528,7 +466,7 @@ window.editNote = function(id) {
   document.getElementById('modal-title-text').textContent = 'Edit / View Note';
   document.getElementById('modal-note-title').value = note.title || '';
   document.getElementById('modal-note-content').value = note.content || '';
-  
+
   const catSelect = document.getElementById('modal-note-category');
   if (catSelect) {
     catSelect.value = note.category || 'DSA & Problem Solving';
@@ -545,9 +483,6 @@ window.editNote = function(id) {
   if (modal) modal.classList.add('open');
 };
 
-/**
- * Deletes a note with confirmation.
- */
 window.deleteNote = function(id) {
   if (confirm('Are you sure you want to delete this note?')) {
     notes = notes.filter(n => n.id !== id);
@@ -557,9 +492,6 @@ window.deleteNote = function(id) {
   }
 };
 
-/**
- * HTML Escaping utility.
- */
 function escapeHtml(str) {
   if (!str) return '';
   const div = document.createElement('div');

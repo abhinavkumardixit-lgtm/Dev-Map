@@ -31,20 +31,21 @@
       window.addEventListener('load', () => setTimeout(reveal, 100));
       setTimeout(reveal, 1200);
     })();
-  </script>
+
+</script>
 </head>
 <body class="bg-slate-50 text-slate-900 antialiased min-h-screen timer-page" data-page="timer">
 
-  <!-- Mobile Overlay -->
+  
   <div class="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm hidden md:hidden" id="mobile-overlay"></div>
 
-  <!-- SideNavBar -->
+  
   <aside class="fixed left-0 top-0 h-full w-[260px] bg-white border-r border-slate-200 flex flex-col py-6 z-50 transform md:translate-x-0" id="sidebar">
     <button aria-label="Toggle Sidebar" class="absolute -right-3.5 top-6 w-7 h-7 bg-white border border-slate-200 rounded-full flex items-center justify-center text-slate-600 hover:text-indigo-600 hover:border-indigo-600 transition-colors z-50 hidden md:flex shadow-sm" id="sidebar-toggle">
       <span class="material-symbols-outlined text-[18px]" id="sidebar-toggle-icon">chevron_left</span>
     </button>
     <div class="flex-1 flex flex-col overflow-hidden">
-      <!-- Brand Logo -->
+      
       <div class="px-6 mb-8 flex items-center gap-3 overflow-hidden">
         <div class="min-w-[32px] w-8 h-8 rounded bg-brand-gradient flex items-center justify-center text-white shrink-0 shadow-sm">
           <span class="material-symbols-outlined text-xl" style='font-variation-settings: "FILL" 1;'>terminal</span>
@@ -54,7 +55,7 @@
           <p class="text-xs font-semibold text-slate-400 uppercase mt-0.5">Workspace</p>
         </div>
       </div>
-      <!-- Navigation Links -->
+      
       <nav class="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar px-3 space-y-1">
         <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors duration-200 border-l-[3px] border-transparent tooltip relative group" href="../index.html">
           <span class="material-symbols-outlined shrink-0">dashboard</span>
@@ -146,10 +147,10 @@
     </div>
   </aside>
 
-  <!-- Main Content Area -->
+  
   <main class="md:ml-[260px] min-h-screen p-6 sm:p-8" id="main-content">
     
-    <!-- Page Header Bar -->
+    
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-slate-200" id="page-header-bar">
       <div class="flex items-center gap-3">
         <button class="mobile-nav-toggle md:hidden" id="mobile-menu-trigger" aria-label="Open Sidebar">
@@ -162,29 +163,29 @@
       </div>
 
       <div class="flex flex-wrap items-center gap-2.5">
-        <!-- Exit Focus Mode Button (only visible in focus mode) -->
+        
         <button class="px-3.5 py-2 text-xs font-semibold text-white bg-slate-800 hover:bg-slate-700 rounded-xl transition-colors shadow-sm hidden items-center gap-1.5" id="btn-exit-focus-mode">
           <span class="material-symbols-outlined text-[18px]">fullscreen_exit</span>
           <span>Exit Focus Mode</span>
         </button>
 
-        <!-- Focus Mode Toggle Button -->
+        
         <button class="px-3 py-2 text-xs font-semibold text-slate-600 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl transition-colors shadow-sm flex items-center gap-1.5" id="btn-focus-mode" title="Toggle Fullscreen Focus Mode (F)">
           <span class="material-symbols-outlined text-[18px]">fullscreen</span>
           <span class="hidden sm:inline">Focus Mode</span>
         </button>
 
-        <!-- Keyboard Shortcuts Button -->
+        
         <button class="p-2 text-slate-600 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl transition-colors shadow-sm flex items-center justify-center" id="btn-shortcuts" title="Keyboard Shortcuts">
           <span class="material-symbols-outlined text-[18px]">keyboard</span>
         </button>
 
-        <!-- Settings Button -->
+        
         <button class="p-2 text-slate-600 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl transition-colors shadow-sm flex items-center justify-center" id="btn-timer-settings" title="Timer Settings">
           <span class="material-symbols-outlined text-[18px]">tune</span>
         </button>
 
-        <!-- Today Rounds Counter Badge -->
+        
         <div class="flex items-center gap-2 px-3.5 py-1.5 bg-white border border-slate-200 rounded-xl shadow-sm">
           <span class="material-symbols-outlined text-indigo-600 text-[18px]">verified</span>
           <span class="text-xs font-semibold text-slate-700">Rounds Today: <strong class="text-indigo-600" id="completed-rounds-count">0</strong></span>
@@ -192,10 +193,10 @@
       </div>
     </div>
 
-    <!-- Section 1: Main Timer Column -->
+    
     <div class="max-w-2xl mx-auto space-y-6">
       
-      <!-- Optional Task Focus Card -->
+      
       <div class="dev-card p-4" id="task-card">
         <div class="flex items-center gap-2 mb-2">
           <span class="material-symbols-outlined text-indigo-600 text-lg">target</span>
@@ -210,7 +211,7 @@
             maxlength="80"
           />
         </div>
-        <!-- Quick Suggestion Chips -->
+        
         <div class="flex flex-wrap gap-1.5 mt-2.5" id="task-suggestions-row">
           <button type="button" class="task-suggestion-chip" data-task="DSA — Two Pointer & Sliding Window">DSA Practice</button>
           <button type="button" class="task-suggestion-chip" data-task="System Design Architecture">System Design</button>
@@ -218,16 +219,16 @@
           <button type="button" class="task-suggestion-chip" data-task="Fix Production Bug & Write Tests">Bug Fixing</button>
           <button type="button" class="task-suggestion-chip" data-task="Read CS Core & OS Concepts">CS Revision</button>
         </div>
-        <!-- Active Task Running Display -->
+        
         <p class="text-xs font-semibold text-indigo-700 mt-2 hidden" id="active-task-display">
           🔥 Focusing on: <span id="active-task-text"></span>
         </p>
       </div>
 
-      <!-- Circular Focus Timer & Controls Card -->
+      
       <div class="dev-card text-center py-8 px-6" id="timer-card">
         
-        <!-- Dedicated Focus Mode Top Bar (visible only in Focus Mode) -->
+        
         <div class="focus-mode-top-bar hidden" id="focus-mode-top-bar">
           <div class="focus-mode-badge-wrap">
             <span class="focus-mode-title-badge">
@@ -241,14 +242,14 @@
           </button>
         </div>
 
-        <!-- Mode Selectors -->
+        
         <div class="filter-tabs justify-center mb-8" id="timer-mode-tabs">
           <button class="filter-tab timer-mode-btn active" data-mode="work" id="mode-btn-work"><span>🔥 Deep Work</span><span class="timer-mode-duration">(<span id="mode-work-min">25</span>m)</span></button>
           <button class="filter-tab timer-mode-btn" data-mode="shortBreak" id="mode-btn-short"><span>☕ Short Break</span><span class="timer-mode-duration">(<span id="mode-short-min">5</span>m)</span></button>
           <button class="filter-tab timer-mode-btn" data-mode="longBreak" id="mode-btn-long"><span>🌴 Long Break</span><span class="timer-mode-duration">(<span id="mode-long-min">15</span>m)</span></button>
         </div>
 
-        <!-- Central Circular Clock (SVG) -->
+        
         <div class="timer-circle-container mb-6" id="timer-circle-container">
           <svg class="timer-svg" viewBox="0 0 280 280">
             <circle class="timer-circle-bg" cx="140" cy="140" r="120"></circle>
@@ -260,13 +261,13 @@
           </div>
         </div>
 
-        <!-- Dedicated Focus Mode Active Task Label (Visible only in Focus Mode) -->
+        
         <div class="focus-mode-task-pill hidden mb-6" id="focus-mode-task-pill">
           <span class="material-symbols-outlined text-[16px] text-indigo-600">target</span>
           <span class="font-semibold text-sm text-slate-700" id="focus-mode-task-text">Deep Work Focus</span>
         </div>
 
-        <!-- Action Controls -->
+        
         <div class="flex items-center justify-center gap-3 flex-wrap" id="timer-controls-row">
           <button class="btn-primary text-base py-3 px-7 shadow-sm flex items-center gap-2" id="btn-timer-start">
             <span class="material-symbols-outlined text-[22px]" id="timer-start-icon">play_arrow</span>
@@ -284,27 +285,27 @@
             <span class="material-symbols-outlined text-[18px]">skip_next</span>
             <span>Skip</span>
           </button>
-          <!-- Prominent Exit Focus Mode button inside control row (only in Focus Mode) -->
+          
           <button class="px-5 py-3 text-sm font-semibold text-white bg-slate-800 hover:bg-slate-700 rounded-xl transition-colors shadow-sm hidden items-center gap-1.5 focus-mode-only" id="btn-exit-focus-center" title="Exit Focus Mode (Esc)">
             <span class="material-symbols-outlined text-[18px]">fullscreen_exit</span>
             <span>Exit Focus Mode</span>
           </button>
         </div>
 
-        <!-- Enhanced Cycle Progress Indicators -->
+        
         <div class="mt-8 pt-6 border-t border-slate-100" id="timer-cycle-section">
           <div class="flex items-center justify-between mb-3">
             <span class="cycle-header-label text-xs font-semibold text-slate-500 uppercase tracking-wider">Pomodoro Cycle Progress</span>
             <span class="text-xs font-bold text-indigo-600" id="cycle-fraction-text">Session 1 of 4</span>
           </div>
           <div class="flex items-center justify-center gap-2 flex-wrap" id="rounds-indicators">
-            <!-- Rendered by js/pages/timer.js -->
+            
           </div>
         </div>
 
       </div>
 
-      <!-- Section 2: Today's Focus Statistics -->
+      
       <div class="dev-card p-6" id="focus-stats-section">
         <div class="flex items-center justify-between mb-4">
           <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
@@ -334,7 +335,7 @@
         </div>
       </div>
 
-      <!-- Section 3: Today's Completed Sessions History -->
+      
       <div class="dev-card p-6" id="focus-history-section">
         <div class="flex items-center justify-between mb-4">
           <div>
@@ -350,11 +351,11 @@
         </div>
 
         <div class="space-y-2.5 max-h-[280px] overflow-y-auto custom-scrollbar" id="sessions-history-list">
-          <!-- Rendered dynamically by js/pages/timer.js -->
+          
         </div>
       </div>
 
-      <!-- Deep Work Protocol Card -->
+      
       <div class="dev-card bg-indigo-50/50 border-indigo-100" id="focus-tips-card">
         <div class="flex items-start gap-3">
           <span class="material-symbols-outlined text-indigo-600 text-2xl shrink-0 mt-0.5">lightbulb</span>
@@ -371,9 +372,7 @@
 
   </main>
 
-  <!-- ==========================================
-       MODAL 1: TIMER SETTINGS
-       ========================================== -->
+  
   <div class="modal-backdrop" id="modal-timer-settings">
     <div class="modal-container p-6">
       <div class="flex items-center justify-between mb-5">
@@ -392,7 +391,7 @@
       </div>
 
       <form id="form-timer-settings" class="space-y-4">
-        <!-- Durations -->
+        
         <div class="grid grid-cols-3 gap-3">
           <div>
             <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1" for="setting-focus-dur">Focus (min)</label>
@@ -408,7 +407,7 @@
           </div>
         </div>
 
-        <!-- Cycles before long break -->
+        
         <div>
           <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1" for="setting-cycles">Sessions Before Long Break</label>
           <select id="setting-cycles" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-600 focus:bg-white">
@@ -419,7 +418,7 @@
           </select>
         </div>
 
-        <!-- Toggles -->
+        
         <div class="space-y-2.5 pt-2 border-t border-slate-100">
           <label class="flex items-center justify-between cursor-pointer">
             <span class="text-xs font-medium text-slate-700">Audio Chime Alert</span>
@@ -443,9 +442,7 @@
     </div>
   </div>
 
-  <!-- ==========================================
-       MODAL 2: SESSION COMPLETED TRANSITION
-       ========================================== -->
+  
   <div class="modal-backdrop" id="modal-session-completed">
     <div class="modal-container p-6 max-w-md text-center">
       <div class="w-14 h-14 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-4">
@@ -469,9 +466,7 @@
     </div>
   </div>
 
-  <!-- ==========================================
-       MODAL 3: KEYBOARD SHORTCUTS
-       ========================================== -->
+  
   <div class="modal-backdrop" id="modal-shortcuts">
     <div class="modal-container p-6 max-w-sm">
       <div class="flex items-center justify-between mb-4">

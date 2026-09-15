@@ -1,6 +1,3 @@
-/* ==========================================================================
-   DevPilot-AI - Notes Page CSS
-   ========================================================================== */
 
 .notes-grid {
   display: grid;
@@ -43,7 +40,6 @@
   gap: 0.25rem;
 }
 
-/* Category Specific Badges */
 .tag-dsa { background-color: #fee2e2; color: #dc2626; }
 .tag-cpp { background-color: #e0f2fe; color: #0284c7; }
 .tag-javascript { background-color: #fef3c7; color: #b45309; }
@@ -73,7 +69,6 @@
 .tag-concepts { background-color: #fef3c7; color: #d97706; }
 .tag-general { background-color: #f1f5f9; color: #475569; }
 
-/* Interview Important Badge */
 .badge-interview {
   display: inline-flex;
   align-items: center;
@@ -87,7 +82,6 @@
   border-radius: var(--radius-full);
 }
 
-/* Category Filter Bar & Controls */
 .category-filter-wrapper {
   display: flex;
   flex-direction: column;
@@ -162,7 +156,6 @@
   box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
 }
 
-/* Note Metadata Line */
 .note-meta-row {
   display: flex;
   align-items: center;
@@ -186,7 +179,6 @@
 .difficulty-medium { background-color: #fffbeb; color: #d97706; }
 .difficulty-hard { background-color: #fef2f2; color: #dc2626; }
 
-/* Note Tags Pill List */
 .note-tags-container {
   display: flex;
   flex-wrap: wrap;
@@ -212,7 +204,6 @@
   border-color: #4f46e5;
 }
 
-/* Note Modal */
 .modal-backdrop {
   position: fixed;
   inset: 0;

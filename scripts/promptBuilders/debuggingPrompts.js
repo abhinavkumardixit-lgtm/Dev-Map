@@ -1,7 +1,4 @@
-/**
- * Debugging Prompts Collection (11 Prompts)
- * Covers Runtime Errors, Stack Traces, Async Bugs, Database Locks, 500 Triage, CORS, Docker Crashes, and CSS Breaks.
- */
+
 module.exports = [
   {
     id: 'debug-stack-trace-rca',

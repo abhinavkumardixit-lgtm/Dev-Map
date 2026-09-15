@@ -1,7 +1,3 @@
-/**
- * MAD DEV — Communication & Group Discussion Module
- * 100 scenario-based MCQs across 10 communication topics + 10 comprehensive GD Practice Topics.
- */
 
 (function () {
   'use strict';

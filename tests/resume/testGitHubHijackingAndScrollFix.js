@@ -4,7 +4,6 @@ const analyzer = require('../../js/pages/resumeAnalyzer.js');
 async function main() {
   console.log('Testing GitHub Hijacking Fix & Clean Profile Resolution...\n');
 
-  // Mock global.fetch for deterministic offline testing
   const originalFetch = global.fetch;
   global.fetch = async function(url) {
     if (url.includes('github.c')) {
@@ -13,7 +12,6 @@ async function main() {
     return { ok: true, status: 200, json: async () => ({ login: 'user' }) };
   };
 
-  // 1. Verify invalid handle (like github.c) is NOT hijacked to 2k25adityasharma
   const sampleResultWithProjects = {
     projectsAnalysis: {
       details: [
@@ -54,14 +52,12 @@ async function main() {
   console.log('Badge HTML:', mockContainer.badgeEl.innerHTML);
   console.log('Meta HTML:', mockContainer.metaEl.innerHTML);
 
-  // Must NOT contain 2k25adityasharma or Real Verified!
   assert.ok(!mockContainer.badgeEl.innerHTML.includes('Real Verified'), 'Must NOT mark invalid username as Real Verified');
   assert.ok(!mockContainer.metaEl.innerHTML.includes('2k25adityasharma'), 'Must NOT substitute 2k25adityasharma');
   assert.ok(mockContainer.badgeEl.innerHTML.includes('Account Not Found (404)'), 'Must report 404 Account Not Found');
   assert.ok(mockContainer.metaEl.innerHTML.includes('github.c'), 'Must report error specifically for github.c');
   console.log('✓ Test 1 Passed: Invalid GitHub handle is NOT hijacked by project repos\n');
 
-  // 2. Verify resume without header GitHub does NOT treat project repo as personal profile
   const resumeTextWithoutGithub = [
     'Jane Doe',
     'Senior Frontend Engineer',
@@ -83,7 +79,6 @@ async function main() {
   assert.strictEqual(extractedLinks.github, null, 'Must NOT extract facebook or kubernetes as Jane Doe personal profile');
   console.log('✓ Test 2 Passed: Project repos are not falsely extracted as candidate personal profiles\n');
 
-  // 3. Verify resume WITH personal GitHub in header is correctly extracted
   const resumeWithPersonalGithub = [
     'John Smith',
     'Full Stack Engineer',

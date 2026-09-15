@@ -1,7 +1,3 @@
-/**
- * MAD DEV — English & Verbal Ability Question Bank
- * 100 placement MCQs across 10 subsections covering reading comprehension, grammar, vocabulary, and verbal logic.
- */
 
 (function () {
   'use strict';

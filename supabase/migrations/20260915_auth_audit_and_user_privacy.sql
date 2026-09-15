@@ -52,11 +52,11 @@ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can view own profile') THEN
     CREATE POLICY "Users can view own profile" ON maddev_users FOR SELECT USING (auth.uid() = id);
   END IF;
-  
+
   IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can view own synced profile data') THEN
     CREATE POLICY "Users can view own synced profile data" ON maddev_user_profiles_data FOR SELECT USING (auth.uid() = user_id);
   END IF;
-  
+
   IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can insert own audit logs') THEN
     CREATE POLICY "Users can insert own audit logs" ON maddev_auth_audit_logs FOR INSERT WITH CHECK (auth.uid() = user_id OR user_id IS NULL);
   END IF;

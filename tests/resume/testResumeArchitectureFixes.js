@@ -1,22 +1,6 @@
-/**
- * Test Suite: Resume Analyzer Architecture Fixes
- * Comprehensive test suite verifying all 13 parts of the Resume Analyzer upgrade:
- * - Part 1: Deterministic Link Detection & Normalization (LinkedIn, GitHub, Portfolio, LeetCode, HackerRank, CodeChef, Kaggle, Behance, Dribbble, plain text, without https, git@)
- * - Part 2: Intermediate Structured Resume JSON Schema ({ candidate, links, sections })
- * - Part 3: Fact Anchoring & Zero Hallucinations
- * - Part 4: Primary UI Structured Dashboard
- * - Part 5: 8 Score Pillars (15, 15, 20, 15, 10, 8, 5, 12 = 100 max) with Progress Bars & Accordion Details
- * - Part 6: Dedicated Contact & Links Card with Clickable URLs & Missing Profile Recommendations
- * - Part 7 & 8: Section-by-Section Analysis preserving renderExperienceDetails untouched
- * - Part 9: Best Fit Role & Estimated Role Fit
- * - Part 10: Real Job Match
- * - Part 11: Secondary AI Assistant with Quick Prompt Chips & Contextual Q&A
- * - Part 12 & 13: Controlled Scoring and Compatibility
- */
 
 const assert = require('assert');
 
-// Setup minimal DOM mock
 global.document = {
   getElementById: (id) => ({
     id,
@@ -59,9 +43,6 @@ console.log(`====================================================${colors.reset}
 let passed = 0;
 let total = 0;
 
-// ============================================================
-// PART 1: DETERMINISTIC LINK DETECTION & NORMALIZATION
-// ============================================================
 total++;
 if (runTest('PART 1.1: Normalize URLs (https upgrade, trailing slashes, git ssh)', () => {
   assert.strictEqual(analyzer.normalizeUrl('http://github.com/aditya/'), 'https://github.com/aditya');
@@ -134,30 +115,27 @@ if (runTest('PART 1.3: False positive prevention ("LeetCode 200+ problems solved
   assert.strictEqual(links.hackerrank, null, 'HackerRank mention without handle should be null');
 })) passed++;
 
-// ============================================================
-// PART 2: INTERMEDIATE STRUCTURED RESUME JSON SCHEMA
-// ============================================================
 total++;
 if (runTest('PART 2: buildIntermediateResumeJSON conforms to required schema', () => {
   const resumeText = `
     Jane Doe
     jane@example.com | 555-123-4567 | San Francisco, CA
     linkedin.com/in/janedoe | github.com/janedoe | janedoe.dev
-    
+
     SUMMARY
     Senior Engineer with 5 years experience in Go and React.
-    
+
     EXPERIENCE
     Software Engineer | Stripe | 2022 - Present
     • Built payments service with 99.99% availability.
-    
+
     PROJECTS
     OpenGateway | github.com/janedoe/gateway
     • High speed gateway handling 50k req/sec.
-    
+
     EDUCATION
     BS in Computer Science | UC Berkeley | 2020
-    
+
     CERTIFICATIONS
     AWS Certified Solutions Architect (2023)
   `;
@@ -199,9 +177,6 @@ if (runTest('PART 2: buildIntermediateResumeJSON conforms to required schema', (
   assert.ok(json.sections.certifications, 'Sections.certifications present');
 })) passed++;
 
-// ============================================================
-// PART 4 & 5: 8 SCORE PILLARS & STRUCTURED DASHBOARD
-// ============================================================
 total++;
 if (runTest('PART 5: renderEightScorePillars generates all 8 required score pillars', () => {
   const dummyResult = {
@@ -247,9 +222,6 @@ if (runTest('PART 5: renderEightScorePillars generates all 8 required score pill
   assert.ok(html.includes('breakdown-bar-fill'), 'Progress bar fills present');
 })) passed++;
 
-// ============================================================
-// PART 6: DEDICATED CONTACT & LINKS CARD
-// ============================================================
 total++;
 if (runTest('PART 6: renderContactAndLinksCard renders clickable links and missing profile notices', () => {
   const result = {
@@ -275,9 +247,6 @@ if (runTest('PART 6: renderContactAndLinksCard renders clickable links and missi
   assert.ok(html.includes('Deterministic ground truth'), 'Ground truth disclaimer rendered');
 })) passed++;
 
-// ============================================================
-// PART 7 & 8: SECTION-BY-SECTION ANALYSIS & PRESERVED EXPERIENCE
-// ============================================================
 total++;
 if (runTest('PART 8: renderSectionAnalysisCards preserves renderExperienceDetails intact', () => {
   const result = {
@@ -305,9 +274,6 @@ if (runTest('PART 8: renderSectionAnalysisCards preserves renderExperienceDetail
   assert.ok(html.includes('Technologies in Context'), 'Technologies in context rendered');
 })) passed++;
 
-// ============================================================
-// PART 11: SECONDARY AI ASSISTANT
-// ============================================================
 total++;
 if (runTest('PART 11: renderResumeAiAssistant renders coach card with 4 prompt chips', () => {
   const result = {

@@ -1,14 +1,3 @@
-/**
- * MAD DEV — Resume Analyzer Input Pipeline Test Suite
- * Tests the complete flow:
- * 1. File validation (PDF, DOCX, TXT, 0-byte rejection)
- * 2. TXT file reading & text extraction
- * 3. Pre-AI validation guard (empty / whitespace / insufficient text)
- * 4. Construction of [RESUME_INPUT] ... [/RESUME_INPUT] delimiters
- * 5. Length-only debug logging (no raw resume text leaks)
- * 6. End-to-end real resume analysis (candidate name, contact, skills, education, projects, scores > 0)
- * 7. Graceful error handling without generating fake 0-score objects
- */
 
 const assert = require('assert');
 const analyzer = require('../../js/pages/resumeAnalyzer.js');
@@ -82,9 +71,6 @@ ACHIEVEMENTS
 • Finalist in National Level Web & AI Hackathon 2024.
 `;
 
-  // ----------------------------------------------------
-  // TEST 1: File Validation supports PDF, DOCX, and TXT
-  // ----------------------------------------------------
   total++;
   if (await runTest('TEST 1: File validation accepts .pdf, .docx, and .txt, rejects unsupported extensions', () => {
     assert.strictEqual(analyzer.validateFile({ name: 'resume.pdf', size: 1024 }).valid, true);
@@ -100,9 +86,6 @@ ACHIEVEMENTS
     assert.ok(emptyFile.error.includes('0 bytes'));
   })) passed++;
 
-  // ----------------------------------------------------
-  // TEST 2: TXT Text Extraction from Buffer / File
-  // ----------------------------------------------------
   total++;
   if (await runTest('TEST 2: extractTXTText extracts, cleans, and returns valid string from TXT input', async () => {
     const buf = Buffer.from(realResumeText, 'utf-8');
@@ -112,7 +95,6 @@ ACHIEVEMENTS
     assert.ok(extracted.includes('SONIQX'));
     assert.ok(extracted.length > 100);
 
-    // Empty buffer or short text throws
     const shortBuf = Buffer.from('Too short', 'utf-8');
     let threw = false;
     try {
@@ -124,9 +106,6 @@ ACHIEVEMENTS
     assert.strictEqual(threw, true, 'Should throw on empty/too-short TXT file');
   })) passed++;
 
-  // ----------------------------------------------------
-  // TEST 3: Pre-AI Validation Guard
-  // ----------------------------------------------------
   total++;
   if (await runTest('TEST 3: validateResumeInput rejects empty, whitespace, and short text without generating 0 scores', () => {
     const nullRes = analyzer.validateResumeInput(null);
@@ -149,9 +128,6 @@ ACHIEVEMENTS
     assert.ok(validRes.length > 500);
   })) passed++;
 
-  // ----------------------------------------------------
-  // TEST 4: Construction of [RESUME_INPUT] ... [/RESUME_INPUT]
-  // ----------------------------------------------------
   total++;
   if (await runTest('TEST 4: constructMasterAiPrompt embeds real text inside [RESUME_INPUT] delimiters', () => {
     const prompt = analyzer.constructMasterAiPrompt(realResumeText);
@@ -167,15 +143,11 @@ ACHIEVEMENTS
     assert.ok(extracted.includes('SONIQX'));
     assert.strictEqual(extracted.length > 0, true);
 
-    // Throws on empty input (never send empty RESUME_INPUT)
     assert.throws(() => {
       analyzer.constructMasterAiPrompt('   ');
     }, /Cannot construct AI prompt/);
   })) passed++;
 
-  // ----------------------------------------------------
-  // TEST 5: Prompt construction with optional Job Description
-  // ----------------------------------------------------
   total++;
   if (await runTest('TEST 5: constructMasterAiPrompt embeds optional Job Description in [JOB_DESCRIPTION]', () => {
     const jd = 'Looking for a Full Stack React & Node.js Engineer with AWS experience.';
@@ -183,9 +155,6 @@ ACHIEVEMENTS
     assert.ok(prompt.includes('[JOB_DESCRIPTION]\nLooking for a Full Stack React & Node.js Engineer with AWS experience.\n[/JOB_DESCRIPTION]'));
   })) passed++;
 
-  // ----------------------------------------------------
-  // TEST 6: Debug logging logs length ONLY, never raw text
-  // ----------------------------------------------------
   total++;
   if (await runTest('TEST 6: Production logs expose text length only and never expose full raw resume text', () => {
     const logs = [];
@@ -206,9 +175,6 @@ ACHIEVEMENTS
     }
   })) passed++;
 
-  // ----------------------------------------------------
-  // TEST 7: End-to-end analysis populates candidate info & scores > 0
-  // ----------------------------------------------------
   total++;
   if (await runTest('TEST 7: Valid resume analysis populates candidate name, contact, skills, education, projects, and scores > 0', () => {
     const parsedSections = analyzer.parseResumeSections(realResumeText);
@@ -230,25 +196,20 @@ ACHIEVEMENTS
       formattingAnalysis, null
     );
 
-    // Candidate details populated
     assert.strictEqual(contactInfo.details.name, 'Aditya Sharma');
     assert.strictEqual(contactInfo.details.email, '2k25aiml2513475@gmail.com');
     assert.strictEqual(contactInfo.details.phone, '+91 98765 43210');
     assert.ok(contactInfo.details.location.includes('Kanpur'));
     assert.ok(contactInfo.details.github.includes('github.com'));
 
-    // Skills populated
     assert.ok(skills.all.length > 5, 'Skills should be detected');
     assert.ok(skills.all.map(s => s.toLowerCase()).includes('javascript') || skills.all.map(s => s.toLowerCase()).includes('react'));
 
-    // Projects populated
     assert.ok(projectsAnalysis.count > 0, 'Projects should be detected');
     assert.ok(projectsAnalysis.details.some(p => (p.name || '').includes('SONIQX')));
 
-    // Education populated
     assert.strictEqual(educationAnalysis.hasDegree, true);
 
-    // Scores NOT 0
     assert.ok(scores.overall > 60, `Score should be > 60, was ${scores.overall}`);
     assert.ok(scores.breakdown.contact.score > 0);
     assert.ok(scores.breakdown.keywords.score > 0);
@@ -256,9 +217,6 @@ ACHIEVEMENTS
     assert.ok(scores.breakdown.education.score > 0);
   })) passed++;
 
-  // ----------------------------------------------------
-  // TEST 8: AI Response Parsing and Error Handling
-  // ----------------------------------------------------
   total++;
   if (await runTest('TEST 8: parseAiResponse handles raw JSON, markdown-wrapped JSON, and error payloads', () => {
     const rawJson = '{"overallResumeScore": 85, "candidate": {"name": "Aditya"}}';

@@ -21,16 +21,17 @@
       htmlDoc.classList.remove('preload');
       htmlDoc.classList.add('app-ready');
     })();
-  </script>
+
+</script>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col justify-center items-center p-4 antialiased relative overflow-y-auto">
   
-  <!-- Glowing Background Orbs -->
+  
   <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-600/20 rounded-full filter blur-3xl pointer-events-none"></div>
   <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-600/20 rounded-full filter blur-3xl pointer-events-none"></div>
 
   <div class="max-w-lg w-full relative z-10 my-8">
-    <!-- Brand Header -->
+    
     <div class="text-center mb-6">
       <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-indigo-600 text-white shadow-xl shadow-indigo-500/30 mb-3">
         <span class="material-symbols-outlined text-3xl">terminal</span>
@@ -39,13 +40,13 @@
       <p class="text-sm text-slate-400 mt-1">Create your isolated profile & connect your dev accounts</p>
     </div>
 
-    <!-- Signup Card -->
+    
     <div class="bg-slate-800/80 backdrop-blur-xl border border-slate-700/60 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6">
       
-      <!-- Alert Message Box -->
+      
       <div id="signup-alert" class="hidden p-3.5 rounded-xl text-xs font-semibold"></div>
 
-      <!-- Registration Form -->
+      
       <form id="signup-form" class="space-y-4">
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1" for="signup-name">Full Name *</label>
@@ -68,12 +69,12 @@
           </div>
         </div>
 
-        <!-- Account Connections Header -->
+        
         <div class="pt-2 border-t border-slate-700/60">
           <p class="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-3">Connect Developer Accounts</p>
 
           <div class="space-y-3">
-            <!-- GitHub Connection -->
+            
             <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-700 space-y-2">
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2">
@@ -88,7 +89,7 @@
               </div>
             </div>
 
-            <!-- LeetCode Connection -->
+            
             <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-700 space-y-2">
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2">
@@ -176,6 +177,7 @@
         alertBox.classList.remove('hidden');
       }
     });
-  </script>
+
+</script>
 </body>
 </html>

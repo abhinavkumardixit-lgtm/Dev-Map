@@ -1,7 +1,3 @@
-/**
- * MAD DEV — Programming & Coding Fundamentals Question Bank
- * 140 authentic placement/interview MCQs across 14 topics.
- */
 
 (function () {
   'use strict';

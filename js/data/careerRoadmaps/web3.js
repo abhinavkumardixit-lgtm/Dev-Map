@@ -1,7 +1,3 @@
-/**
- * MAD DEV — Career Roadmap: Web3 Developer
- * Complete 5-level dependency path, practical skill tasks, progressive projects, and job-ready checklist.
- */
 
 const web3Roadmap = {
   roleId: 'web3-developer',

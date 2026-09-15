@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+
 import json
 import re
 import sys
@@ -32,7 +32,6 @@ existing_roadmap = json.loads(m.group(1))
 all_questions = []
 used_ids = set()
 
-# 1. Existing 260 questions
 for cat in existing_roadmap:
     c_id = cat['id']
     c_name = cat['name']
@@ -59,7 +58,6 @@ for cat in existing_roadmap:
                 "solved": False
             })
 
-# 2. Curated questions part 1, 2, 3 + EXTRA_QUESTIONS
 all_raw = get_additional_questions() + get_part2_questions() + get_part3_questions() + EXTRA_QUESTIONS
 
 for entry in all_raw:
@@ -91,21 +89,17 @@ print(f"Total questions available: {len(all_questions)}")
 
 patterns = get_patterns_curriculum()
 
-# Now for each pattern, select exactly 5 Easy, 3 Med, 2 Hard
 q_by_id = {q['id']: q for q in all_questions}
 
-# Helper to pick N questions of difficulty diff for a pattern
 def pick_questions(pid, diff, target_count):
-    # 1. First priority: questions directly mapped to this pattern
+
     direct = [q for q in all_questions if q['patternId'] == pid and q['difficulty'] == diff]
-    
-    # Deduplicate by leetcode number and clean title
+
     seen = set()
     selected = []
-    
-    # Prioritize original roadmap questions (non lc- prefix) first
+
     sorted_direct = sorted(direct, key=lambda q: (1 if q['id'].startswith('lc-') else 0, q.get('leetcodeNumber') or 99999))
-    
+
     for q in sorted_direct:
         num = q.get('leetcodeNumber')
         key = num if num else q['title'].lower()
@@ -114,9 +108,9 @@ def pick_questions(pid, diff, target_count):
             selected.append(q['id'])
             if len(selected) == target_count:
                 return selected
-                
+
     if len(selected) < target_count:
-        # Check by category if needed
+
         pat_cat = next((p['categoryId'] for p in patterns if p['id'] == pid), None)
         if pat_cat:
             cat_qs = [q for q in all_questions if q['categoryId'] == pat_cat and q['difficulty'] == diff]
@@ -131,7 +125,7 @@ def pick_questions(pid, diff, target_count):
                         return selected
 
     if len(selected) < target_count:
-        # Fallback to any questions in the whole dataset matching diff
+
         all_diff = [q for q in all_questions if q['difficulty'] == diff]
         for q in all_diff:
             num = q.get('leetcodeNumber')
@@ -141,7 +135,7 @@ def pick_questions(pid, diff, target_count):
                 selected.append(q['id'])
                 if len(selected) == target_count:
                     return selected
-                    
+
     return selected
 
 results = []
@@ -152,14 +146,14 @@ for pat in patterns:
     e_ids = pick_questions(pid, 'Easy', 5)
     m_ids = pick_questions(pid, 'Medium', 3)
     h_ids = pick_questions(pid, 'Hard', 2)
-    
+
     pat_q_ids = e_ids + m_ids + h_ids
     pat['practiceQuestionIds'] = pat_q_ids
     pat['totalQuestions'] = 10
     pat['easyQuestions'] = 5
     pat['mediumQuestions'] = 3
     pat['hardQuestions'] = 2
-    
+
     is_valid = len(e_ids) == 5 and len(m_ids) == 3 and len(h_ids) == 2 and len(pat_q_ids) == 10 and len(set(pat_q_ids)) == 10
     if not is_valid:
         all_ok = False

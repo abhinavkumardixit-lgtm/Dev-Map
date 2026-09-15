@@ -1,8 +1,4 @@
-/* ==========================================================================
-   DevPilot-AI - Responsive CSS Utilities
-   ========================================================================== */
 
-/* Main content positioning */
 #main-content {
   margin-left: 0;
   width: 100%;
@@ -19,18 +15,17 @@
   }
 }
 
-/* Mobile Sidebar Drawer */
 @media (max-width: 767px) {
   #sidebar {
     transform: translateX(-100%);
     width: 280px !important;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
   }
-  
+
   #sidebar.mobile-open {
     transform: translateX(0) !important;
   }
-  
+
   .subpage-header {
     flex-direction: column;
     align-items: flex-start;
@@ -56,7 +51,6 @@
   }
 }
 
-/* Sub-page top mobile floating nav button */
 .mobile-nav-toggle {
   display: flex;
   align-items: center;
@@ -84,12 +78,11 @@
   }
 }
 
-/* Print Styles for Resume and Docs */
 @media print {
   #sidebar, #top-nav, .no-print, .mobile-nav-toggle, #toast-container {
     display: none !important;
   }
-  
+
   #main-content {
     margin-left: 0 !important;
     width: 100% !important;

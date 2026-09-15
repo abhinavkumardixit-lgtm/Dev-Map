@@ -1,6 +1,3 @@
-/* ==========================================================================
-   DevPilot-AI - Workspace Settings CSS
-   ========================================================================== */
 
 .settings-layout {
   display: grid;
@@ -50,7 +47,6 @@
   display: block;
 }
 
-/* Switch Toggle */
 .toggle-switch {
   position: relative;
   display: inline-block;

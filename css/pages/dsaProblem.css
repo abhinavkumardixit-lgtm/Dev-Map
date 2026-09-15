@@ -1,10 +1,4 @@
-/* ==========================================================================
-   DevPilot-AI — DSA Problem Detail & Revision Styles
-   ========================================================================== */
 
-/* --------------------------------------------------------------------------
-   1. Problem Detail Container & Layout
-   -------------------------------------------------------------------------- */
 .dsa-problem-view-container {
   width: 100%;
   max-width: 1200px;
@@ -12,7 +6,6 @@
   padding-bottom: 5rem;
 }
 
-/* Breadcrumb & Top Bar */
 .dp-breadcrumb-bar {
   display: flex;
   align-items: center;
@@ -70,9 +63,6 @@
   background: rgba(79, 70, 229, 0.04);
 }
 
-/* --------------------------------------------------------------------------
-   2. Problem Header Card
-   -------------------------------------------------------------------------- */
 .dp-header-card {
   background: var(--color-surface, #ffffff);
   border: 1px solid var(--color-outline-variant, #e2e8f0);
@@ -164,7 +154,6 @@
   border: 1px solid rgba(234, 179, 8, 0.3);
 }
 
-/* Solve Quality Badges in Problem Detail */
 .dp-badge-quality-self {
   background: rgba(16, 185, 129, 0.12);
   color: #059669;
@@ -189,7 +178,6 @@
   border: 1px solid rgba(244, 63, 94, 0.35);
 }
 
-/* Honesty Revision Notice Banner in Detail View */
 .dp-revision-notice {
   display: flex;
   align-items: center;
@@ -252,7 +240,6 @@
   margin-right: 0.35rem;
 }
 
-/* Problem Action Buttons */
 .dp-actions-toolbar {
   display: flex;
   align-items: center;
@@ -313,9 +300,6 @@
   background: var(--color-primary-dark, #4338ca);
 }
 
-/* --------------------------------------------------------------------------
-   3. Interactive Hint System
-   -------------------------------------------------------------------------- */
 .dp-hints-card {
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   border: 1px solid #e2e8f0;
@@ -400,9 +384,6 @@
   animation: dpFadeIn 0.2s ease-out;
 }
 
-/* --------------------------------------------------------------------------
-   4. 15-Section Step-by-Step Thought Process
-   -------------------------------------------------------------------------- */
 .dp-sections-container {
   display: flex;
   flex-direction: column;
@@ -449,7 +430,6 @@
   line-height: 1.65;
 }
 
-/* Recognition Signals list */
 .dp-signals-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -476,7 +456,6 @@
   flex-shrink: 0;
 }
 
-/* Approach numbered steps */
 .dp-approach-list {
   list-style: none;
   padding: 0;
@@ -512,7 +491,6 @@
   margin-top: 2px;
 }
 
-/* Walkthrough Table */
 .dp-table-wrap {
   width: 100%;
   max-width: 100%;
@@ -558,7 +536,6 @@
   background: #f8fafc;
 }
 
-/* Edge Cases Grid */
 .dp-edge-cases-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -587,9 +564,6 @@
   line-height: 1.4;
 }
 
-/* --------------------------------------------------------------------------
-   5. Multi-Language Code Block & Explanation
-   -------------------------------------------------------------------------- */
 .dp-code-container {
   background: #0f172a;
   border: 1px solid #1e293b;
@@ -672,7 +646,6 @@
   -webkit-overflow-scrolling: touch;
 }
 
-/* Dynamic Line-by-Line Code Explanation */
 .dp-explanation-card {
   margin-top: 1.25rem;
   background: #f8fafc;
@@ -718,7 +691,6 @@
   margin-top: 2px;
 }
 
-/* Complexity Cards */
 .dp-complexity-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -758,7 +730,6 @@
   line-height: 1.4;
 }
 
-/* Mistakes and Takeaways */
 .dp-mistakes-list {
   list-style: none;
   padding: 0;
@@ -795,9 +766,6 @@
   font-weight: 500;
 }
 
-/* --------------------------------------------------------------------------
-   6. Personal Notes Section
-   -------------------------------------------------------------------------- */
 .dp-notes-card {
   background: var(--color-surface, #ffffff);
   border: 1px solid var(--color-outline-variant, #e2e8f0);
@@ -848,9 +816,6 @@
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
 }
 
-/* --------------------------------------------------------------------------
-   7. Contextual Previous / Next Navigation Bar
-   -------------------------------------------------------------------------- */
 .dp-nav-footer {
   display: flex;
   align-items: center;
@@ -889,9 +854,6 @@
   cursor: not-allowed;
 }
 
-/* --------------------------------------------------------------------------
-   8. Dedicated Revision Dashboard View
-   -------------------------------------------------------------------------- */
 .dp-revision-container {
   width: 100%;
   max-width: 1400px;
@@ -942,7 +904,6 @@
   margin-top: 2px;
 }
 
-/* Revision filter chips */
 .dp-rev-chips {
   display: flex;
   align-items: center;
@@ -1015,9 +976,6 @@
   border-color: #94a3b8;
 }
 
-/* --------------------------------------------------------------------------
-   9. Mobile & Tablet Responsiveness
-   -------------------------------------------------------------------------- */
 @media (max-width: 768px) {
   .dp-problem-title {
     font-size: 1.35rem;

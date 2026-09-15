@@ -1,7 +1,3 @@
-/**
- * MAD DEV — Logical Reasoning Question Bank
- * 120 authentic placement MCQs across 12 topics with step-by-step logical explanations.
- */
 
 (function () {
   'use strict';

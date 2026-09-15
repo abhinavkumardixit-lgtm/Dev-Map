@@ -1,22 +1,12 @@
-/**
- * MAD DEV - Consistency & Habit Tracker Controller
- * 
- * Central controller coordinating user-scoped authentication,
- * authoritative database persistence, mathematical streak calculations,
- * weekly momentum, 26-week heatmap, daily goals, weekly goals,
- * optimistic UI with failure rollback, and cross-tab/cloud realtime sync.
- */
 
 (function () {
   'use strict';
 
-  // In-Memory State for current authenticated user
   let habits = [];
   let completions = [];
   let dailyGoals = [];
   let weeklyGoals = [];
 
-  // Temporary UI selection state
   let pendingManageHabitId = null;
   let selectedAddFrequency = 'daily';
   let selectedAddCustomDays = [1, 2, 3, 4, 5];
@@ -24,28 +14,24 @@
   let selectedEditCustomDays = [1, 2, 3, 4, 5];
   let selectedHeatmapDate = null;
 
-  // DOM Elements cache
   let dom = {};
 
   document.addEventListener('DOMContentLoaded', async () => {
     cacheDomElements();
     bindEvents();
 
-    // 1. Initialize Auth Session
     await AuthService.init();
     updateUserHeaderUI();
 
-    // 2. Load User's Genuine Data
     await loadUserState();
 
-    // 3. Listen for Realtime Events
     HabitService.onRealtimeChange(handleRealtimeSync);
     AuthService.onAuthStateChange(handleAuthChange);
   });
 
   function cacheDomElements() {
     dom = {
-      // Header & Auth
+
       btnAccountSwitch: document.getElementById('btn-account-switch'),
       userAvatarBadge: document.getElementById('user-avatar-badge'),
       userNameBadge: document.getElementById('user-name-badge'),
@@ -56,13 +42,11 @@
       btnViewArchived: document.getElementById('btn-view-archived'),
       btnAddHabit: document.getElementById('btn-add-habit'),
 
-      // Habits Checklist
       habitsListContainer: document.getElementById('habits-list-container'),
       habitsCompletedText: document.getElementById('habits-completed-text'),
       habitsPctText: document.getElementById('habits-pct-text'),
       habitsProgressBar: document.getElementById('habits-progress-bar'),
 
-      // Daily Goals
       dailyGoalsDateBadge: document.getElementById('daily-goals-date-badge'),
       dailyGoalsCompletedText: document.getElementById('daily-goals-completed-text'),
       dailyGoalsPctText: document.getElementById('daily-goals-pct-text'),
@@ -70,26 +54,21 @@
       dailyGoalsContainer: document.getElementById('daily-goals-container'),
       btnAddDailyGoal: document.getElementById('btn-add-daily-goal'),
 
-      // Weekly Goals
       btnAddGoal: document.getElementById('btn-add-goal'),
       weeklyGoalsContainer: document.getElementById('weekly-goals-container'),
 
-      // Weekly Momentum
       momentumComparisonChip: document.getElementById('momentum-comparison-chip'),
       momentumMessageText: document.getElementById('momentum-message-text'),
       statTotalDays: document.getElementById('stat-total-days'),
       statBestStreak: document.getElementById('stat-best-streak'),
       statCompletionPct: document.getElementById('stat-completion-pct'),
 
-      // Heatmap
       habitHeatmapGrid: document.getElementById('habit-heatmap-grid'),
       heatmapTooltip: document.getElementById('heatmap-tooltip'),
       heatmapDayHistory: document.getElementById('heatmap-day-history'),
 
-      // Insights
       habitInsightsContainer: document.getElementById('habit-insights-container'),
 
-      // Modal 1: Add Habit
       modalAddHabit: document.getElementById('modal-add-habit'),
       formAddHabit: document.getElementById('form-add-habit'),
       habitTitleInput: document.getElementById('habit-title-input'),
@@ -102,7 +81,6 @@
       btnCloseAddHabit: document.getElementById('btn-close-add-habit'),
       btnCancelAddHabit: document.getElementById('btn-cancel-add-habit'),
 
-      // Modal 2: Edit Habit
       modalEditHabit: document.getElementById('modal-edit-habit'),
       formEditHabit: document.getElementById('form-edit-habit'),
       editHabitId: document.getElementById('edit-habit-id'),
@@ -114,7 +92,6 @@
       btnCloseEditHabit: document.getElementById('btn-close-edit-habit'),
       btnCancelEditHabit: document.getElementById('btn-cancel-edit-habit'),
 
-      // Modal 3: Add Daily Goal
       modalAddDailyGoal: document.getElementById('modal-add-daily-goal'),
       formAddDailyGoal: document.getElementById('form-add-daily-goal'),
       dailyGoalTitleInput: document.getElementById('daily-goal-title-input'),
@@ -123,7 +100,6 @@
       btnCloseAddDailyGoal: document.getElementById('btn-close-add-daily-goal'),
       btnCancelAddDailyGoal: document.getElementById('btn-cancel-add-daily-goal'),
 
-      // Modal 4: Add Weekly Goal
       modalAddGoal: document.getElementById('modal-add-goal'),
       formAddGoal: document.getElementById('form-add-goal'),
       goalTitleInput: document.getElementById('goal-title-input'),
@@ -132,7 +108,6 @@
       btnCloseAddGoal: document.getElementById('btn-close-add-goal'),
       btnCancelAddGoal: document.getElementById('btn-cancel-add-goal'),
 
-      // Modal 5: Manage / Deactivate / Delete Habit
       modalConfirmDelete: document.getElementById('modal-confirm-delete'),
       deleteHabitTitle: document.getElementById('delete-habit-title'),
       btnActionEditHabit: document.getElementById('btn-action-edit-habit'),
@@ -140,13 +115,11 @@
       btnConfirmDeletePermanent: document.getElementById('btn-confirm-delete-permanent'),
       btnCancelDelete: document.getElementById('btn-cancel-delete'),
 
-      // Modal 6: Inactive / Archived Habits
       modalInactiveHabits: document.getElementById('modal-inactive-habits'),
       inactiveHabitsList: document.getElementById('inactive-habits-list'),
       btnCloseInactiveModal: document.getElementById('btn-close-inactive-modal'),
       btnDismissInactive: document.getElementById('btn-dismiss-inactive'),
 
-      // Modal 7: Auth Account Switcher
       modalAuthAccount: document.getElementById('modal-auth-account'),
       btnCloseAuthModal: document.getElementById('btn-close-auth-modal'),
       btnDismissAuth: document.getElementById('btn-dismiss-auth'),
@@ -160,19 +133,12 @@
     };
   }
 
-  // ==========================================================================
-  // 1. DATA FETCHING & USER ISOLATION
-  // ==========================================================================
-
-  /**
-   * Loads all records scoped to the active authenticated user.
-   */
   async function loadUserState() {
     const todayStr = HabitsData.getTodayStr();
     const weekKey = HabitsData.getWeekId(todayStr);
 
     try {
-      // Parallel fetch for speed
+
       const [fetchedHabits, fetchedCompletions, fetchedDailyGoals, fetchedWeeklyGoals] = await Promise.all([
         HabitService.getHabits(),
         HabitService.getCompletions(),
@@ -202,14 +168,10 @@
     if (dom.activeUserEmail) dom.activeUserEmail.textContent = user.email;
   }
 
-  /**
-   * Realtime event listener: updates in-memory records and re-renders dynamically.
-   */
   async function handleRealtimeSync(type, payload) {
     const todayStr = HabitsData.getTodayStr();
     const weekKey = HabitsData.getWeekId(todayStr);
 
-    // Refresh affected collections
     if (type.startsWith('HABIT_')) {
       habits = await HabitService.getHabits();
     } else if (type === 'COMPLETION_CHANGED') {
@@ -219,7 +181,7 @@
     } else if (type === 'WEEKLY_GOAL_CHANGED') {
       weeklyGoals = await HabitService.getWeeklyGoals(weekKey);
     } else {
-      // STORAGE_SYNC or general refresh
+
       await loadUserState();
       return;
     }
@@ -227,9 +189,6 @@
     renderAll();
   }
 
-  /**
-   * User switch / logout: wipe in-memory cache and re-fetch.
-   */
   async function handleAuthChange(event, user) {
     habits = [];
     completions = [];
@@ -240,10 +199,6 @@
     showToast(`Session: ${user ? user.fullName : 'Guest'}`, 'info');
     await loadUserState();
   }
-
-  // ==========================================================================
-  // 2. RENDERING PIPELINE
-  // ==========================================================================
 
   function renderAll() {
     const todayStr = HabitsData.getTodayStr();
@@ -280,9 +235,6 @@
     renderArchivedCount();
   }
 
-  /**
-   * Streak Header Badge
-   */
   function renderStreakHeader() {
     if (!dom.streakDisplay) return;
     const overall = HabitsData.calculateOverallStreak(habits, completions);
@@ -295,9 +247,6 @@
     }
   }
 
-  /**
-   * Habits Checklist Completion Progress
-   */
   function renderTodayProgress() {
     const progress = HabitsData.calculateTodayProgress(habits, completions);
 
@@ -306,9 +255,6 @@
     if (dom.habitsProgressBar) dom.habitsProgressBar.style.width = `${progress.pct}%`;
   }
 
-  /**
-   * Habits Checklist Items
-   */
   function renderHabitsList() {
     if (!dom.habitsListContainer) return;
 
@@ -385,11 +331,11 @@
       return `
         <div class="habit-item ${isCompleted ? 'is-completed' : ''}" data-id="${habit.id}">
           <div class="flex items-center gap-3 flex-1 min-w-0">
-            <input 
-              type="checkbox" 
-              class="habit-checkbox" 
-              id="chk-${habit.id}" 
-              ${isCompleted ? 'checked' : ''} 
+            <input
+              type="checkbox"
+              class="habit-checkbox"
+              id="chk-${habit.id}"
+              ${isCompleted ? 'checked' : ''}
               onchange="window.toggleHabit('${habit.id}')"
               aria-label="Mark ${escapeHtml(habit.title)} completed"
             />
@@ -410,9 +356,9 @@
               </div>
             </label>
           </div>
-          <button 
-            class="text-slate-400 hover:text-indigo-600 p-1.5 rounded-lg hover:bg-slate-100 transition-colors flex items-center justify-center shrink-0" 
-            title="Manage Habit" 
+          <button
+            class="text-slate-400 hover:text-indigo-600 p-1.5 rounded-lg hover:bg-slate-100 transition-colors flex items-center justify-center shrink-0"
+            title="Manage Habit"
             onclick="window.promptManageHabit('${habit.id}')"
             aria-label="Manage habit"
           >
@@ -423,9 +369,6 @@
     }).join('');
   }
 
-  /**
-   * Daily Goals Section (Separate feature with numeric progress)
-   */
   function renderDailyGoals() {
     if (!dom.dailyGoalsContainer) return;
 
@@ -457,7 +400,7 @@
         <div class="daily-goal-item ${isCompleted ? 'is-completed' : ''}" data-id="${goal.id}">
           <div class="flex items-center justify-between gap-2 mb-2">
             <div class="flex items-center gap-2 min-w-0">
-              <button 
+              <button
                 class="w-5 h-5 rounded flex items-center justify-center text-xs transition-colors shrink-0 ${isCompleted ? 'bg-emerald-600 text-white' : 'border border-slate-300 text-slate-400 hover:border-emerald-600 hover:text-emerald-600'}"
                 onclick="window.toggleDailyGoalComplete('${goal.id}')"
                 title="${isCompleted ? 'Mark Incomplete' : 'Mark Complete'}"
@@ -475,8 +418,8 @@
 
             <!-- Numeric Counter & Controls -->
             <div class="flex items-center gap-1.5 shrink-0">
-              <button 
-                class="w-6 h-6 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center text-xs font-bold transition-colors disabled:opacity-40" 
+              <button
+                class="w-6 h-6 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center text-xs font-bold transition-colors disabled:opacity-40"
                 onclick="window.adjustDailyGoal('${goal.id}', -1)"
                 ${goal.progress <= 0 ? 'disabled' : ''}
                 title="Decrement Progress"
@@ -486,16 +429,16 @@
               <span class="font-bold text-xs px-2 py-0.5 rounded bg-slate-50 border border-slate-200 min-w-[40px] text-center ${isCompleted ? 'text-emerald-700 font-extrabold' : 'text-slate-800'}">
                 ${goal.progress || 0} / ${goal.target}
               </span>
-              <button 
-                class="w-6 h-6 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center text-xs font-bold transition-colors" 
+              <button
+                class="w-6 h-6 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center text-xs font-bold transition-colors"
                 onclick="window.adjustDailyGoal('${goal.id}', 1)"
                 title="Increment Progress"
               >
                 +
               </button>
-              <button 
-                class="text-slate-300 hover:text-rose-600 p-1 rounded transition-colors ml-1" 
-                title="Delete Goal" 
+              <button
+                class="text-slate-300 hover:text-rose-600 p-1 rounded transition-colors ml-1"
+                title="Delete Goal"
                 onclick="window.deleteDailyGoal('${goal.id}')"
               >
                 <span class="material-symbols-outlined text-[15px]">delete</span>
@@ -512,9 +455,6 @@
     }).join('');
   }
 
-  /**
-   * Weekly Goals Section
-   */
   function renderWeeklyGoals() {
     if (!dom.weeklyGoalsContainer) return;
 
@@ -548,9 +488,9 @@
               <span class="text-xs font-bold ${isCompleted ? 'text-emerald-700' : 'text-slate-600'}">
                 ${progress.current} / ${progress.target}
               </span>
-              <button 
-                class="text-slate-300 hover:text-rose-600 p-1 rounded transition-colors" 
-                title="Remove Goal" 
+              <button
+                class="text-slate-300 hover:text-rose-600 p-1 rounded transition-colors"
+                title="Remove Goal"
                 onclick="window.removeWeeklyGoal('${goal.id}')"
               >
                 <span class="material-symbols-outlined text-[16px]">close</span>
@@ -559,8 +499,8 @@
           </div>
 
           <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden mb-1.5">
-            <div 
-              class="h-full rounded-full transition-all duration-300 ${isCompleted ? 'bg-emerald-500' : 'bg-indigo-600'}" 
+            <div
+              class="h-full rounded-full transition-all duration-300 ${isCompleted ? 'bg-emerald-500' : 'bg-indigo-600'}"
               style="width: ${progress.pct}%;"
             ></div>
           </div>
@@ -574,9 +514,6 @@
     }).join('');
   }
 
-  /**
-   * Weekly Momentum Card (truthful copy & zero-division safety)
-   */
   function renderWeeklyMomentum() {
     const momentum = HabitsData.calculateWeeklyMomentum(habits, completions);
 
@@ -597,25 +534,17 @@
     if (dom.statCompletionPct) dom.statCompletionPct.textContent = `${momentum.overallCompletionPct}%`;
   }
 
-  /**
-   * 6-Month Heatmap Matrix
-   */
-  /**
-   * 6-Month Heatmap Matrix
-   */
   function renderHeatmap() {
     if (!dom.habitHeatmapGrid) return;
 
     const weeks = HabitsData.calculateHeatmapMatrix(habits, completions, 26, HabitsData.getTodayStr(), dailyGoals);
     if (!weeks || weeks.length === 0) return;
 
-    // Default selected date to today if not yet chosen
     const todayStr = HabitsData.getTodayStr();
     if (!selectedHeatmapDate) {
       selectedHeatmapDate = todayStr;
     }
 
-    // Mathematically anchor month labels to the exact week columns where each month starts
     const monthSpans = [];
     let currentMonth = -1;
 
@@ -646,8 +575,8 @@
     const monthHeadersHtml = `
       <div class="heatmap-months-row">
         ${monthSpans.map(m => `
-          <span 
-            class="heatmap-month-label" 
+          <span
+            class="heatmap-month-label"
             style="grid-column: ${m.colIndex + 1} / span ${m.span};"
           >${m.name}</span>
         `).join('')}
@@ -667,8 +596,8 @@
       const cellsHtml = week.map(day => {
         const isSelected = (day.date === selectedHeatmapDate);
         return `
-          <div 
-            class="heatmap-cell ${day.levelClass} ${day.isToday ? 'is-today' : ''} ${isSelected ? 'is-selected' : ''} ${day.isFuture ? 'is-future' : ''}" 
+          <div
+            class="heatmap-cell ${day.levelClass} ${day.isToday ? 'is-today' : ''} ${isSelected ? 'is-selected' : ''} ${day.isFuture ? 'is-future' : ''}"
             data-date="${day.date}"
             data-formatted="${day.formattedDate}"
             data-count="${day.count}"
@@ -704,7 +633,7 @@
 
     const cells = dom.habitHeatmapGrid.querySelectorAll('.heatmap-cell');
     cells.forEach(cell => {
-      // Cell Click: Select this day and show history in bullets
+
       cell.addEventListener('click', () => {
         const cellDate = cell.getAttribute('data-date');
         if (!cellDate) return;
@@ -716,7 +645,6 @@
         renderDayHistory(selectedHeatmapDate);
       });
 
-      // Cell Hover: Smart floating tooltip with boundary clamping
       cell.addEventListener('mouseenter', () => {
         const dateStr = cell.getAttribute('data-formatted');
         const count = parseInt(cell.getAttribute('data-count'), 10) || 0;
@@ -747,7 +675,6 @@
         let left = rect.left + (rect.width / 2) - parentRect.left + dom.habitHeatmapGrid.parentElement.scrollLeft;
         let top = rect.top - parentRect.top - 8;
 
-        // Smart edge collision avoidance: flip below if close to the card top
         if (top < 40) {
           top = rect.bottom - parentRect.top + 8;
           tooltip.classList.add('flip-below');
@@ -757,7 +684,6 @@
           tooltip.style.transform = 'translate(-50%, -100%)';
         }
 
-        // Horizontal boundary clamping
         const tooltipWidth = tooltip.offsetWidth || 150;
         const minLeft = (tooltipWidth / 2) + 6;
         const maxLeft = parentRect.width - (tooltipWidth / 2) - 6;
@@ -774,9 +700,6 @@
     });
   }
 
-  /**
-   * Interactive Day Activity History Breakdown (underneath heatmap)
-   */
   function renderDayHistory(dateStr) {
     if (!dom.heatmapDayHistory) return;
 
@@ -796,24 +719,19 @@
     const isYesterday = (HabitsData.diffDays(todayStr, targetDate) === 1);
     const dayTag = isToday ? 'Today' : (isYesterday ? 'Yesterday' : '');
 
-    // 1. Determine habit completions for this day
     const { byDate } = HabitsData.buildCompletionMaps(habits, completions);
     const completedHabitIds = byDate[targetDate] || new Set();
 
-    // Completed habits
     const completedList = habits.filter(h => completedHabitIds.has(h.id));
 
-    // Missed/Pending habits (active habits scheduled for this day but not completed)
     const missedList = isFuture ? [] : habits.filter(h => {
       if (h.active === false) return false;
       if (completedHabitIds.has(h.id)) return false;
       return HabitsData.isHabitScheduledOn(h, targetDate);
     });
 
-    // Daily goals for this date
     const goalsForDate = (dailyGoals || []).filter(g => g.date === targetDate);
 
-    // Stats
     const totalScheduled = completedList.length + missedList.length;
     const completedCount = completedList.length;
     const pct = totalScheduled > 0 ? Math.round((completedCount / totalScheduled) * 100) : 0;
@@ -849,7 +767,6 @@
     } else {
       const itemsHtml = [];
 
-      // Completed habits (Green checkmark bullet)
       completedList.forEach(h => {
         itemsHtml.push(`
           <div class="heatmap-history-item flex items-center justify-between py-1.5 px-2.5 rounded-lg bg-emerald-50/60 border border-emerald-100 text-xs">
@@ -865,7 +782,6 @@
         `);
       });
 
-      // Missed or pending habits (Neutral/amber bullet)
       missedList.forEach(h => {
         const isPending = isToday;
         itemsHtml.push(`
@@ -884,7 +800,6 @@
         `);
       });
 
-      // Daily goals for this day
       goalsForDate.forEach(g => {
         itemsHtml.push(`
           <div class="heatmap-history-item flex items-center justify-between py-1.5 px-2.5 rounded-lg ${g.completed ? 'bg-indigo-50/60 border border-indigo-100' : 'bg-slate-50/80 border border-slate-200/70'} text-xs">
@@ -923,9 +838,6 @@
     `;
   }
 
-  /**
-   * Habit Insights Card
-   */
   function renderHabitInsights() {
     if (!dom.habitInsightsContainer) return;
 
@@ -1002,14 +914,6 @@
     }
   }
 
-  // ==========================================================================
-  // 3. OPTIMISTIC HABIT COMPLETION
-  // ==========================================================================
-
-  /**
-   * Toggles today's completion for a habit optimistically.
-   * If backend persistence fails, rolls back state and informs the user.
-   */
   window.toggleHabit = async function (habitId) {
     const todayStr = HabitsData.getTodayStr();
     const existingIdx = completions.findIndex(
@@ -1019,7 +923,6 @@
     const wasCompleted = existingIdx !== -1;
     const removedRecord = wasCompleted ? completions[existingIdx] : null;
 
-    // 1. Optimistic UI update
     if (wasCompleted) {
       completions.splice(existingIdx, 1);
       showToast('Unchecked habit', 'info');
@@ -1034,12 +937,11 @@
 
     renderAll();
 
-    // 2. Async persistence
     try {
       await HabitService.toggleCompletion(habitId, todayStr);
     } catch (err) {
       console.error('Failed to toggle completion:', err);
-      // Rollback optimistic state
+
       if (wasCompleted && removedRecord) {
         completions.push(removedRecord);
       } else {
@@ -1049,10 +951,6 @@
       showToast('Could not save completion to database. Rolled back.', 'error');
     }
   };
-
-  // ==========================================================================
-  // 4. HABIT LIFECYCLE (CREATE, EDIT, ARCHIVE, RESTORE, DELETE)
-  // ==========================================================================
 
   async function saveNewHabit() {
     const title = (dom.habitTitleInput ? dom.habitTitleInput.value : '').trim();
@@ -1220,10 +1118,6 @@
     }
   };
 
-  // ==========================================================================
-  // 5. DAILY GOALS LIFECYCLE
-  // ==========================================================================
-
   window.openAddDailyGoalModal = function () {
     if (dom.formAddDailyGoal) dom.formAddDailyGoal.reset();
     if (dom.modalAddDailyGoal) dom.modalAddDailyGoal.classList.add('active');
@@ -1300,10 +1194,6 @@
     }
   };
 
-  // ==========================================================================
-  // 6. WEEKLY GOALS LIFECYCLE
-  // ==========================================================================
-
   window.openAddGoalModal = function () {
     if (dom.formAddGoal) dom.formAddGoal.reset();
 
@@ -1365,10 +1255,6 @@
     }
   };
 
-  // ==========================================================================
-  // 7. ARCHIVED HABITS MODAL
-  // ==========================================================================
-
   function openInactiveHabitsModal() {
     renderInactiveHabitsList();
     if (dom.modalInactiveHabits) dom.modalInactiveHabits.classList.add('active');
@@ -1402,13 +1288,13 @@
             <p class="text-[11px] text-slate-400 mt-0.5">${escapeHtml(habit.category || 'General')} • ${totalCompleted} total completions</p>
           </div>
           <div class="flex items-center gap-2">
-            <button 
+            <button
               class="px-2.5 py-1 text-xs font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-md transition-colors"
               onclick="window.reactivateHabit('${habit.id}')"
             >
               Restore
             </button>
-            <button 
+            <button
               class="text-slate-400 hover:text-rose-600 p-1 rounded"
               title="Delete permanently"
               onclick="window.deleteHabitFromArchive('${habit.id}')"
@@ -1428,10 +1314,6 @@
     }
   };
 
-  // ==========================================================================
-  // 8. AUTH ACCOUNT MODAL
-  // ==========================================================================
-
   function openAuthAccountModal() {
     renderKnownAccountsList();
     updateUserHeaderUI();
@@ -1450,7 +1332,7 @@
     dom.knownAccountsList.innerHTML = users.map(u => {
       const isActive = current && current.id === u.id;
       return `
-        <div 
+        <div
           class="flex items-center justify-between p-2.5 rounded-lg border cursor-pointer transition-colors ${isActive ? 'bg-indigo-50 border-indigo-300' : 'bg-white hover:bg-slate-50 border-slate-200'}"
           onclick="window.switchUserAccount('${u.id}')"
         >
@@ -1474,12 +1356,8 @@
     AuthService.switchAccount(userIdOrEmail);
   };
 
-  // ==========================================================================
-  // 9. EVENT BINDING
-  // ==========================================================================
-
   function bindEvents() {
-    // Auth Account Button
+
     if (dom.btnAccountSwitch) dom.btnAccountSwitch.addEventListener('click', openAuthAccountModal);
     if (dom.btnCloseAuthModal) dom.btnCloseAuthModal.addEventListener('click', closeAuthAccountModal);
     if (dom.btnDismissAuth) dom.btnDismissAuth.addEventListener('click', closeAuthAccountModal);
@@ -1503,7 +1381,6 @@
       });
     }
 
-    // Add Habit Button & Modal
     window.openAddHabitModal = function () {
       if (dom.formAddHabit) dom.formAddHabit.reset();
       selectedAddFrequency = 'daily';
@@ -1527,7 +1404,6 @@
     if (dom.btnCloseAddHabit) dom.btnCloseAddHabit.addEventListener('click', closeAddHabitModal);
     if (dom.btnCancelAddHabit) dom.btnCancelAddHabit.addEventListener('click', closeAddHabitModal);
 
-    // Quick chips for Add Habit Category
     if (dom.habitCategoryChips) {
       dom.habitCategoryChips.querySelectorAll('button').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -1537,7 +1413,6 @@
       });
     }
 
-    // Frequency Selector for Add Habit
     if (dom.habitFreqButtons) {
       dom.habitFreqButtons.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -1552,7 +1427,6 @@
       });
     }
 
-    // Custom Days Selector for Add Habit
     if (dom.habitCustomDaysRow) {
       dom.habitCustomDaysRow.querySelectorAll('.day-selector-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -1574,7 +1448,6 @@
       });
     }
 
-    // Edit Habit Modal events
     if (dom.btnCloseEditHabit) dom.btnCloseEditHabit.addEventListener('click', closeEditHabitModal);
     if (dom.btnCancelEditHabit) dom.btnCancelEditHabit.addEventListener('click', closeEditHabitModal);
 
@@ -1613,7 +1486,6 @@
       });
     }
 
-    // Manage Habit Modal actions
     if (dom.btnActionEditHabit) {
       dom.btnActionEditHabit.addEventListener('click', () => {
         if (pendingManageHabitId) window.openEditHabitModal(pendingManageHabitId);
@@ -1638,7 +1510,6 @@
 
     if (dom.btnCancelDelete) dom.btnCancelDelete.addEventListener('click', closeManageModal);
 
-    // Daily Goals Modal events
     if (dom.btnAddDailyGoal) dom.btnAddDailyGoal.addEventListener('click', window.openAddDailyGoalModal);
     if (dom.btnCloseAddDailyGoal) dom.btnCloseAddDailyGoal.addEventListener('click', closeAddDailyGoalModal);
     if (dom.btnCancelAddDailyGoal) dom.btnCancelAddDailyGoal.addEventListener('click', closeAddDailyGoalModal);
@@ -1650,7 +1521,6 @@
       });
     }
 
-    // Weekly Goals Modal events
     if (dom.btnAddGoal) dom.btnAddGoal.addEventListener('click', window.openAddGoalModal);
     if (dom.btnCloseAddGoal) dom.btnCloseAddGoal.addEventListener('click', closeAddGoalModal);
     if (dom.btnCancelAddGoal) dom.btnCancelAddGoal.addEventListener('click', closeAddGoalModal);
@@ -1662,7 +1532,6 @@
       });
     }
 
-    // Inactive / Archived Habits Modal events
     if (dom.btnViewArchived) dom.btnViewArchived.addEventListener('click', openInactiveHabitsModal);
     if (dom.btnCloseInactiveModal) dom.btnCloseInactiveModal.addEventListener('click', closeInactiveHabitsModal);
     if (dom.btnDismissInactive) dom.btnDismissInactive.addEventListener('click', closeInactiveHabitsModal);

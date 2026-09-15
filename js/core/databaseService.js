@@ -1,9 +1,3 @@
-/**
- * MAD DEV - Database & Audit Trail Service
- * 
- * Provides centralized audit logging for user logins, logouts, and profile switches.
- * Guarantees strict user data privacy and auto-syncs GitHub/LeetCode account data.
- */
 
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
@@ -32,9 +26,6 @@
     } catch (e) {}
   }
 
-  /**
-   * Records an authentication event (LOGIN, LOGOUT, SWITCH_PROFILE).
-   */
   async function logAuthEvent(eventType, user = null, metadata = {}) {
     const activeUser = user || (window.AuthService ? window.AuthService.getCurrentUser() : null);
     if (!activeUser) return null;
@@ -44,21 +35,19 @@
       userId: activeUser.id,
       userEmail: activeUser.email,
       userName: activeUser.fullName || activeUser.email,
-      eventType: eventType, // 'LOGIN', 'LOGOUT', 'SWITCH_PROFILE'
+      eventType: eventType,
       ipAddress: '127.0.0.1 (Local)',
       userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'NodeJS',
       timestamp: new Date().toISOString(),
       metadata: metadata
     };
 
-    // 1. Save to local audit trail
     const logs = getStorageItem(AUDIT_LOGS_KEY, []);
     logs.unshift(logEntry);
-    // Keep last 500 audit events
+
     if (logs.length > 500) logs.pop();
     setStorageItem(AUDIT_LOGS_KEY, logs);
 
-    // 2. Sync to Supabase if connected
     if (typeof window !== 'undefined' && window.supabase && typeof window.supabase.from === 'function') {
       try {
         await window.supabase.from('maddev_auth_audit_logs').insert([{
@@ -70,7 +59,6 @@
       } catch (err) {}
     }
 
-    // 3. Auto-sync GitHub & LeetCode data on LOGIN
     if (eventType === 'LOGIN' || eventType === 'SIGNED_IN' || eventType === 'INITIALIZED') {
       await syncUserDataOnLogin(activeUser);
     }
@@ -78,9 +66,6 @@
     return logEntry;
   }
 
-  /**
-   * Syncs GitHub and LeetCode account info for the logged in user.
-   */
   async function syncUserDataOnLogin(user) {
     if (!user || !user.id) return;
 
@@ -92,7 +77,6 @@
     let reposCount = 12;
     let starsCount = 45;
 
-    // Fetch real public GitHub info
     try {
       const res = await fetch(`https://api.github.com/users/${encodeURIComponent(ghUser)}`);
       if (res.ok) {
@@ -118,30 +102,20 @@
     setStorageItem(USER_SYNCED_DATA_KEY, allSynced);
   }
 
-  /**
-   * Returns complete audit trail of login/logout actions.
-   */
   function getAuditLogs() {
     return getStorageItem(AUDIT_LOGS_KEY, []);
   }
 
-  /**
-   * Returns audit logs for a specific user ID for privacy views.
-   */
   function getUserAuditLogs(userId) {
     const logs = getAuditLogs();
     return logs.filter(l => l.userId === userId);
   }
 
-  /**
-   * Returns synced GitHub/LeetCode account data for user.
-   */
   function getSyncedUserData(userId) {
     const all = getStorageItem(USER_SYNCED_DATA_KEY, {});
     return all[userId] || null;
   }
 
-  // Auto-bind to AuthService state changes
   if (typeof window !== 'undefined') {
     document.addEventListener('DOMContentLoaded', () => {
       if (window.AuthService) {
