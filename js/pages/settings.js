@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initSettingsSave();
   initGithubLinkUpdater();
   initLeetCodeLinkUpdater();
+  initAuditLogsViewer();
 });
 
 function initGithubLinkUpdater() {
@@ -228,5 +229,42 @@ function getVal(id) {
 function setVal(id, val) {
   const el = document.getElementById(id);
   if (el) el.value = val || '';
+}
+
+function initAuditLogsViewer() {
+  const container = document.getElementById('audit-logs-container');
+  const btnRefresh = document.getElementById('btn-refresh-audit-logs');
+
+  function renderLogs() {
+    if (!container) return;
+    const db = window.DatabaseService;
+    const logs = db ? db.getAuditLogs() : [];
+
+    if (logs.length === 0) {
+      container.innerHTML = '<div class="p-4 text-center text-xs text-slate-400">No audit log entries recorded yet. Log in or switch account to generate audit trails.</div>';
+      return;
+    }
+
+    container.innerHTML = logs.map(l => `
+      <div class="p-3 border-b border-slate-100 flex items-center justify-between hover:bg-slate-50 transition-colors">
+        <div class="flex items-center gap-2.5 overflow-hidden">
+          <div class="w-7 h-7 rounded-full ${l.eventType === 'LOGIN' ? 'bg-emerald-100 text-emerald-700' : l.eventType === 'LOGOUT' ? 'bg-red-100 text-red-700' : 'bg-indigo-100 text-indigo-700'} flex items-center justify-center font-bold text-xs shrink-0">
+            <span class="material-symbols-outlined text-sm">${l.eventType === 'LOGIN' ? 'login' : l.eventType === 'LOGOUT' ? 'logout' : 'sync_alt'}</span>
+          </div>
+          <div class="truncate">
+            <div class="flex items-center gap-1.5">
+              <span class="text-xs font-bold text-slate-800">${l.userName || l.userEmail}</span>
+              <span class="text-[10px] font-extrabold uppercase px-1.5 py-0.2 rounded ${l.eventType === 'LOGIN' ? 'bg-emerald-100 text-emerald-800' : l.eventType === 'LOGOUT' ? 'bg-red-100 text-red-800' : 'bg-indigo-100 text-indigo-800'}">${l.eventType}</span>
+            </div>
+            <p class="text-[10px] text-slate-400 truncate">${l.userEmail} • ${l.ipAddress}</p>
+          </div>
+        </div>
+        <span class="text-[10px] text-slate-400 shrink-0 font-mono">${new Date(l.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}</span>
+      </div>
+    `).join('');
+  }
+
+  if (btnRefresh) btnRefresh.onclick = renderLogs;
+  renderLogs();
 }
 
