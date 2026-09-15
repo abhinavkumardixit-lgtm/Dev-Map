@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Login & Authentication - MAD DEV</title>
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries" id="tailwind-cdn"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet"/>
+
+  <link rel="stylesheet" href="../css/base/global.css"/>
+  <link rel="stylesheet" href="../css/base/components.css"/>
+  <link rel="stylesheet" href="../css/base/responsive.css"/>
+
+  <script>
+    (function () {
+      const htmlDoc = document.documentElement;
+      htmlDoc.classList.remove('preload');
+      htmlDoc.classList.add('app-ready');
+    })();
+  </script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col justify-center items-center p-4 antialiased relative overflow-hidden">
+  
+  <!-- Glowing Background Orbs -->
+  <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-600/20 rounded-full filter blur-3xl pointer-events-none"></div>
+  <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-600/20 rounded-full filter blur-3xl pointer-events-none"></div>
+
+  <div class="max-w-md w-full relative z-10">
+    <!-- Brand Header -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-indigo-600 text-white shadow-xl shadow-indigo-500/30 mb-3">
+        <span class="material-symbols-outlined text-3xl">terminal</span>
+      </div>
+      <h1 class="text-3xl font-extrabold tracking-tight text-white">MAD DEV</h1>
+      <p class="text-sm text-slate-400 mt-1">Sign in to your account to save your workspace progress</p>
+    </div>
+
+    <!-- Login Card -->
+    <div class="bg-slate-800/80 backdrop-blur-xl border border-slate-700/60 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6">
+      
+      <!-- Active Account Badge -->
+      <div id="active-user-badge" class="hidden p-3.5 rounded-xl bg-indigo-950/60 border border-indigo-500/30 flex items-center justify-between">
+        <div class="flex items-center gap-3 overflow-hidden">
+          <div id="active-user-avatar" class="w-10 h-10 rounded-full bg-indigo-600 text-white font-bold flex items-center justify-center text-sm shadow-md shrink-0">
+            M
+          </div>
+          <div class="truncate">
+            <span class="text-[10px] font-extrabold uppercase tracking-wider text-indigo-400">Currently Logged In</span>
+            <p id="active-user-name" class="font-bold text-white text-sm truncate">MAD DEV User</p>
+            <p id="active-user-email" class="text-xs text-slate-400 truncate">user@maddev.io</p>
+          </div>
+        </div>
+        <a href="../index.html" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs rounded-lg transition-colors shadow-sm shrink-0">
+          Go to App
+        </a>
+      </div>
+
+      <!-- GitHub Authentication Section -->
+      <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-700/80 shadow-inner space-y-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-white shrink-0">
+            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          </div>
+          <div>
+            <h3 class="text-xs font-bold text-white uppercase tracking-wider">Sign in with GitHub</h3>
+            <p class="text-[11px] text-slate-400">Syncs public repos, contribution graph & avatar</p>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-300 mb-1" for="github-username-input">GitHub Username</label>
+          <div class="flex items-center gap-2">
+            <div class="relative flex-1">
+              <span class="absolute left-3 top-2.5 text-slate-500 text-xs">@</span>
+              <input type="text" id="github-username-input" class="w-full pl-7 pr-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-xs text-white placeholder-slate-500 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="e.g. torvalds or your username"/>
+            </div>
+            <button id="btn-github-login" type="button" class="py-2 px-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-lg transition-all flex items-center gap-1.5 shadow-md shrink-0">
+              <span class="material-symbols-outlined text-sm">login</span>
+              <span>Connect</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Preset Profiles -->
+        <div class="flex items-center gap-1.5 pt-1">
+          <span class="text-[10px] text-slate-400">Quick Try:</span>
+          <button type="button" class="btn-gh-preset text-[10px] px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-indigo-300 font-mono transition-colors" data-user="torvalds">@torvalds</button>
+          <button type="button" class="btn-gh-preset text-[10px] px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-indigo-300 font-mono transition-colors" data-user="gaearon">@gaearon</button>
+          <button type="button" class="btn-gh-preset text-[10px] px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-indigo-300 font-mono transition-colors" data-user="octocat">@octocat</button>
+        </div>
+      </div>
+
+      <!-- Known Local Accounts Switcher -->
+      <div id="known-accounts-container" class="space-y-2">
+        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Saved Accounts on this Device</p>
+        <div id="known-accounts-list" class="space-y-1.5 max-h-36 overflow-y-auto"></div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <div class="h-px bg-slate-700/60 flex-1"></div>
+        <span class="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">Or continue with email</span>
+        <div class="h-px bg-slate-700/60 flex-1"></div>
+      </div>
+
+      <!-- Login / Signup Form -->
+      <form id="login-form" class="space-y-4 pt-1">
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Email Authentication</p>
+        
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1" for="login-name">Full Name (Optional for Register)</label>
+          <input type="text" id="login-name" class="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all" placeholder="e.g. Abhinav"/>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1" for="login-email">Email Address</label>
+          <input type="email" id="login-email" class="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all" placeholder="name@domain.com" required/>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1" for="login-password">Password</label>
+          <input type="password" id="login-password" class="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all" placeholder="Enter password" value="password123" required/>
+        </div>
+
+        <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-indigo-600/30 transition-all flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-base">login</span>
+          <span>Sign In to MAD DEV</span>
+        </button>
+      </form>
+
+      <div class="flex items-center justify-between pt-2">
+        <a href="../index.html" class="text-xs text-slate-400 hover:text-white transition-colors flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">arrow_back</span>
+          <span>Continue as Guest</span>
+        </a>
+        <button id="btn-logout" class="text-xs text-red-400 hover:text-red-300 transition-colors">
+          Sign Out All Sessions
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="../js/core/utils.js"></script>
+  <script src="../js/core/authService.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (window.AuthService) {
+        await window.AuthService.init();
+        renderAccounts();
+      }
+    });
+
+    function renderAccounts() {
+      const auth = window.AuthService;
+      if (!auth) return;
+
+      const current = auth.getCurrentUser();
+      const accounts = auth.listKnownUsers();
+
+      // Update Active Badge
+      const badge = document.getElementById('active-user-badge');
+      const avatar = document.getElementById('active-user-avatar');
+      const name = document.getElementById('active-user-name');
+      const email = document.getElementById('active-user-email');
+
+      if (current && badge && avatar && name && email) {
+        badge.classList.remove('hidden');
+        avatar.textContent = (current.fullName || current.email || 'M').charAt(0).toUpperCase();
+        name.textContent = current.fullName || 'MAD DEV User';
+        email.textContent = current.email;
+      }
+
+      // Render Known Accounts List
+      const listContainer = document.getElementById('known-accounts-list');
+      if (listContainer) {
+        listContainer.innerHTML = accounts.map(acc => `
+          <button class="w-full text-left p-3 rounded-xl border ${acc.id === current.id ? 'border-indigo-500 bg-indigo-950/40 text-white' : 'border-slate-700/80 bg-slate-900/60 text-slate-300 hover:bg-slate-700/50'} flex items-center justify-between transition-all btn-switch" data-id="${acc.id}">
+            <div class="flex items-center gap-3 overflow-hidden">
+              <div class="w-8 h-8 rounded-full bg-slate-700 text-white font-bold text-xs flex items-center justify-center shrink-0">
+                ${(acc.fullName || acc.email).charAt(0).toUpperCase()}
+              </div>
+              <div class="truncate">
+                <p class="text-xs font-bold truncate">${acc.fullName}</p>
+                <p class="text-[10px] text-slate-400 truncate">${acc.email}</p>
+              </div>
+            </div>
+            ${acc.id === current.id ? '<span class="material-symbols-outlined text-indigo-400 text-sm font-bold">check_circle</span>' : '<span class="material-symbols-outlined text-slate-500 text-sm">chevron_right</span>'}
+          </button>
+        `).join('');
+
+        listContainer.querySelectorAll('.btn-switch').forEach(btn => {
+          btn.onclick = () => {
+            const uid = btn.getAttribute('data-id');
+            auth.switchAccount(uid);
+            window.location.href = '../index.html';
+          };
+        });
+      }
+
+      // Populate saved GitHub Username if available
+      const inputGh = document.getElementById('github-username-input');
+      if (inputGh) {
+        inputGh.value = localStorage.getItem('maddev_github_user') || '';
+      }
+
+      // Preset profile buttons
+      document.querySelectorAll('.btn-gh-preset').forEach(preset => {
+        preset.onclick = async () => {
+          const userVal = preset.getAttribute('data-user');
+          if (inputGh) inputGh.value = userVal;
+          await auth.signInWithGitHub(userVal);
+          window.location.href = '../index.html';
+        };
+      });
+
+      // Handle GitHub Login Button
+      const btnGithub = document.getElementById('btn-github-login');
+      if (btnGithub) {
+        btnGithub.onclick = async () => {
+          let ghUser = inputGh ? inputGh.value.trim() : '';
+          if (!ghUser) {
+            ghUser = prompt('Enter your GitHub Username to connect your account:', localStorage.getItem('maddev_github_user') || 'torvalds');
+          }
+          if (ghUser) {
+            await auth.signInWithGitHub(ghUser);
+            window.location.href = '../index.html';
+          }
+        };
+      }
+
+      // Handle Login Form
+      const form = document.getElementById('login-form');
+      if (form) {
+        form.onsubmit = async (e) => {
+          e.preventDefault();
+          const name = document.getElementById('login-name').value.trim();
+          const em = document.getElementById('login-email').value.trim();
+          const pw = document.getElementById('login-password').value;
+          await auth.signIn(em, pw, name);
+          window.location.href = '../index.html';
+        };
+      }
+
+      // Handle Sign Out
+      const btnLogout = document.getElementById('btn-logout');
+      if (btnLogout) {
+        btnLogout.onclick = async () => {
+          await auth.signOut();
+          window.location.reload();
+        };
+      }
+    }
+  </script>
+</body>
+</html>

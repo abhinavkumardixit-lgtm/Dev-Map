@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html class="js preload" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Resume Workspace - MAD DEV</title>
+  <meta name="description" content="Build ATS-friendly developer resumes with 10 professional templates and get detailed resume analysis in the MAD DEV workspace."/>
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries" id="tailwind-cdn"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet"/>
+
+  <!-- PDF.js for real PDF text extraction -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    if (typeof pdfjsLib !== 'undefined') {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+  </script>
+  <!-- Mammoth.js for real DOCX text extraction -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+  <!-- Tesseract.js for OCR on scanned/image-based resumes -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+  <link rel="stylesheet" href="../css/base/global.css"/>
+  <link rel="stylesheet" href="../css/base/components.css"/>
+  <link rel="stylesheet" href="../css/pages/resume.css"/>
+  <link rel="stylesheet" href="../css/base/responsive.css"/>
+
+  <script>
+    (function () {
+      const htmlDoc = document.documentElement;
+      htmlDoc.classList.add('js', 'preload');
+      const isCollapsed = localStorage.getItem('devpilot-sidebar-collapsed') === 'true';
+      if (isCollapsed && window.innerWidth >= 768) {
+        htmlDoc.classList.add('sidebar-collapsed');
+      }
+      function reveal() {
+        htmlDoc.classList.remove('preload');
+        htmlDoc.classList.add('app-ready');
+      }
+      window.addEventListener('load', () => setTimeout(reveal, 100));
+      setTimeout(reveal, 1200);
+    })();
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased min-h-screen">
+
+  <!-- Mobile Overlay -->
+  <div class="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm hidden md:hidden" id="mobile-overlay"></div>
+
+  <!-- SideNavBar -->
+  <aside class="fixed left-0 top-0 h-full w-[260px] bg-white border-r border-slate-200 flex flex-col py-6 z-50 transform md:translate-x-0" id="sidebar">
+    <button aria-label="Toggle Sidebar" class="absolute -right-3.5 top-6 w-7 h-7 bg-white border border-slate-200 rounded-full flex items-center justify-center text-slate-600 hover:text-indigo-600 hover:border-indigo-600 transition-colors z-50 hidden md:flex shadow-sm" id="sidebar-toggle">
+      <span class="material-symbols-outlined text-[18px]" id="sidebar-toggle-icon">chevron_left</span>
+    </button>
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <!-- Brand Logo -->
+      <div class="px-6 mb-8 flex items-center gap-3 overflow-hidden">
+        <div class="min-w-[32px] w-8 h-8 rounded bg-brand-gradient flex items-center justify-center text-white shrink-0 shadow-sm">
+          <span class="material-symbols-outlined text-xl" style='font-variation-settings: "FILL" 1;'>terminal</span>
+        </div>
+        <div class="sidebar-text">
+          <h1 class="text-xl font-bold text-indigo-600 tracking-tight leading-none">MAD DEV</h1>
+          <p class="text-xs font-semibold text-slate-400 uppercase mt-0.5">Workspace</p>
+        </div>
+      </div>
+      <!-- Navigation Links -->
+      <nav class="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar px-3 space-y-1">
+        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors duration-200 border-l-[3px] border-transparent tooltip relative group" href="../index.html">
+          <span class="material-symbols-outlined shrink-0">dashboard</span>
+          <span class="text-sm font-medium sidebar-text">Dashboard</span>
+          <span class="tooltip-text">Dashboard</span>
+        </a>
+        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors duration-200 border-l-[3px] border-transparent tooltip relative group" href="github.html">
+          <span class="material-symbols-outlined shrink-0">analytics</span>
+          <span class="text-sm font-medium sidebar-text">GitHub Analyzer</span>
+          <span class="tooltip-text">GitHub Analyzer</span>
+        </a>
+        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors duration-200 border-l-[3px] border-transparent tooltip relative group" href="chat.html">
+          <span class="material-symbols-outlined shrink-0">smart_toy</span>
+          <span class="text-sm font-medium sidebar-text">AI Chat</span>
+          <span class="tooltip-text">AI Chat</span>
+        </a>
+        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-indigo-50 text-indigo-900 border-l-[3px] border-indigo-600 tooltip relative group" href="resume.html">
+          <span class="material-symbols-outlined text-indigo-600 shrink-0" style='font-variation-settings: "FILL" 1;'>description</span>
+          <span class="text-sm font-semibold sidebar-text">Resume</span>
+          <span class="tooltip-text">Resume</span>
+        </a>
+        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors duration-200 border-l-[3px] border-transparent tooltip relative group" href="dsa.html">
+          <span class="material-symbols-outlined shrink-0">alt_route</span>
+          <span class="text-sm font-medium sidebar-text">DSA Roadmap</span>
+          <span class="tooltip-text">DSA Roadmap</span>
+        </a>
+        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors duration-200 border-l-[3px] border-transparent tooltip relative group" href="roadmaps.html">
+          <span class="material-symbols-outlined shrink-0">map</span>
+          <span class="text-sm font-medium sidebar-text">Career Roadmaps</span>
+          <span class="tooltip-text">Career Roadmaps</span>
+        </a>
+        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200 border-l-[3px] border-transparent tooltip relative group" href="interviewPrep.html">
+          <span class="material-symbols-outlined shrink-0">work</span>
+          <span class="text-sm font-medium sidebar-text">Interview Prep</span>
+          <span class="tooltip-text">Interview Prep</span>
+        </a>
+
+        <div class="pt-4 pb-2 px-3 sidebar-text">
+          <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Resources</p>
+        </div>
+        <div class="hidden pt-4 pb-2 px-3 justify-center items-center sidebar-collapsed-only">
+          <div class="w-4 h-[1px] bg-slate-200"></div>
+        </div>
+        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors duration-200 border-l-[3px] border-transparent tooltip relative group" href="notes.html">
+          <span class="material-symbols-outlined shrink-0">edit_note</span>
+          <span class="text-sm font-medium sidebar-text">Notes</span>
+          <span class="tooltip-text">Notes</span>
+        </a>
+        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors duration-200 border-l-[3px] border-transparent tooltip relative group" href="snippets.html">
+          <span class="material-symbols-outlined shrink-0">terminal</span>
+          <span class="text-sm font-medium sidebar-text">Snippets</span>
+          <span class="tooltip-text">Snippets</span>
+        </a>
+        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors duration-200 border-l-[3px] border-transparent tooltip relative group" href="prompts.html">
+          <span class="material-symbols-outlined shrink-0">bolt</span>
+          <span class="text-sm font-medium sidebar-text">Prompts</span>
+          <span class="tooltip-text">Prompts</span>
+        </a>
+
+        <div class="pt-4 pb-2 px-3 sidebar-text">
+          <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Tracking</p>
+        </div>
+        <div class="hidden pt-4 pb-2 px-3 justify-center items-center sidebar-collapsed-only">
+          <div class="w-4 h-[1px] bg-slate-200"></div>
+        </div>
+        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors duration-200 border-l-[3px] border-transparent tooltip relative group" href="habits.html">
+          <span class="material-symbols-outlined shrink-0">check_circle</span>
+          <span class="text-sm font-medium sidebar-text">Habits</span>
+          <span class="tooltip-text">Habits</span>
+        </a>
+        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors duration-200 border-l-[3px] border-transparent tooltip relative group" href="timer.html">
+          <span class="material-symbols-outlined shrink-0">timer</span>
+          <span class="text-sm font-medium sidebar-text">Timer</span>
+          <span class="tooltip-text">Timer</span>
+        </a>
+        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors duration-200 border-l-[3px] border-transparent tooltip relative group" href="settings.html">
+          <span class="material-symbols-outlined shrink-0">settings</span>
+          <span class="text-sm font-medium sidebar-text">Settings</span>
+          <span class="tooltip-text">Settings</span>
+        </a>
+      </nav>
+    </div>
+
+    <div class="mt-auto px-4 pt-4 sidebar-text">
+      <div class="bg-brand-gradient rounded-xl p-4 text-white relative overflow-hidden shadow-sm">
+        <p class="font-bold text-sm leading-tight mb-1">ATS Friendly CV.</p>
+        <p class="text-xs opacity-80">Instant Live Preview.</p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="md:ml-[260px] min-h-screen p-6 sm:p-8" id="main-content">
+
+    <!-- ================================================================
+         VIEW: HUB (Landing)
+         ================================================================ -->
+    <div class="resume-view" id="view-hub">
+
+      <!-- Page Header -->
+      <div class="flex items-center justify-between gap-3 mb-2 no-print">
+        <div class="flex items-center gap-3">
+          <button class="mobile-nav-toggle md:hidden" id="mobile-menu-trigger" aria-label="Open Sidebar">
+            <span class="material-symbols-outlined">menu</span>
+          </button>
+          <div>
+            <h1 class="page-title">Resume Workspace</h1>
+            <p class="page-subtitle">Create a professional developer resume or analyze your existing resume.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="rws-divider mb-8"></div>
+
+      <!-- Hub Cards Grid -->
+      <div class="resume-hub-grid">
+
+        <!-- Card 1: Resume Builder -->
+        <div class="resume-hub-card dev-card dev-card-interactive" id="hub-go-builder" role="button" tabindex="0" aria-label="Open Resume Builder">
+          <div class="resume-hub-card-icon">
+            <span class="material-symbols-outlined" style='font-variation-settings: "FILL" 1;'>edit_document</span>
+          </div>
+          <div class="resume-hub-card-body">
+            <h2 class="resume-hub-card-title">Resume Builder</h2>
+            <p class="resume-hub-card-desc">Create and customize a professional developer resume using ATS-friendly templates. 9 layout options available.</p>
+            <div class="resume-hub-card-meta">
+              <span class="badge badge-primary">
+                <span class="material-symbols-outlined text-[14px]">layers</span>
+                9 Templates
+              </span>
+              <span class="badge badge-success">
+                <span class="material-symbols-outlined text-[14px]">visibility</span>
+                Live Preview
+              </span>
+              <span class="badge badge-neutral">
+                <span class="material-symbols-outlined text-[14px]">picture_as_pdf</span>
+                PDF Export
+              </span>
+            </div>
+          </div>
+          <button class="btn-primary resume-hub-card-btn" tabindex="-1">
+            <span class="material-symbols-outlined text-[18px]">edit</span>
+            Start Building
+          </button>
+        </div>
+
+        <!-- Card 2: Resume Analyzer -->
+        <div class="resume-hub-card dev-card dev-card-interactive" id="hub-go-analyzer" role="button" tabindex="0" aria-label="Open Resume Analyzer">
+          <div class="resume-hub-card-icon resume-hub-card-icon--analyzer">
+            <span class="material-symbols-outlined" style='font-variation-settings: "FILL" 1;'>manage_search</span>
+          </div>
+          <div class="resume-hub-card-body">
+            <h2 class="resume-hub-card-title">Resume Analyzer</h2>
+            <p class="resume-hub-card-desc">Upload your resume and get ATS, content, keyword, and job-match insights to improve your chances of landing interviews.</p>
+            <div class="resume-hub-card-meta">
+              <span class="badge badge-primary">
+                <span class="material-symbols-outlined text-[14px]">bar_chart</span>
+                ATS Score
+              </span>
+              <span class="badge badge-success">
+                <span class="material-symbols-outlined text-[14px]">work</span>
+                Job Match
+              </span>
+              <span class="badge badge-neutral">
+                <span class="material-symbols-outlined text-[14px]">hub</span>
+                GitHub Link
+              </span>
+            </div>
+          </div>
+          <button class="btn-primary resume-hub-card-btn" tabindex="-1">
+            <span class="material-symbols-outlined text-[18px]">manage_search</span>
+            Analyze Resume
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Quick Stats Row -->
+      <div class="resume-hub-stats">
+        <div class="resume-stat-item">
+          <span class="material-symbols-outlined text-indigo-500" style='font-variation-settings: "FILL" 1;'>layers</span>
+          <div>
+            <div class="resume-stat-value" id="hub-stat-template">Classic ATS</div>
+            <div class="resume-stat-label">Active Template</div>
+          </div>
+        </div>
+        <div class="rws-stat-divider"></div>
+        <div class="resume-stat-item">
+          <span class="material-symbols-outlined text-emerald-500" style='font-variation-settings: "FILL" 1;'>shield_check</span>
+          <div>
+            <div class="resume-stat-value" id="hub-stat-ats">—</div>
+            <div class="resume-stat-label">ATS Score</div>
+          </div>
+        </div>
+        <div class="rws-stat-divider"></div>
+        <div class="resume-stat-item">
+          <span class="material-symbols-outlined text-amber-500" style='font-variation-settings: "FILL" 1;'>save</span>
+          <div>
+            <div class="resume-stat-value" id="hub-stat-saved">Not saved</div>
+            <div class="resume-stat-label">Last Saved</div>
+          </div>
+        </div>
+        <div class="rws-stat-divider"></div>
+        <div class="resume-stat-item">
+          <span class="material-symbols-outlined text-indigo-500" style='font-variation-settings: "FILL" 1;'>article</span>
+          <div>
+            <div class="resume-stat-value" id="hub-stat-sections">0 / 8</div>
+            <div class="resume-stat-label">Sections Filled</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /view-hub -->
+
+
+    <!-- ================================================================
+         VIEW: BUILDER
+         ================================================================ -->
+    <div class="resume-view" id="view-builder" style="display:none;">
+
+      <!-- Builder Top Bar -->
+      <div class="builder-topbar no-print">
+        <div class="builder-topbar-left">
+          <button class="btn-secondary btn-sm" id="builder-back-btn">
+            <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+            <span class="hidden sm:inline">Resume</span>
+          </button>
+          <div class="builder-topbar-title">
+            <span class="material-symbols-outlined text-indigo-600 text-[18px]" style='font-variation-settings: "FILL" 1;'>edit_document</span>
+            <span class="font-semibold text-slate-800 text-sm hidden sm:inline">Resume Builder</span>
+          </div>
+        </div>
+
+        <div class="builder-topbar-center">
+          <button class="btn-secondary btn-sm" id="btn-template-picker" title="Change template">
+            <span class="material-symbols-outlined text-[16px]">layers</span>
+            <span id="active-template-label" class="hidden sm:inline">Classic ATS</span>
+            <span class="material-symbols-outlined text-[16px] text-slate-400">expand_more</span>
+          </button>
+        </div>
+
+        <div class="builder-topbar-right">
+          <!-- ATS Score Badge -->
+          <div class="ats-badge" id="ats-badge" title="ATS Compatibility Score">
+            <span class="material-symbols-outlined text-[14px]">shield_check</span>
+            <span>ATS</span>
+            <span class="ats-badge-score" id="ats-score-display">—</span>
+          </div>
+
+          <button class="btn-icon" id="btn-undo" title="Undo">
+            <span class="material-symbols-outlined text-[18px]">undo</span>
+          </button>
+          <button class="btn-icon" id="btn-redo" title="Redo">
+            <span class="material-symbols-outlined text-[18px]">redo</span>
+          </button>
+          <button class="btn-secondary btn-sm" id="btn-reset-resume" title="Reset Resume / Restore Previous State (Jaisa tha bilkul vaise)">
+            <span class="material-symbols-outlined text-[16px]">restart_alt</span>
+            <span class="hidden sm:inline">Reset</span>
+          </button>
+          <button class="btn-secondary btn-sm" id="btn-save-draft">
+            <span class="material-symbols-outlined text-[16px]">save</span>
+            <span class="hidden sm:inline">Save</span>
+          </button>
+          <button class="btn-secondary btn-sm" id="btn-print-preview">
+            <span class="material-symbols-outlined text-[16px]">preview</span>
+            <span class="hidden lg:inline">Preview</span>
+          </button>
+          <button class="btn-primary btn-sm" id="btn-export-pdf">
+            <span class="material-symbols-outlined text-[16px]">picture_as_pdf</span>
+            <span class="hidden sm:inline">Export PDF</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Builder Split Layout -->
+      <div class="resume-builder-split">
+
+        <!-- LEFT: Editor Panel -->
+        <div class="builder-editor-panel no-print custom-scrollbar">
+
+          <!-- 1. Personal Information -->
+          <div class="form-accordion active" id="acc-personal">
+            <div class="accordion-header">
+              <span class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-indigo-600 text-[18px]" style='font-variation-settings: "FILL" 1;'>person</span>
+                Personal Information
+              </span>
+              <span class="material-symbols-outlined text-slate-400 accordion-chevron">expand_more</span>
+            </div>
+            <div class="accordion-content">
+              <div class="acc-grid-2">
+                <div class="form-group">
+                  <label class="form-label" for="res-name">Full Name</label>
+                  <input type="text" id="res-name" class="form-input" placeholder="Jordan Alex Rivera"/>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="res-title">Target Job Title</label>
+                  <input type="text" id="res-title" class="form-input" placeholder="Full Stack Software Engineer"/>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="res-email">Email</label>
+                  <input type="email" id="res-email" class="form-input" placeholder="jordan.rivera@example.dev"/>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="res-phone">Phone</label>
+                  <input type="text" id="res-phone" class="form-input" placeholder="+91 XXX XXX XXXX"/>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="res-location">Location</label>
+                  <input type="text" id="res-location" class="form-input" placeholder="San Francisco, CA"/>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="res-portfolio">Portfolio</label>
+                  <input type="text" id="res-portfolio" class="form-input" placeholder="yourportfolio.dev"/>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="res-github">GitHub</label>
+                  <input type="text" id="res-github" class="form-input" placeholder="github.com/your-username"/>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="res-linkedin">LinkedIn</label>
+                  <input type="text" id="res-linkedin" class="form-input" placeholder="linkedin.com/in/your-name"/>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Professional Summary -->
+          <div class="form-accordion" id="acc-summary">
+            <div class="accordion-header">
+              <span class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-indigo-600 text-[18px]" style='font-variation-settings: "FILL" 1;'>chat_bubble</span>
+                Professional Summary
+              </span>
+              <span class="material-symbols-outlined text-slate-400 accordion-chevron">expand_more</span>
+            </div>
+            <div class="accordion-content">
+              <div class="form-group">
+                <label class="form-label" for="res-summary">Summary</label>
+                <textarea id="res-summary" class="form-textarea" rows="4" placeholder="Passionate Full Stack Developer with 3+ years of experience building modern web applications..."></textarea>
+              </div>
+              <button class="btn-ai-assist" id="btn-ai-summary">
+                <span class="material-symbols-outlined text-[16px]" style='font-variation-settings: "FILL" 1;'>auto_awesome</span>
+                Improve with AI
+              </button>
+            </div>
+          </div>
+
+          <!-- 3. Technical Skills -->
+          <div class="form-accordion" id="acc-skills">
+            <div class="accordion-header">
+              <span class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-indigo-600 text-[18px]" style='font-variation-settings: "FILL" 1;'>code</span>
+                Technical Skills
+              </span>
+              <span class="material-symbols-outlined text-slate-400 accordion-chevron">expand_more</span>
+            </div>
+            <div class="accordion-content">
+              <div class="form-group">
+                <label class="form-label" for="res-skills-languages">Programming Languages</label>
+                <input type="text" id="res-skills-languages" class="form-input" placeholder="JavaScript, TypeScript, C++, Python, HTML/CSS"/>
+                <p class="acc-field-hint">Comma-separated</p>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="res-skills-frontend">Frontend</label>
+                <input type="text" id="res-skills-frontend" class="form-input" placeholder="React, Next.js, Tailwind CSS, Redux"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="res-skills-backend">Backend</label>
+                <input type="text" id="res-skills-backend" class="form-input" placeholder="Node.js, Express, REST APIs, GraphQL"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="res-skills-db">Databases</label>
+                <input type="text" id="res-skills-db" class="form-input" placeholder="PostgreSQL, MongoDB, Redis"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="res-skills-tools">Tools &amp; Cloud</label>
+                <input type="text" id="res-skills-tools" class="form-input" placeholder="Git, Docker, AWS, CI/CD, Vite"/>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Experience -->
+          <div class="form-accordion" id="acc-experience">
+            <div class="accordion-header">
+              <span class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-indigo-600 text-[18px]" style='font-variation-settings: "FILL" 1;'>work</span>
+                Experience / Internships
+              </span>
+              <span class="material-symbols-outlined text-slate-400 accordion-chevron">expand_more</span>
+            </div>
+            <div class="accordion-content">
+              <div id="experience-list"></div>
+              <button class="btn-add-entry" id="btn-add-experience">
+                <span class="material-symbols-outlined text-[16px]">add_circle</span>
+                Add Experience
+              </button>
+            </div>
+          </div>
+
+          <!-- 5. Projects -->
+          <div class="form-accordion" id="acc-projects">
+            <div class="accordion-header">
+              <span class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-indigo-600 text-[18px]" style='font-variation-settings: "FILL" 1;'>rocket_launch</span>
+                Projects
+              </span>
+              <span class="material-symbols-outlined text-slate-400 accordion-chevron">expand_more</span>
+            </div>
+            <div class="accordion-content">
+              <div id="projects-list"></div>
+              <button class="btn-add-entry" id="btn-add-project">
+                <span class="material-symbols-outlined text-[16px]">add_circle</span>
+                Add Project
+              </button>
+            </div>
+          </div>
+
+          <!-- 6. Education -->
+          <div class="form-accordion" id="acc-education">
+            <div class="accordion-header">
+              <span class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-indigo-600 text-[18px]" style='font-variation-settings: "FILL" 1;'>school</span>
+                Education
+              </span>
+              <span class="material-symbols-outlined text-slate-400 accordion-chevron">expand_more</span>
+            </div>
+            <div class="accordion-content">
+              <div id="education-list"></div>
+              <button class="btn-add-entry" id="btn-add-education">
+                <span class="material-symbols-outlined text-[16px]">add_circle</span>
+                Add Education
+              </button>
+            </div>
+          </div>
+
+          <!-- 7. Achievements -->
+          <div class="form-accordion" id="acc-achievements">
+            <div class="accordion-header">
+              <span class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-indigo-600 text-[18px]" style='font-variation-settings: "FILL" 1;'>emoji_events</span>
+                Achievements
+                <span class="badge badge-neutral" style="font-size:10px; padding: 2px 6px;">Optional</span>
+              </span>
+              <span class="material-symbols-outlined text-slate-400 accordion-chevron">expand_more</span>
+            </div>
+            <div class="accordion-content">
+              <div id="achievements-list"></div>
+              <button class="btn-add-entry" id="btn-add-achievement">
+                <span class="material-symbols-outlined text-[16px]">add_circle</span>
+                Add Achievement
+              </button>
+            </div>
+          </div>
+
+          <!-- 8. Certifications -->
+          <div class="form-accordion" id="acc-certifications">
+            <div class="accordion-header">
+              <span class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-indigo-600 text-[18px]" style='font-variation-settings: "FILL" 1;'>verified</span>
+                Certifications
+                <span class="badge badge-neutral" style="font-size:10px; padding: 2px 6px;">Optional</span>
+              </span>
+              <span class="material-symbols-outlined text-slate-400 accordion-chevron">expand_more</span>
+            </div>
+            <div class="accordion-content">
+              <div id="certifications-list"></div>
+              <button class="btn-add-entry" id="btn-add-certification">
+                <span class="material-symbols-outlined text-[16px]">add_circle</span>
+                Add Certification
+              </button>
+            </div>
+          </div>
+
+        </div><!-- /builder-editor-panel -->
+
+        <!-- RIGHT: Live Resume Preview (A4 Paper) -->
+        <div class="builder-preview-panel">
+          <div class="preview-panel-header no-print">
+            <span class="preview-panel-label">
+              <span class="material-symbols-outlined text-[14px]">visibility</span>
+              Live Preview
+              <span class="text-[11px] font-normal text-slate-400 hidden sm:inline">• A4 Proportions</span>
+            </span>
+            <div class="flex items-center gap-2">
+              <span class="text-[11px] text-slate-500 font-medium md:hidden flex items-center gap-1">
+                <span class="material-symbols-outlined text-[13px]">swipe</span>
+                Scroll
+              </span>
+              <span class="badge badge-primary" id="template-badge-preview">DevPilot Classic</span>
+            </div>
+          </div>
+          <div class="a4-scaler-wrapper">
+            <div class="a4-paper" id="printable-resume-paper">
+              <!-- Rendered by JS based on active template -->
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /resume-builder-split -->
+
+    </div><!-- /view-builder -->
+
+
+    <!-- ================================================================
+         VIEW: ANALYZER
+         ================================================================ -->
+    <div class="resume-view" id="view-analyzer" style="display:none;">
+
+      <!-- Analyzer Top Bar -->
+      <div class="builder-topbar no-print">
+        <div class="builder-topbar-left">
+          <button class="btn-secondary btn-sm" id="analyzer-back-btn">
+            <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+            <span class="hidden sm:inline">Resume</span>
+          </button>
+          <div class="builder-topbar-title">
+            <span class="material-symbols-outlined text-indigo-600 text-[18px]" style='font-variation-settings: "FILL" 1;'>manage_search</span>
+            <span class="font-semibold text-slate-800 text-sm hidden sm:inline">Resume Analyzer</span>
+          </div>
+        </div>
+        <div class="builder-topbar-right">
+          <button class="btn-secondary btn-sm" id="btn-use-builder-resume">
+            <span class="material-symbols-outlined text-[16px]">description</span>
+            <span class="hidden sm:inline">Use Builder Resume</span>
+          </button>
+          <button class="btn-primary btn-sm" id="btn-run-analysis">
+            <span class="material-symbols-outlined text-[16px]">play_arrow</span>
+            <span>Analyze</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Analyzer Upload State (always visible) -->
+      <div id="analyzer-upload-state">
+        <div class="analyzer-upload-zone" id="upload-dropzone">
+          <div class="upload-zone-icon">
+            <span class="material-symbols-outlined" style='font-variation-settings: "FILL" 1; font-size: 40px;'>upload_file</span>
+          </div>
+          <p class="upload-zone-title">Drag &amp; drop your resume here</p>
+          <p class="upload-zone-sub">Supports PDF, DOCX, and TXT (max 10 MB) — or analyze the resume currently in the Builder</p>
+          <div class="upload-zone-actions">
+            <label class="btn-primary" for="file-upload-input" style="cursor:pointer;">
+              <span class="material-symbols-outlined text-[16px]">folder_open</span>
+              Choose File
+            </label>
+            <input type="file" id="file-upload-input" accept=".pdf,.docx,.txt" style="display:none;"/>
+            <button class="btn-secondary" id="btn-analyze-builder">
+              <span class="material-symbols-outlined text-[16px]">description</span>
+              Use Builder Resume
+            </button>
+          </div>
+        </div>
+
+        <!-- File Preview Strip (after file selected) -->
+        <div class="file-preview-strip" id="file-preview-strip" style="display:none;">
+          <span class="material-symbols-outlined text-indigo-500 text-[24px]" style='font-variation-settings: "FILL" 1;'>description</span>
+          <div class="file-preview-info">
+            <div class="file-preview-name" id="file-name-display">resume.pdf</div>
+            <div class="file-preview-meta" id="file-meta-display">1.2 MB · PDF</div>
+          </div>
+          <button class="btn-icon" id="btn-remove-file" title="Remove file">
+            <span class="material-symbols-outlined text-[18px]">close</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading Overlay -->
+      <div id="analyzer-loading" class="analyzer-loading-overlay" style="display:none;">
+        <div class="analyzer-loading-content">
+          <span class="material-symbols-outlined analyzer-loading-icon">hourglass_top</span>
+          <div class="analyzer-loading-title">Analyzing Resume...</div>
+          <div class="analyzer-loading-sub">Extracting text and calculating scores</div>
+        </div>
+      </div>
+
+      <!-- Analysis Results Area (shown BELOW upload area after analysis, page scrolls) -->
+      <div id="analyzer-results-area" class="analyzer-results-area" style="display:none;">
+        <!-- Dynamically rendered by resumeAnalyzer.js -->
+      </div>
+
+    </div><!-- /view-analyzer -->
+
+  </main>
+
+  <!-- Template Picker Modal -->
+  <div class="modal-backdrop" id="template-modal-backdrop" style="display:none;" aria-modal="true" role="dialog">
+    <div class="template-modal">
+      <div class="template-modal-header">
+        <h2 class="template-modal-title">
+          <span class="material-symbols-outlined text-indigo-600" style='font-variation-settings: "FILL" 1;'>layers</span>
+          Choose Template
+        </h2>
+        <button class="btn-icon" id="close-template-modal">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <!-- Category Filters -->
+      <div class="filter-tabs" id="template-category-tabs">
+        <button class="filter-tab active" data-category="all">All</button>
+        <button class="filter-tab" data-category="ats">ATS</button>
+        <button class="filter-tab" data-category="professional">Professional</button>
+        <button class="filter-tab" data-category="developer">Developer</button>
+        <button class="filter-tab" data-category="academic">Academic</button>
+        <button class="filter-tab" data-category="student">Student</button>
+      </div>
+      <!-- Template Cards Grid -->
+      <div class="template-cards-grid" id="template-cards-grid">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Reset / Restore Resume Modal -->
+  <div class="modal-backdrop" id="reset-modal-backdrop" style="display:none;" aria-modal="true" role="dialog" aria-labelledby="reset-modal-title">
+    <div class="reset-modal">
+      <div class="reset-modal-header">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 border border-amber-200">
+            <span class="material-symbols-outlined text-[20px]">restart_alt</span>
+          </div>
+          <div>
+            <h2 class="reset-modal-title" id="reset-modal-title">Reset / Restore Resume</h2>
+            <p class="reset-modal-subtitle">Take resume back to original sample data or revert changes (jaisa tha bilkul vaise).</p>
+          </div>
+        </div>
+        <button class="btn-icon" id="close-reset-modal" aria-label="Close Reset Dialog">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="reset-modal-body custom-scrollbar">
+        <!-- Option 1: Restore Original Sample Resume (Recommended) -->
+        <div class="reset-option-card recommended">
+          <div class="reset-option-header">
+            <div class="reset-option-title-wrap">
+              <span class="reset-option-badge">Recommended</span>
+              <h3 class="reset-option-title">
+                <span class="material-symbols-outlined text-indigo-600 text-[20px]">auto_fix_high</span>
+                Restore Original Sample Resume
+              </h3>
+            </div>
+            <button class="btn-primary btn-sm" id="btn-confirm-restore-default">
+              <span class="material-symbols-outlined text-[16px]">restart_alt</span>
+              Restore Default
+            </button>
+          </div>
+          <p class="reset-option-desc">
+            Restores the complete, clean professional developer profile (<strong>Aditya Sharma</strong> • Full Stack Engineer) with all original sample projects, experience, skills, education, and achievements — <em>bilkul jaisa pehle tha</em>.
+          </p>
+        </div>
+
+        <!-- Option 2: Revert to Last Saved Draft -->
+        <div class="reset-option-card">
+          <div class="reset-option-header">
+            <div class="reset-option-title-wrap">
+              <h3 class="reset-option-title">
+                <span class="material-symbols-outlined text-slate-600 text-[20px]">history</span>
+                Revert to Last Saved Draft
+              </h3>
+            </div>
+            <button class="btn-secondary btn-sm" id="btn-confirm-revert-saved">
+              <span class="material-symbols-outlined text-[16px]">restore</span>
+              Revert to Saved
+            </button>
+          </div>
+          <p class="reset-option-desc">
+            Discards unsaved edits from this session and restores your last saved resume draft from local storage.
+          </p>
+        </div>
+
+        <!-- Option 3: Clear All Fields -->
+        <div class="reset-option-card">
+          <div class="reset-option-header">
+            <div class="reset-option-title-wrap">
+              <h3 class="reset-option-title text-slate-700">
+                <span class="material-symbols-outlined text-rose-500 text-[20px]">delete_sweep</span>
+                Clear All Fields (Blank Canvas)
+              </h3>
+            </div>
+            <button class="btn-secondary btn-sm text-rose-600 hover:bg-rose-50 hover:border-rose-300" id="btn-confirm-clear-all">
+              <span class="material-symbols-outlined text-[16px]">delete</span>
+              Clear All
+            </button>
+          </div>
+          <p class="reset-option-desc">
+            Empties all text fields, skills, and dynamic entries so you can start writing your resume completely from scratch.
+          </p>
+        </div>
+      </div>
+
+      <div class="reset-modal-footer">
+        <div class="reset-modal-tip">
+          <span class="material-symbols-outlined text-[16px] text-amber-500">lightbulb</span>
+          <span>Press <strong>Ctrl+Z</strong> or click <strong>Undo</strong> anytime to reverse any reset.</span>
+        </div>
+        <button class="btn-secondary btn-sm" id="btn-cancel-reset">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/core/utils.js"></script>
+  <script src="../js/data/timerData.js"></script>
+  <script src="../js/core/globalTimer.js"></script>
+  <script src="../js/core/app.js"></script>
+  <script src="../js/pages/resume.js"></script>
+  <script src="../js/pages/resumeAnalyzer.js"></script>
+</body>
+</html>

@@ -1,0 +1,650 @@
+/* ==========================================================================
+   DevPilot-AI — Interview Preparation Stylesheet
+   100% harmonized with DevPilot AI Core Design System, Components & Tokens
+   ========================================================================== */
+
+:root {
+  --ip-primary: var(--color-primary);
+  --ip-primary-hover: var(--color-primary-hover);
+  --ip-primary-light: var(--color-primary-light);
+  --ip-success: var(--color-success);
+  --ip-success-light: var(--color-success-bg);
+  --ip-danger: var(--color-error);
+  --ip-danger-light: var(--color-error-bg);
+  --ip-warning: var(--color-warning);
+  --ip-warning-light: var(--color-warning-bg);
+
+  --ip-card-bg: var(--color-surface);
+  --ip-card-border: var(--color-outline-variant);
+  --ip-card-hover: var(--color-surface-container);
+  --ip-card-hover-border: rgba(79, 70, 229, 0.4);
+  --ip-item-bg: var(--color-surface);
+  --ip-item-border: var(--color-outline-variant);
+  --ip-item-hover: var(--color-surface-container);
+  --ip-text-main: var(--color-on-surface);
+  --ip-text-muted: var(--color-on-surface-variant);
+  --ip-badge-bg: var(--color-surface-container);
+  --ip-badge-text: var(--color-on-surface-variant);
+  --ip-tab-bg: var(--color-surface);
+  --ip-tab-text: var(--color-on-surface-variant);
+  --ip-tab-hover-bg: var(--color-surface-container);
+  --ip-tab-hover-text: var(--color-primary);
+  --ip-tab-active-bg: var(--color-primary);
+  --ip-tab-active-text: #ffffff;
+  --ip-banner-bg: linear-gradient(135deg, rgba(79, 70, 229, 0.05) 0%, var(--color-surface) 100%);
+  --ip-banner-border: var(--color-outline-variant);
+}
+
+
+/* Typography Consistency with DevPilot AI Workspace */
+.page-title,
+.ip-section-title,
+.ip-cat-title,
+.ip-card-title,
+.ip-question-text,
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-on-surface);
+}
+
+body,
+p,
+span,
+div,
+button,
+input,
+.page-subtitle,
+.ip-section-desc,
+.ip-cat-desc,
+.badge,
+.filter-tab,
+.btn-primary,
+.btn-secondary {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Base Layout & Transitions */
+.ip-container {
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 0 4rem;
+}
+
+@media (max-width: 768px) {
+  .ip-container {
+    padding: 0 0 3rem;
+  }
+}
+
+/* Metric Banner Cards */
+.ip-metric-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-subtle);
+}
+
+.ip-metric-card:hover {
+  border-color: rgba(79, 70, 229, 0.3);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+.ip-metric-icon {
+  width: 3rem;
+  height: 3rem;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Quick Resume Widget */
+.ip-resume-banner {
+  background: var(--ip-banner-bg);
+  border: 1px solid var(--ip-banner-border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-subtle);
+}
+
+/* Categories Grid */
+.ip-categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+.ip-cat-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-subtle);
+}
+
+.ip-cat-card:hover {
+  border-color: rgba(79, 70, 229, 0.4);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+
+.ip-cat-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.ip-cat-icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border: 1px solid rgba(79, 70, 229, 0.15);
+  transition: all var(--transition-fast);
+}
+
+.ip-cat-card:hover .ip-cat-icon {
+  background: var(--color-primary);
+  color: #ffffff;
+  border-color: var(--color-primary);
+}
+
+.ip-cat-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-on-surface);
+  margin-bottom: 0.25rem;
+}
+
+.ip-cat-desc {
+  font-size: 0.8125rem;
+  color: var(--color-on-surface-variant);
+  line-height: 1.45;
+  margin-bottom: 1.25rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ip-cat-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-outline-variant);
+  font-size: 0.75rem;
+  color: var(--color-on-surface-variant);
+}
+
+.ip-cat-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+/* Category Topics Grid */
+.ip-topic-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 0.875rem;
+  margin-top: 1rem;
+}
+
+.ip-topic-item {
+  background: var(--color-surface);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-md);
+  padding: 0.875rem 1.125rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  transition: all var(--transition-fast);
+}
+
+.ip-topic-item:hover {
+  border-color: var(--color-primary);
+  background: var(--color-surface-container);
+}
+
+.ip-topic-name {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-on-surface);
+}
+
+/* ======================================================
+   QUESTION ENGINE (Interactive Quiz & Immediate Feedback)
+====================================================== */
+.ip-quiz-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow-card);
+  margin-bottom: 2rem;
+}
+
+
+.ip-quiz-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--color-outline-variant);
+  margin-bottom: 1.75rem;
+}
+
+.ip-quiz-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--color-surface-container);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.ip-quiz-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4f46e5, #6366f1);
+  transition: width 0.3s ease;
+}
+
+
+.ip-question-text {
+  font-size: 1.1875rem;
+  font-weight: 600;
+  line-height: 1.6;
+  color: var(--color-on-surface);
+  margin-bottom: 1.75rem;
+}
+
+.ip-options-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.ip-option-btn {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-outline-variant);
+  border-radius: var(--radius-md);
+  color: var(--color-on-surface);
+  text-align: left;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  position: relative;
+  width: 100%;
+}
+
+.ip-option-btn:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+  color: var(--color-on-surface);
+}
+
+.ip-option-badge {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-container);
+  color: var(--color-primary);
+  font-weight: 700;
+  font-size: 0.8125rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+}
+
+/* Option States upon Answer Submission */
+.ip-option-btn.selected-option {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.ip-option-btn.correct-option {
+  border-color: #10b981 !important;
+  background: rgba(16, 185, 129, 0.12) !important;
+  color: #065f46 !important;
+}
+
+
+.ip-option-btn.correct-option .ip-option-badge {
+  background: #10b981 !important;
+  color: #ffffff !important;
+}
+
+.ip-option-btn.incorrect-option {
+  border-color: #ef4444 !important;
+  background: rgba(239, 68, 68, 0.12) !important;
+  color: #b91c1c !important;
+}
+
+
+.ip-option-btn.incorrect-option .ip-option-badge {
+  background: #ef4444 !important;
+  color: #ffffff !important;
+}
+
+/* Explanation Panel */
+.ip-explanation-panel {
+  background: var(--color-surface-container-low);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-md);
+  padding: 1.25rem 1.5rem;
+  margin-top: 1.5rem;
+  animation: fadeIn 0.25s ease;
+}
+
+.ip-explanation-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.ip-explanation-text {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--color-on-surface);
+}
+
+/* Quiz Completion Screen */
+.ip-results-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem 2rem;
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto;
+  box-shadow: var(--shadow-card);
+}
+
+.ip-score-circle {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  margin: 0 auto 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: conic-gradient(var(--score-color, #10b981) calc(var(--score-percent, 80) * 1%), var(--color-outline-variant) 0);
+}
+
+.ip-score-inner {
+  width: 116px;
+  height: 116px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.ip-results-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.ip-results-stat {
+  background: var(--color-surface-container-low);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+}
+
+/* More Practice Action Menu */
+.ip-more-practice-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+/* ======================================================
+   60-MINUTE MOCK PLACEMENT TEST
+====================================================== */
+.ip-mock-banner {
+  background: var(--ip-banner-bg);
+  border: 1px solid var(--ip-banner-border);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-subtle);
+}
+
+.ip-timer-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.125rem;
+  font-weight: 700;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-outline-variant);
+  color: #10b981;
+}
+
+.ip-timer-badge.warning {
+  color: #ef4444;
+  border-color: #ef4444;
+  animation: pulseWarning 1s infinite;
+}
+
+.ip-qnav-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
+  gap: 0.5rem;
+  padding: 1rem;
+  background: var(--color-surface-container-low);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-md);
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.ip-qnav-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-on-surface-variant);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 1px solid var(--color-outline-variant);
+  transition: all var(--transition-fast);
+}
+
+.ip-qnav-btn:hover {
+  background: var(--color-surface-container);
+  color: var(--color-on-surface);
+  border-color: var(--color-primary);
+}
+
+.ip-qnav-btn.answered {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border-color: #10b981;
+}
+
+.ip-qnav-btn.current {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.3);
+}
+
+/* ======================================================
+   CORE SUBJECT CHECKLISTS TAB
+====================================================== */
+.ip-checklist-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow-subtle);
+}
+
+.ip-checklist-header {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-outline-variant);
+  transition: background-color var(--transition-fast);
+}
+
+.ip-checklist-header:hover {
+  background: var(--color-surface-container);
+}
+
+.ip-chk-item {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid var(--color-outline-variant);
+  transition: background-color var(--transition-fast);
+}
+
+.ip-chk-item:last-child {
+  border-bottom: none;
+}
+
+.ip-chk-item:hover {
+  background: var(--color-surface-container);
+}
+
+.ip-chk-box {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 0.25rem;
+  border: 1.5px solid var(--color-outline-variant);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+  background: var(--color-surface);
+}
+
+.ip-chk-box.checked {
+  background: #10b981;
+  border-color: #10b981;
+  color: #ffffff;
+}
+
+.ip-chk-label {
+  color: var(--color-on-surface);
+  font-size: 0.875rem;
+}
+
+.ip-chk-label.checked {
+  color: var(--color-on-surface-variant);
+  text-decoration: line-through;
+}
+
+/* ======================================================
+   GD & HR INTERVIEW PREPARATION
+====================================================== */
+.ip-gd-card, .ip-hr-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow-subtle);
+}
+
+.ip-star-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.ip-star-box {
+  background: var(--color-surface-container-low);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+}
+
+.ip-star-letter {
+  display: inline-block;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin-bottom: 0.25rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulseWarning {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
