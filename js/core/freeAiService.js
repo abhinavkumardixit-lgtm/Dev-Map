@@ -19,7 +19,7 @@
 })(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
-  // Default Public Free Endpoint (Open access AI endpoint)
+  // Public Free AI Endpoint
   const PUBLIC_FREE_ENDPOINT = 'https://text.pollinations.ai/';
 
   /**
@@ -30,23 +30,36 @@
       ? window.AuthService.getUserSettings()
       : {};
 
+    const geminiKey = userSettings.geminiKey || (typeof localStorage !== 'undefined' ? localStorage.getItem('maddev_gemini_key') : '') || '';
     const endpoint = userSettings.privateAiEndpoint || PUBLIC_FREE_ENDPOINT;
-    const apiKey = userSettings.privateAiKey || '';
-    const model = userSettings.privateAiModel || options.model || 'gpt-4o';
+    const apiKey = userSettings.privateAiKey || geminiKey;
+    const model = userSettings.privateAiModel || options.model || 'gemini-1.5-flash';
 
-    // 1. If Private API Key is configured, attempt Private Gateway Call
-    if (apiKey && apiKey.length > 5) {
+    // 1. Primary: Try Google Gemini API Call using user's Gemini Key
+    if (geminiKey && geminiKey.length > 5) {
+      try {
+        const geminiRes = await callGeminiApi(geminiKey, prompt, options);
+        if (geminiRes && geminiRes.content) {
+          return geminiRes;
+        }
+      } catch (err) {
+        console.warn('[FreeAiService] Gemini API call failed, trying secondary gateway:', err.message);
+      }
+    }
+
+    // 2. Secondary: If Private OpenAI-compatible API Key is configured
+    if (apiKey && apiKey.length > 5 && !apiKey.startsWith('AQ.')) {
       try {
         const privateRes = await callPrivateGateway(endpoint, apiKey, model, prompt, options);
         if (privateRes && privateRes.content) {
           return privateRes;
         }
       } catch (err) {
-        console.warn('[FreeAiService] Private API failed, falling back to Public Free AI:', err.message);
+        console.warn('[FreeAiService] Private API gateway failed:', err.message);
       }
     }
 
-    // 2. Attempt Public Free AI Endpoint
+    // 3. Fallback: Public Free AI Endpoint
     try {
       const publicRes = await callPublicFreeApi(prompt, options);
       if (publicRes && publicRes.content && !publicRes.content.includes('budget')) {
@@ -56,8 +69,42 @@
       console.warn('[FreeAiService] Public Free API network fallback:', err.message);
     }
 
-    // 3. Guaranteed High-Intelligence Intelligent Engine Fallback
+    // 4. Guaranteed High-Intelligence Fallback
     return generateIntelligentFallback(prompt, model, options);
+  }
+
+  /**
+   * Call Google Gemini API directly
+   */
+  async function callGeminiApi(geminiKey, prompt, options) {
+    const modelName = options.model && options.model.includes('gemini') ? options.model : 'gemini-1.5-flash';
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(geminiKey)}`;
+
+    const sysPrompt = options.systemPrompt || 'You are MAD DEV AI Assistant — an expert software engineer and computer science mentor.';
+    const fullText = `${sysPrompt}\n\nUser Request:\n${prompt}`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [{ text: fullText }]
+          }
+        ]
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Gemini API returned HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+    const rawText = data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0]
+      ? data.candidates[0].content.parts[0].text
+      : '';
+
+    return parseAiMarkdownResponse(rawText);
   }
 
   /**
