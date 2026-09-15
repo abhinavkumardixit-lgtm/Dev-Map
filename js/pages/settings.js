@@ -4,17 +4,17 @@
 
 const defaultSettings = {
   profile: {
-    fullName: 'Aditya Sharma',
-    title: 'Senior Full Stack Engineer',
-    email: 'aditya.sharma@example.dev',
-    githubUsername: '2k25adityasharma',
-    bio: 'Building next-gen developer tools and high-scale web applications.'
+    fullName: 'Guest Developer',
+    title: 'Senior Engineer',
+    email: 'developer@maddev.io',
+    githubUsername: 'torvalds',
+    bio: 'Building next-gen developer tools and high-scale applications.'
   },
   apiKeys: {
-    githubToken: 'ghp_mock9481729487192837491823749817234',
-    openAiKey: 'sk-mock-9817234981723948712938471928374',
-    geminiKey: 'AIzaSyMock-891723498172394871293847',
-    claudeKey: 'sk-ant-mock-192837491827349182734'
+    githubToken: '',
+    openAiKey: '',
+    geminiKey: '',
+    claudeKey: ''
   },
   ui: {
     themeAccent: '#4F46E5',
@@ -49,7 +49,7 @@ function initGithubLinkUpdater() {
   const ghLink = document.getElementById('link-github-profile');
   if (ghInput && ghLink) {
     const updateLink = () => {
-      const user = ghInput.value.trim() || '2k25adityasharma';
+      const user = ghInput.value.trim() || 'torvalds';
       ghLink.href = `https://github.com/${user}`;
     };
     ghInput.addEventListener('input', updateLink);
@@ -62,7 +62,7 @@ function initLeetCodeLinkUpdater() {
   const lcLink = document.getElementById('link-leetcode-profile');
   if (lcInput && lcLink) {
     const updateLink = () => {
-      const user = lcInput.value.trim() || 'aditya_maddev';
+      const user = lcInput.value.trim() || 'tourist';
       lcLink.href = `https://leetcode.com/u/${user}`;
     };
     lcInput.addEventListener('input', updateLink);
@@ -93,11 +93,11 @@ function populateSettingsForm() {
   const authSettings = window.AuthService ? window.AuthService.getUserSettings() : {};
 
   // Profile
-  setVal('set-fullname', settings.profile.fullName || authSettings.fullName);
+  setVal('set-fullname', authSettings.fullName || settings.profile.fullName);
   setVal('set-title', settings.profile.title);
-  setVal('set-email', settings.profile.email || authSettings.email);
-  setVal('set-github-username', settings.profile.githubUsername || authSettings.githubUsername || '2k25adityasharma');
-  setVal('set-leetcode-handle', authSettings.leetcodeHandle || 'aditya_maddev');
+  setVal('set-email', authSettings.email || settings.profile.email);
+  setVal('set-github-username', authSettings.githubUsername || settings.profile.githubUsername || 'torvalds');
+  setVal('set-leetcode-handle', authSettings.leetcodeHandle || 'tourist');
   setVal('set-bio', settings.profile.bio);
 
   // Private AI API Setup
@@ -156,8 +156,8 @@ function initSettingsSave() {
       settings.profile.fullName = getVal('set-fullname');
       settings.profile.title = getVal('set-title');
       settings.profile.email = getVal('set-email');
-      const ghUsername = getVal('set-github-username') || '2k25adityasharma';
-      const lcHandle = getVal('set-leetcode-handle') || 'aditya_maddev';
+      const ghUsername = getVal('set-github-username') || 'torvalds';
+      const lcHandle = getVal('set-leetcode-handle') || 'tourist';
       settings.profile.githubUsername = ghUsername;
       settings.profile.bio = getVal('set-bio');
 
