@@ -193,7 +193,10 @@
     if (typeof window !== 'undefined' && window.supabase && typeof window.supabase.auth === 'object') {
       try {
         const { data, error } = await window.supabase.auth.signInWithPassword({ email, password });
-        if (!error && data.user) {
+        if (error) {
+          return { success: false, error: error.message };
+        }
+        if (data && data.user) {
           currentUser = {
             id: data.user.id,
             email: data.user.email,
@@ -212,8 +215,11 @@
     let found = users.find(u => u.email.toLowerCase() === email);
 
     if (!found) {
-      // Auto-register for smooth UX in local mode
-      return signUp(email, password, fullName || email.split('@')[0]);
+      return { success: false, error: 'Account not found. Please Sign Up first to create your account!' };
+    }
+
+    if (found.password && found.password !== password) {
+      return { success: false, error: 'Invalid password. Please check your password and try again.' };
     }
 
     if (fullName && fullName.trim()) {
@@ -226,6 +232,23 @@
     setStorageItem(SESSION_KEY, currentUser);
     notifyListeners('SIGNED_IN', currentUser);
     return { success: true, user: currentUser };
+  }
+
+  /**
+   * Connect LeetCode account for active user.
+   */
+  async function connectLeetCode(inputHandle = '') {
+    const handle = (inputHandle || '').trim().replace(/^@/, '');
+    if (!handle) return { success: false, error: 'Please enter a valid LeetCode handle' };
+
+    saveUserSettings({ leetcodeHandle: handle });
+
+    if (typeof window !== 'undefined' && window.DatabaseService) {
+      window.DatabaseService.syncUserDataOnLogin(getCurrentUser());
+    }
+
+    notifyListeners('LEETCODE_CONNECTED', getCurrentUser());
+    return { success: true, handle };
   }
 
   /**
@@ -254,7 +277,7 @@
       }
     } catch (e) {}
 
-    const authRes = await signUp(email, 'github_oauth_pass', fullName);
+    const authRes = await signUp(email, 'github_oauth_pass', fullName, ghUser);
     saveUserSettings({ githubUsername: ghUser, fullName, email });
     return authRes;
   }
@@ -262,7 +285,7 @@
   /**
    * Registers a new user account with genuine isolation.
    */
-  async function signUp(email, password, fullName = '') {
+  async function signUp(email, password, fullName = '', githubUser = '', leetcodeHandle = '') {
     email = email.trim().toLowerCase();
     const displayName = fullName.trim() || email.split('@')[0];
 
@@ -274,7 +297,10 @@
           password,
           options: { data: { full_name: displayName } }
         });
-        if (!error && data.user) {
+        if (error) {
+          return { success: false, error: error.message };
+        }
+        if (data && data.user) {
           currentUser = {
             id: data.user.id,
             email: data.user.email,
@@ -293,19 +319,32 @@
     let existing = users.find(u => u.email.toLowerCase() === email);
     if (existing) {
       currentUser = existing;
-    } else {
-      const newUser = {
-        id: generateUuid(),
-        email,
-        fullName: displayName,
-        avatar: displayName.charAt(0).toUpperCase()
-      };
-      users.push(newUser);
-      setStorageItem(USERS_LIST_KEY, users);
-      currentUser = newUser;
+      setStorageItem(SESSION_KEY, currentUser);
+      notifyListeners('SIGNED_IN', currentUser);
+      return { success: true, user: currentUser, isExisting: true };
     }
 
+    const newUser = {
+      id: generateUuid(),
+      email,
+      password: password || 'password123',
+      fullName: displayName,
+      avatar: displayName.charAt(0).toUpperCase(),
+      createdAt: new Date().toISOString()
+    };
+
+    users.push(newUser);
+    setStorageItem(USERS_LIST_KEY, users);
+    currentUser = newUser;
     setStorageItem(SESSION_KEY, currentUser);
+
+    saveUserSettings({
+      fullName: displayName,
+      email: email,
+      githubUsername: githubUser || displayName,
+      leetcodeHandle: leetcodeHandle || displayName
+    });
+
     notifyListeners('SIGNED_IN', currentUser);
     return { success: true, user: currentUser };
   }
@@ -420,6 +459,7 @@
     switchAccount,
     signIn,
     signInWithGitHub,
+    connectLeetCode,
     signUp,
     signOut,
     listKnownUsers,

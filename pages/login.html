@@ -106,23 +106,52 @@
         <div class="h-px bg-slate-700/60 flex-1"></div>
       </div>
 
-      <!-- Login / Signup Form -->
-      <form id="login-form" class="space-y-4 pt-1">
-        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Email Authentication</p>
-        
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1" for="login-name">Full Name (Optional for Register)</label>
-          <input type="text" id="login-name" class="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all" placeholder="e.g. Abhinav"/>
+      <!-- Alert Box -->
+      <div id="login-alert" class="hidden p-3.5 rounded-xl text-xs font-semibold"></div>
+
+      <!-- LeetCode Connection Box -->
+      <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-700/80 shadow-inner space-y-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-amber-950/80 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0">
+            <span class="material-symbols-outlined text-lg">code</span>
+          </div>
+          <div>
+            <h3 class="text-xs font-bold text-white uppercase tracking-wider">Connect LeetCode Profile</h3>
+            <p class="text-[11px] text-slate-400">Syncs DSA problem stats, ranking & solved counts</p>
+          </div>
         </div>
 
         <div>
+          <label class="block text-[11px] font-semibold text-slate-300 mb-1" for="leetcode-username-input">LeetCode Handle</label>
+          <div class="flex items-center gap-2">
+            <div class="relative flex-1">
+              <span class="absolute left-3 top-2.5 text-slate-500 text-xs">@</span>
+              <input type="text" id="leetcode-username-input" class="w-full pl-7 pr-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-xs text-white placeholder-slate-500 focus:ring-2 focus:ring-amber-500 outline-none" placeholder="e.g. tourist or your handle"/>
+            </div>
+            <button id="btn-leetcode-connect" type="button" class="py-2 px-4 bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs rounded-lg transition-all flex items-center gap-1.5 shadow-md shrink-0">
+              <span class="material-symbols-outlined text-sm">link</span>
+              <span>Connect</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <div class="h-px bg-slate-700/60 flex-1"></div>
+        <span class="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">Or Sign In with Email</span>
+        <div class="h-px bg-slate-700/60 flex-1"></div>
+      </div>
+
+      <!-- Login Form -->
+      <form id="login-form" class="space-y-4 pt-1">
+        <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1" for="login-email">Email Address</label>
-          <input type="email" id="login-email" class="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all" placeholder="name@domain.com" required/>
+          <input type="email" id="login-email" class="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:ring-2 focus:ring-indigo-500 outline-none transition-all" placeholder="name@domain.com" required/>
         </div>
 
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1" for="login-password">Password</label>
-          <input type="password" id="login-password" class="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all" placeholder="Enter password" value="password123" required/>
+          <input type="password" id="login-password" class="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:ring-2 focus:ring-indigo-500 outline-none transition-all" placeholder="Enter password" required/>
         </div>
 
         <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-indigo-600/30 transition-all flex items-center justify-center gap-2">
@@ -131,14 +160,15 @@
         </button>
       </form>
 
-      <div class="flex items-center justify-between pt-2">
-        <a href="../index.html" class="text-xs text-slate-400 hover:text-white transition-colors flex items-center gap-1">
-          <span class="material-symbols-outlined text-sm">arrow_back</span>
-          <span>Continue as Guest</span>
+      <!-- Navigation to Sign Up Page -->
+      <div class="flex items-center justify-between pt-3 border-t border-slate-700/60">
+        <a href="signup.html" class="text-xs text-indigo-400 hover:text-indigo-300 font-bold transition-colors flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">person_add</span>
+          <span>Don't have an account? Sign Up</span>
         </a>
-        <button id="btn-logout" class="text-xs text-red-400 hover:text-red-300 transition-colors">
-          Sign Out All Sessions
-        </button>
+        <a href="../index.html" class="text-xs text-slate-400 hover:text-white transition-colors">
+          Continue as Guest
+        </a>
       </div>
 
     </div>
@@ -202,10 +232,17 @@
         });
       }
 
-      // Populate saved GitHub Username if available
+      const alertBox = document.getElementById('login-alert');
+
+      // Populate saved GitHub & LeetCode inputs if available
       const inputGh = document.getElementById('github-username-input');
       if (inputGh) {
         inputGh.value = localStorage.getItem('maddev_github_user') || '';
+      }
+
+      const inputLc = document.getElementById('leetcode-username-input');
+      if (inputLc) {
+        inputLc.value = localStorage.getItem('maddev_leetcode_user') || '';
       }
 
       // Preset profile buttons
@@ -233,17 +270,49 @@
         };
       }
 
+      // Handle LeetCode Connect Button
+      const btnLeetCode = document.getElementById('btn-leetcode-connect');
+      if (btnLeetCode) {
+        btnLeetCode.onclick = async () => {
+          let lcHandle = inputLc ? inputLc.value.trim() : '';
+          if (lcHandle) {
+            await auth.connectLeetCode(lcHandle);
+            showAlert(`LeetCode account @${lcHandle} connected successfully!`, 'success');
+          } else {
+            showAlert('Please enter a valid LeetCode handle.', 'error');
+          }
+        };
+      }
+
       // Handle Login Form
       const form = document.getElementById('login-form');
       if (form) {
         form.onsubmit = async (e) => {
           e.preventDefault();
-          const name = document.getElementById('login-name').value.trim();
+          if (alertBox) alertBox.classList.add('hidden');
+
           const em = document.getElementById('login-email').value.trim();
           const pw = document.getElementById('login-password').value;
-          await auth.signIn(em, pw, name);
-          window.location.href = '../index.html';
+
+          const res = await auth.signIn(em, pw);
+          if (res.success) {
+            window.location.href = '../index.html';
+          } else {
+            showAlert(res.error || 'Account not found. Please Sign Up first!', 'error');
+          }
         };
+      }
+
+      function showAlert(msg, type) {
+        if (!alertBox) return;
+        alertBox.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span>${msg}</span>
+            ${type === 'error' && msg.includes('Sign Up') ? '<a href="signup.html" class="ml-2 px-2.5 py-1 bg-white text-slate-900 rounded font-bold text-[10px] hover:bg-slate-200">Sign Up Now</a>' : ''}
+          </div>
+        `;
+        alertBox.className = `p-3.5 rounded-xl text-xs font-semibold ${type === 'error' ? 'bg-red-900/80 border border-red-500/50 text-red-200' : 'bg-emerald-900/80 border border-emerald-500/50 text-emerald-200'}`;
+        alertBox.classList.remove('hidden');
       }
 
       // Handle Sign Out

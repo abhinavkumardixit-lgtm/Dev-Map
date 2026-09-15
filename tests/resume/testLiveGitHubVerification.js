@@ -4,6 +4,25 @@ const analyzer = require('../../js/pages/resumeAnalyzer.js');
 async function main() {
   console.log('Testing live GitHub verification & clean location extraction...');
 
+  // Mock global.fetch for deterministic offline verification
+  const originalFetch = global.fetch;
+  global.fetch = async function(url) {
+    if (url.includes('nonexistentfakeusertesting9999123')) {
+      return { ok: false, status: 404, json: async () => ({ message: 'Not Found' }) };
+    }
+    return {
+      ok: true,
+      status: 200,
+      json: async () => ({
+        login: 'torvalds',
+        name: 'Linus Torvalds',
+        public_repos: 12,
+        followers: 200000,
+        avatar_url: 'https://avatars.githubusercontent.com/u/1024025?v=4'
+      })
+    };
+  };
+
   // 1. Test clean location extraction from long summary paragraph
   const resumeWithSummary = [
     'ADITYA SHARMA | 2k25aiml2513475@gmail.com | +91 96160 32564',
@@ -21,7 +40,7 @@ async function main() {
     candidate: { name: 'ADITYA SHARMA', email: '2k25aiml2513475@gmail.com', location: 'Kanpur' },
     structuredResume: {
       links: [
-        { type: 'github', label: 'GitHub', url: 'https://github.com/2k25adityasharma', username: '2k25adityasharma', isClickable: true },
+        { type: 'github', label: 'GitHub', url: 'https://github.com/torvalds', username: 'torvalds', isClickable: true },
         { type: 'linkedin', label: 'LinkedIn', url: 'https://linkedin.com/in/aditya-sharma-a93387418', username: 'aditya-sharma-a93387418', isClickable: true }
       ]
     }
@@ -29,7 +48,7 @@ async function main() {
 
   const html = analyzer.renderContactAndLinksCard(result);
   assert.ok(html.includes('id="contact-link-github"'), 'GitHub card must have id contact-link-github');
-  assert.ok(html.includes('data-username="2k25adityasharma"'), 'GitHub card must have data-username');
+  assert.ok(html.includes('data-username="torvalds"'), 'GitHub card must have data-username');
   assert.ok(html.includes('id="badge-github-verify"'), 'GitHub card must have id badge-github-verify');
   assert.ok(html.includes('Live Checking...'), 'GitHub badge initially says Live Checking...');
   assert.ok(html.includes('Format Valid'), 'LinkedIn has Format Valid badge');
@@ -42,7 +61,7 @@ async function main() {
       if (sel === '#contact-link-github') {
         const self = this;
         return {
-          dataset: { username: '2k25adityasharma' },
+          dataset: { username: 'torvalds' },
           classList: {
             add(c) { self.classes.add(c); },
             remove(c) { self.classes.delete(c); }

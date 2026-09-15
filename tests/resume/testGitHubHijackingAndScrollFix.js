@@ -4,6 +4,15 @@ const analyzer = require('../../js/pages/resumeAnalyzer.js');
 async function main() {
   console.log('Testing GitHub Hijacking Fix & Clean Profile Resolution...\n');
 
+  // Mock global.fetch for deterministic offline testing
+  const originalFetch = global.fetch;
+  global.fetch = async function(url) {
+    if (url.includes('github.c')) {
+      return { ok: false, status: 404, json: async () => ({ message: 'Not Found' }) };
+    }
+    return { ok: true, status: 200, json: async () => ({ login: 'user' }) };
+  };
+
   // 1. Verify invalid handle (like github.c) is NOT hijacked to 2k25adityasharma
   const sampleResultWithProjects = {
     projectsAnalysis: {
