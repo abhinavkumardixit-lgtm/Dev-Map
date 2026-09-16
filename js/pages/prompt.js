@@ -533,7 +533,7 @@ function initDetailsModal() {
 
       showToast('Redirecting to AI Chat...', 'info');
       setTimeout(() => {
-        window.location.href = 'chat.html';
+        window.location.href = typeof getPageUrl === 'function' ? getPageUrl('chat.html') : 'chat.html';
       }, 350);
     });
   }

@@ -352,7 +352,7 @@
         patternPercentage: 0,
         patternSolved: 0,
         patternTotal: 0,
-        targetUrl: 'pages/dsa.html#row-1'
+        targetUrl: typeof getPageUrl === 'function' ? getPageUrl('dsa.html#row-1') : 'pages/dsa.html#row-1'
       };
     }
 
@@ -410,7 +410,7 @@
         patternPercentage: 100,
         patternSolved: 0,
         patternTotal: 0,
-        targetUrl: 'pages/dsa.html'
+        targetUrl: typeof getPageUrl === 'function' ? getPageUrl('dsa.html') : 'pages/dsa.html'
       };
     }
 
@@ -437,7 +437,7 @@
       patternPercentage: patternPercent,
       patternSolved,
       patternTotal,
-      targetUrl: `pages/dsa.html#row-${nextProblem.id}`
+      targetUrl: typeof getPageUrl === 'function' ? getPageUrl(`dsa.html#row-${nextProblem.id}`) : `pages/dsa.html#row-${nextProblem.id}`
     };
   }
 
@@ -664,7 +664,7 @@
         previewIcon: 'code',
         type: 'dsa',
         badge: 'DSA',
-        url: 'pages/dsa.html'
+        url: typeof getPageUrl === 'function' ? getPageUrl('dsa.html') : 'pages/dsa.html'
       },
       {
         title: `Career: ${roleTitle}`,
@@ -675,7 +675,7 @@
         type: 'career',
         badge: 'Career',
         roleId: activeCareerId,
-        url: `pages/roadmaps.html#role=${activeCareerId}`,
+        url: typeof getPageUrl === 'function' ? getPageUrl(`roadmaps.html#role=${activeCareerId}`) : `pages/roadmaps.html#role=${activeCareerId}`,
         isCommitted: hasActiveCareer
       },
       {
@@ -689,7 +689,7 @@
         badge: 'Interview',
         categoryId: interviewDetails.categoryId,
         topicName: interviewDetails.topicName,
-        url: `pages/interviewPrep.html?cat=${interviewDetails.categoryId}&topic=${encodeURIComponent(interviewDetails.topicName)}`
+        url: typeof getPageUrl === 'function' ? getPageUrl(`interviewPrep.html?cat=${interviewDetails.categoryId}&topic=${encodeURIComponent(interviewDetails.topicName)}`) : `pages/interviewPrep.html?cat=${interviewDetails.categoryId}&topic=${encodeURIComponent(interviewDetails.topicName)}`
       }
     ];
 
@@ -1026,7 +1026,7 @@
             timeAgo: 'Recently',
             dotColor: '#4f46e5',
             timestamp: Date.now() - (2 * 3600 * 1000),
-            url: `pages/dsa.html#row-${foundQ.id}`
+            url: typeof getPageUrl === 'function' ? getPageUrl(`dsa.html#row-${foundQ.id}`) : `pages/dsa.html#row-${foundQ.id}`
           });
         }
       }
@@ -1046,7 +1046,7 @@
           timeAgo: formatTimeAgo(latestNote.createdAt),
           dotColor: '#f59e0b',
           timestamp: latestNote.createdAt ? new Date(latestNote.createdAt).getTime() : Date.now() - (5 * 3600 * 1000),
-          url: 'pages/notes.html'
+          url: typeof getPageUrl === 'function' ? getPageUrl('notes.html') : 'pages/notes.html'
         });
       }
     } catch (e) {}
@@ -1066,7 +1066,7 @@
           timeAgo: formatTimeAgo(latestSession.completedAt),
           dotColor: '#8b5cf6',
           timestamp: new Date(latestSession.completedAt).getTime(),
-          url: 'pages/timer.html'
+          url: typeof getPageUrl === 'function' ? getPageUrl('timer.html') : 'pages/timer.html'
         });
       }
     } catch (e) {}
@@ -1084,7 +1084,7 @@
         timeAgo: 'Just now',
         dotColor: '#4f46e5',
         timestamp: Date.now(),
-        url: 'pages/dsa.html'
+        url: typeof getPageUrl === 'function' ? getPageUrl('dsa.html') : 'pages/dsa.html'
       });
     }
 
@@ -1108,8 +1108,8 @@
         subtext: `Level ${career.currentLevelNum} • ${career.roleTitle}`,
         buttonText: 'Ask AI to Explain',
         chatPrompt,
-        careerUrl: 'pages/roadmaps.html',
-        targetUrl: `pages/chat.html?prompt=${encodeURIComponent(chatPrompt)}&autoSend=true`
+        careerUrl: typeof getPageUrl === 'function' ? getPageUrl('roadmaps.html') : 'pages/roadmaps.html',
+        targetUrl: typeof getPageUrl === 'function' ? getPageUrl(`chat.html?prompt=${encodeURIComponent(chatPrompt)}&autoSend=true`) : `pages/chat.html?prompt=${encodeURIComponent(chatPrompt)}&autoSend=true`
       };
     }
 
@@ -1126,8 +1126,8 @@
         subtext: `${nextDSA.categoryName} • ${nextDSA.difficulty}`,
         buttonText: 'Ask AI to Solve',
         chatPrompt,
-        dsaUrl: nextDSA.targetUrl,
-        targetUrl: `pages/chat.html?prompt=${encodeURIComponent(chatPrompt)}&autoSend=true`
+        dsaUrl: typeof getPageUrl === 'function' ? getPageUrl(nextDSA.targetUrl) : nextDSA.targetUrl,
+        targetUrl: typeof getPageUrl === 'function' ? getPageUrl(`chat.html?prompt=${encodeURIComponent(chatPrompt)}&autoSend=true`) : `pages/chat.html?prompt=${encodeURIComponent(chatPrompt)}&autoSend=true`
       };
     }
 
@@ -1143,8 +1143,8 @@
       subtext: 'Core algorithmic patterns for technical interviews',
       buttonText: 'Ask AI to Solve',
       chatPrompt: fallbackPrompt,
-      dsaUrl: 'pages/dsa.html',
-      targetUrl: `pages/chat.html?prompt=${encodeURIComponent(fallbackPrompt)}&autoSend=true`
+      dsaUrl: typeof getPageUrl === 'function' ? getPageUrl('dsa.html') : 'pages/dsa.html',
+      targetUrl: typeof getPageUrl === 'function' ? getPageUrl(`chat.html?prompt=${encodeURIComponent(fallbackPrompt)}&autoSend=true`) : `pages/chat.html?prompt=${encodeURIComponent(fallbackPrompt)}&autoSend=true`
     };
   }
 

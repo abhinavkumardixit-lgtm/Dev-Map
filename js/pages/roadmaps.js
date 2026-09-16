@@ -1104,7 +1104,7 @@
                       </h4>
                     </div>
                     ${cfg.link ? `
-                      <a href="${cfg.link}" class="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 hover:underline inline-flex items-center gap-0.5 shrink-0">
+                      <a href="${typeof getPageUrl === 'function' ? getPageUrl(cfg.link) : cfg.link}" class="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 hover:underline inline-flex items-center gap-0.5 shrink-0">
                         <span>${cfg.linkText}</span>
                         <span class="material-symbols-outlined text-xs">open_in_new</span>
                       </a>

@@ -223,7 +223,7 @@
           eventsListEl.innerHTML = `
             <div class="py-3 text-center">
               <p class="text-label-sm text-outline">No recent commits found for @${escapeHtml(data.username)}.</p>
-              <a href="pages/settings.html" class="inline-block mt-2 text-xs text-primary hover:underline font-medium">Update GitHub Username in Settings →</a>
+              <a href="${typeof getPageUrl === 'function' ? getPageUrl('settings.html') : 'pages/settings.html'}" class="inline-block mt-2 text-xs text-primary hover:underline font-medium">Update GitHub Username in Settings →</a>
             </div>
           `;
         } else {
@@ -345,9 +345,9 @@
     }
 
     if (milestoneEl && progress.nextMilestone) {
-      const milestoneTarget = progress.career?.roleId
-        ? `pages/roadmaps.html#role=${progress.career.roleId}`
-        : 'pages/roadmaps.html';
+      const milestoneTarget = typeof getPageUrl === 'function'
+        ? getPageUrl(progress.career?.roleId ? `roadmaps.html#role=${progress.career.roleId}` : 'roadmaps.html')
+        : (progress.career?.roleId ? `pages/roadmaps.html#role=${progress.career.roleId}` : 'pages/roadmaps.html');
       milestoneEl.innerHTML = `
         <a href="${milestoneTarget}" class="flex items-center gap-2 hover:text-primary transition-colors truncate">
           <span class="material-symbols-outlined text-primary text-[16px] shrink-0">emoji_events</span>
@@ -377,6 +377,7 @@
     }
 
     if (displayGoals.length === 0) {
+      const habitsUrl = typeof getPageUrl === 'function' ? getPageUrl('habits.html') : 'pages/habits.html';
       taskListEl.innerHTML = `
         <div class="py-8 text-center flex flex-col items-center justify-center">
           <div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-outline mb-2">
@@ -384,10 +385,11 @@
           </div>
           <p class="font-label-md text-label-md text-on-surface font-medium">All caught up for this day!</p>
           <p class="text-label-sm text-outline mt-1 mb-4">No pending daily goals.</p>
-          <a href="pages/habits.html" class="inline-flex items-center gap-1.5 text-xs font-semibold text-primary bg-primary/10 hover:bg-primary/20 px-3 py-1.5 rounded-lg transition-colors">
+          <a href="${habitsUrl}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-primary bg-primary/10 hover:bg-primary/20 px-3 py-1.5 rounded-lg transition-colors">
             <span class="material-symbols-outlined text-[16px]">add</span> Add Daily Goals in Habits
           </a>
         </div>
+
       `;
       return;
     }
@@ -679,7 +681,7 @@
             if (typeof showToast === 'function') showToast('Focus session started! Let\'s build.', 'success');
           }
         } else {
-          window.location.href = 'pages/timer.html';
+          window.location.href = typeof getPageUrl === 'function' ? getPageUrl('timer.html') : 'pages/timer.html';
         }
       });
     }

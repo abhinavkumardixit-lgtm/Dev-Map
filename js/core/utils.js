@@ -105,3 +105,42 @@ function escapeHtml(str) {
 function capitalize(str) {
   return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
 }
+
+function getPageUrl(target) {
+  if (!target) return target;
+  if (target.startsWith('http://') || target.startsWith('https://') || target.startsWith('#') || target.startsWith('mailto:')) {
+    return target;
+  }
+
+  let path = target;
+  let hashOrQuery = '';
+  const hashIdx = path.search(/[?#]/);
+  if (hashIdx !== -1) {
+    hashOrQuery = path.substring(hashIdx);
+    path = path.substring(0, hashIdx);
+  }
+
+  const pageName = path.split('/').pop();
+  const isWebProtocol = typeof window !== 'undefined' && window.location && window.location.protocol.startsWith('http');
+
+  if (isWebProtocol) {
+    if (pageName === 'index.html') {
+      return '/index.html' + hashOrQuery;
+    }
+    return '/pages/' + pageName + hashOrQuery;
+  }
+
+  const pathname = (typeof window !== 'undefined' && window.location) ? window.location.pathname.replace(/\\/g, '/') : '';
+  const isInPagesDir = pathname.includes('/pages/');
+
+  if (pageName === 'index.html') {
+    return (isInPagesDir ? '../index.html' : 'index.html') + hashOrQuery;
+  }
+
+  if (isInPagesDir) {
+    return pageName + hashOrQuery;
+  } else {
+    return 'pages/' + pageName + hashOrQuery;
+  }
+}
+

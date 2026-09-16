@@ -465,10 +465,19 @@
 
   function getRelativePath(target) {
     if (typeof window === 'undefined') return target;
+    if (typeof getPageUrl === 'function' && target !== 'favicon.ico') {
+      return getPageUrl(target);
+    }
+    const isWebProtocol = window.location.protocol && window.location.protocol.startsWith('http');
+    if (isWebProtocol) {
+      if (target === 'favicon.ico') return '/favicon.ico';
+      const pageName = target.replace(/^pages\//, '');
+      return '/pages/' + pageName;
+    }
     const isPagesDir = window.location.pathname.includes('/pages/') ||
                        window.location.pathname.includes('\\pages\\');
 
-    if (target === 'timer.html') {
+    if (target === 'timer.html' || target === 'pages/timer.html') {
       return isPagesDir ? 'timer.html' : 'pages/timer.html';
     }
     if (target === 'favicon.ico') {
@@ -476,6 +485,7 @@
     }
     return target;
   }
+
 
   function init() {
     if (typeof document === 'undefined' || isInitialized) return;

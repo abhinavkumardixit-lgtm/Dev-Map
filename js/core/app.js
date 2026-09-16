@@ -7,6 +7,7 @@
 })();
 
 document.addEventListener('DOMContentLoaded', async () => {
+  fixNavigationLinks();
   initSidebar();
   highlightActiveRoute();
   if (typeof window !== 'undefined' && window.AuthService) {
@@ -17,6 +18,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.GlobalTimer.init();
   }
 });
+
 
 function initUserWidget() {
   const sidebar = document.getElementById('sidebar');
@@ -223,11 +225,35 @@ function openAuthModal() {
     btnSignOut.onclick = async () => {
       await auth.signOut();
       modal.classList.add('hidden');
-      const isPagesDir = window.location.pathname.includes('/pages/');
-      window.location.href = isPagesDir ? 'login.html' : 'pages/login.html';
+      window.location.href = typeof getPageUrl === 'function' ? getPageUrl('login.html') : '/pages/login.html';
     };
   }
 }
+
+function fixNavigationLinks() {
+  const isWebProtocol = window.location.protocol.startsWith('http');
+  const pathname = window.location.pathname.replace(/\\/g, '/');
+  const isInPagesDir = pathname.includes('/pages/');
+
+  document.querySelectorAll('a[href]').forEach(link => {
+    let href = link.getAttribute('href');
+    if (!href || href.startsWith('#') || href.startsWith('http://') || href.startsWith('https://') || href.startsWith('mailto:') || href.startsWith('javascript:')) {
+      return;
+    }
+
+    if (typeof getPageUrl === 'function') {
+      link.setAttribute('href', getPageUrl(href));
+    } else if (isWebProtocol) {
+      if (href === 'index.html' || href === '../index.html') {
+        link.setAttribute('href', '/index.html');
+      } else if (href.includes('.html')) {
+        const pageName = href.split('/').pop();
+        link.setAttribute('href', '/pages/' + pageName);
+      }
+    }
+  });
+}
+
 
 function highlightActiveRoute() {
   const currentPath = window.location.pathname.toLowerCase();
